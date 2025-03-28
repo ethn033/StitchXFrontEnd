@@ -1,0 +1,130 @@
+.dashboard-container {
+    padding: 1.5rem;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 2rem;
+    
+    h2 {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 1.75rem;
+    }
+    
+    p {
+      margin: 0.5rem 0 0;
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+  }
+  
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .metric-card {
+    .metric-content {
+      h3 {
+        margin: 0;
+        font-size: 2rem;
+        color: #2c3e50;
+      }
+      
+      h4 {
+        margin: 0.25rem 0;
+        font-size: 1rem;
+        color: #7f8c8d;
+        font-weight: normal;
+      }
+      
+      p {
+        margin: 0.5rem 0 0;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        
+        &.trend-up {
+          color: #4CAF50;
+        }
+        
+        &.trend-down {
+          color: #F44336;
+        }
+      }
+    }
+  }
+  
+  .orders-card {
+    margin-bottom: 1.5rem;
+    
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      
+      .order-header {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .order-row {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f5f5f5;
+        
+        .order-id {
+          font-weight: 500;
+          color: #3498db;
+        }
+        
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+  
+  .actions-card {
+    .action-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      
+      span {
+        &.completed {
+          text-decoration: line-through;
+          color: #7f8c8d;
+        }
+      }
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .orders-grid {
+      grid-template-columns: 1fr !important;
+      
+      .order-header, .order-row {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.5rem !important;
+      }
+    }
+    
+    .metrics-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+  }

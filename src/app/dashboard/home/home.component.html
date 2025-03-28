@@ -1,0 +1,53 @@
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h2>Dashboard Overview</h2>
+      <p>Today: {{ today | date:'fullDate' }}</p>
+    </div>
+  
+    <!-- Metrics Cards -->
+    <div class="metrics-grid">
+      <p-card *ngFor="let metric of metrics" class="metric-card">
+        <div class="metric-content">
+          <h3>{{ metric.value }}</h3>
+          <h4>{{ metric.title }}</h4>
+          <p [class]="'trend-' + metric.trend">
+            <i [class]="'pi pi-arrow-' + metric.trend"></i>
+            {{ metric.change }} from last month
+          </p>
+        </div>
+      </p-card>
+    </div>
+  
+    <!-- Recent Orders -->
+    <p-card header="Recent Orders" class="orders-card">
+      <div class="orders-grid">
+        <div class="order-header">
+          <span>Order ID</span>
+          <span>Customer</span>
+          <span>Item</span>
+          <span>Status</span>
+          <span>Due Date</span>
+        </div>
+        
+        <div *ngFor="let order of recentOrders" class="order-row">
+          <span class="order-id">#{{ order.id }}</span>
+          <span>{{ order.customer }}</span>
+          <span>{{ order.item }}</span>
+          <span>
+            <p-tag [value]="order.status" 
+                  [severity]="getStatusSeverity(order.status)"></p-tag>
+          </span>
+          <span>{{ order.dueDate }}</span>
+        </div>
+      </div>
+    </p-card>
+  
+    <!-- Quick Actions -->
+    <p-card header="Quick Actions" class="actions-card">
+      <div *ngFor="let action of quickActions" class="action-item">
+        <p-checkbox [binary]="true" [(ngModel)]="action.completed"></p-checkbox>
+        <span [class.completed]="action.completed">{{ action.label }}</span>
+      </div>
+    </p-card>
+  </div>

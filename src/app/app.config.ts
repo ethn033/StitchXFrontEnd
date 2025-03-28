@@ -15,6 +15,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimationsAsync(),
     providePrimeNG({
+      ripple: true,
         theme: {
             preset: Aura,
             options: {

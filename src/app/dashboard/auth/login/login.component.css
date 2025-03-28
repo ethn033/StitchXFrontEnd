@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .card {
+    border-radius: 0.5rem;
+    border: none;
+  }
+  
+  .p-divider {
+    margin: 1.5rem 0;
+  }
+  
+  .p-password {
+    display: block;
+  }
+  
+  .p-error {
+    margin-top: 0.25rem;
+  }

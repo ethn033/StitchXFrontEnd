@@ -1,0 +1,39 @@
+.admin-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.layout-wrapper {
+  display: flex;
+  flex: 1;
+  margin-top: 60px; /* Topbar height */
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: calc(100vh - 60px);
+  transition: margin-left 0.3s ease;
+
+  /* Desktop */
+  @media (min-width: 992px) {
+    margin-left: 250px;
+    
+    .sidebar-collapsed ~ & {
+      margin-left: 80px;
+    }
+  }
+
+  /* Tablet */
+  @media (max-width: 991px) {
+    margin-left: 0;
+    padding: 1.5rem;
+  }
+
+  /* Mobile */
+  @media (max-width: 767px) {
+    padding: 1rem;
+  }
+}

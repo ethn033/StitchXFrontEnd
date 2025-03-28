@@ -1,0 +1,105 @@
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm mt-5">
+          <div class="card-body p-4">
+            <div class="text-center mb-4">
+              <h2 class="mb-1">Welcome to TailorBhai</h2>
+              <p class="text-muted">Sign in to your account</p>
+            </div>
+  
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+              <!-- Email Field -->
+              <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input
+                  pInputText
+                  id="email"
+                  formControlName="email"
+                  placeholder="Enter your email"
+                  class="w-100"
+                  [ngClass]="{ 'p-invalid': email?.touched && email?.invalid }"
+                />
+                @if (email?.touched && email?.invalid) {
+                  <small class="p-error block">
+                    @if (email?.errors?.['required']) {
+                      Email is required
+                    }
+                    @if (email?.errors?.['email']) {
+                      Please enter a valid email
+                    }
+                  </small>
+                }
+              </div>
+  
+              <!-- Password Field -->
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <p-password
+                  id="password"
+                  formControlName="password"
+                  placeholder="Enter your password"
+                  [toggleMask]="true"
+                  [feedback]="false"
+                  class="w-100"
+                  [ngClass]="{ 'p-invalid': password?.touched && password?.invalid }"
+                  [inputStyleClass]="'w-100'"
+                ></p-password>
+                @if (password?.touched && password?.invalid) {
+                  <small class="p-error block">
+                    @if (password?.errors?.['required']) {
+                      Password is required
+                    }
+                    @if (password?.errors?.['minlength']) {
+                      Password must be at least 6 characters
+                    }
+                  </small>
+                }
+              </div>
+  
+              <!-- Remember Me & Forgot Password -->
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                  <p-checkbox
+                    formControlName="rememberMe"
+                    inputId="rememberMe"
+                    [binary]="true"
+                  ></p-checkbox>
+                  <label class="form-check-label ms-2" for="rememberMe">
+                    Remember me
+                  </label>
+                </div>
+                <a routerLink="/forgot-password" class="text-decoration-none">
+                  Forgot password?
+                </a>
+              </div>
+  
+              <!-- Submit Button -->
+              <div class="d-grid mb-3">
+                <p-button
+                  type="submit"
+                  label="Sign In"
+                  [disabled]="loginForm.invalid || isLoading"
+                  [loading]="isLoading"
+                  styleClass="w-100"
+                ></p-button>
+              </div>
+  
+              <!-- Divider -->
+              <p-divider align="center">
+                <span class="p-tag">OR</span>
+              </p-divider>
+  
+              <!-- Register Link -->
+              <div class="text-center">
+                <p class="text-muted">
+                  Don't have an account?
+                  <a routerLink="/register" class="text-decoration-none">Sign up</a>
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,26 @@
+.topbar {
+  height: 60px;
+  z-index: 1000;
+  
+  .search-bar {
+    .p-autocomplete {
+      width: 100%;
+      
+      .p-autocomplete-input {
+        width: 100%;
+      }
+    }
+  }
+
+  .topbar-icons {
+    .p-button {
+      color: #6c757d;
+      transition: all 0.2s;
+      
+      &:hover {
+        color: #495057;
+        background: rgba(0,0,0,0.05);
+      }
+    }
+  }
+}
