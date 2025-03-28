@@ -4,11 +4,13 @@ import { adminGuard } from './guards/admin.guard';
 export const routes: Routes = [
   {
     path: '',
+    redirectTo: 'admin',
+    pathMatch: 'full'
+  },
+  {
+    path: 'auth',
     loadComponent: () => import('./layouts/auth-layout/auth-layout.component').then(m => m.AuthLayoutComponent),
     children: [
-      {
-        path: 'auth',
-        children: [
           {
             path: 'login',
             loadComponent: () => import('./dashboard/auth/login/login.component').then(m => m.LoginComponent)
@@ -22,8 +24,6 @@ export const routes: Routes = [
             redirectTo: 'login',
             pathMatch: 'full'
           }
-        ]
-      }
     ]
   },
   {
@@ -47,12 +47,7 @@ export const routes: Routes = [
     ]
   },
   {
-    path: '',
-    redirectTo: 'auth/login',
-    pathMatch: 'full'
-  },
-  {
     path: '**',
-    redirectTo: 'auth/login'
+    redirectTo: 'admin'
   }
 ];
