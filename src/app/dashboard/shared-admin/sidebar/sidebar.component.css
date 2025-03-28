@@ -132,3 +132,20 @@
       width: 240px;
     }
   }
+
+  aside {
+    width: 250px;
+    transition: width 0.3s ease;
+    
+    &.collapsed {
+      width: 80px;
+      
+      /* Add styles for collapsed state */
+      .menu-text {
+        display: none;
+      }
+      .menu-icon {
+        margin-right: 0;
+      }
+    }
+  }

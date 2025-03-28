@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
@@ -19,6 +19,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './topbar.component.css'
 })
 export class TopbarComponent {
+  @Output() sidebarToggle = new EventEmitter<void>(); // New event emitter
+  @Input() sidebarCollapsed = false;
   searchText = '';
   filteredItems: string[] = [];
   dummyItems = ['Order #1234', 'Customer: John Doe', 'Fabric Stock', 'Measurement Template'];
@@ -41,5 +43,10 @@ export class TopbarComponent {
     this.filteredItems = this.dummyItems.filter(item => 
       item.toLowerCase().includes(event.query.toLowerCase())
     );
+  }
+
+  // New method to toggle sidebar
+  toggleSidebar() {
+    this.sidebarToggle.emit();
   }
 }

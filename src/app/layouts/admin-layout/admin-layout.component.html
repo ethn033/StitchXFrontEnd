@@ -1,8 +1,21 @@
-<div class="admin-container">
+<!-- <div class="admin-container">
     <app-topbar></app-topbar>
     <div class="layout-wrapper">
       <app-sidebar></app-sidebar>
       <main class="main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div> -->
+
+  <div class="admin-container">
+    <app-topbar 
+  (sidebarToggle)="toggleSidebar()" 
+  [sidebarCollapsed]="sidebarCollapsed">
+</app-topbar>
+    <div class="layout-wrapper">
+      <app-sidebar [collapsed]="sidebarCollapsed"></app-sidebar>
+      <main class="main-content" [class.sidebar-collapsed]="sidebarCollapsed">
         <router-outlet></router-outlet>
       </main>
     </div>

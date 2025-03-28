@@ -1,11 +1,18 @@
 <header class="topbar bg-white py-2 px-3 d-flex align-items-center">
-  <!-- Logo -->
-  <div class="logo me-3" style="min-width: 180px;">
-    <h1 class="m-0 text-primary fw-bold fs-3 font-serif">Tailor<span class="text-dark">Bhai</span></h1>
+  <button pButton pRipple 
+        [icon]="'pi ' + (sidebarCollapsed ? 'pi-align-justify' : 'pi-bars')"
+        class="p-button-rounded p-button-text p-button-lg me-2"
+        (click)="toggleSidebar()"></button>
+
+  <!-- Logo - Shrink on mobile -->
+  <div class="logo me-3 me-lg-3" style="min-width: 180px;">
+    <h1 class="m-0 text-primary fw-bold fs-3 font-serif">
+      <span class="d-none d-sm-inline">Tailor</span><span class="text-dark">Bhai</span>
+    </h1>
   </div>
 
-  <!-- Search Bar - Takes remaining space -->
-  <div class="search-bar flex-grow-1 mx-3" style="max-width: 600px;">
+  <!-- Search Bar - Collapses on mobile -->
+  <div class="search-bar flex-grow-1 mx-2 mx-lg-3" style="max-width: 600px;">
     <p-autoComplete [(ngModel)]="searchText" [suggestions]="filteredItems" 
                    (completeMethod)="filterItems($event)" placeholder="Search..."
                    [dropdown]="true" styleClass="w-100">
@@ -18,22 +25,27 @@
     </p-autoComplete>
   </div>
 
-  <!-- Icons - Fixed width right section -->
-  <div class="topbar-icons d-flex align-items-center" style="min-width: 100px;">
-    <!-- Notification Button -->
+  <!-- Icons - Adjust spacing for mobile -->
+  <div class="topbar-icons d-flex align-items-center ms-auto" style="min-width: auto;">
+    <!-- Notification Button with Badge -->
     <button pButton pRipple 
             icon="pi pi-bell" 
-            class="p-button-rounded p-button-text p-button-lg mx-1"
-            (click)="notifMenu.toggle($event)"></button>
+            class="p-button-rounded p-button-text p-button-lg mx-1 position-relative">
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        3
+      </span>
+    </button>
     
-    <!-- Settings Button -->
+    <!-- User Avatar with Dropdown -->
     <button pButton pRipple 
-            icon="pi pi-cog" 
-            class="p-button-rounded p-button-text p-button-lg mx-1"
-            (click)="userMenu.toggle($event)"></button>
+            class="p-button-rounded p-button-text p-button-lg mx-1 user-avatar"
+            (click)="userMenu.toggle($event)">
+      <i class="pi pi-user"></i>
+    </button>
     
     <!-- Hidden Menus -->
     <p-menu #notifMenu [model]="notificationItems" [popup]="true"></p-menu>
     <p-menu #userMenu [model]="userMenuItems" [popup]="true"></p-menu>
   </div>
+
 </header>
