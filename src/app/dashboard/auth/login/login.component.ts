@@ -55,13 +55,14 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value as LoginRequest;
 
     try {
+      debugger
       await this.authService.signIn({ email, password });
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Logged in successfully'
       });
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['admin']);
     } catch (error) {
       this.messageService.add({
         severity: 'error',

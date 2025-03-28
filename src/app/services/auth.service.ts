@@ -20,11 +20,16 @@ export class AuthService {
   private auth: Auth = inject(Auth);
   private router = inject(Router);
 
-  // Current auth state observable
   authState$ = authState(this.auth);
 
   constructor() {
-    this.setupAuthStateListener();
+    this.authState$.subscribe(user => {
+      if (user) {
+        this.router.navigate(['admin']);
+      } else {
+        this.router.navigate(['auth']);
+      }
+    });
   }
 
   // Sign in with email/password
@@ -60,17 +65,6 @@ export class AuthService {
   // Get current user
   getCurrentUser(): Observable<User | null> {
     return this.authState$;
-  }
-
-  // Auth state listener for navigation
-  private setupAuthStateListener(): void {
-    this.authState$.subscribe(user => {
-      if (user) {
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.router.navigate(['auth']);
-      }
-    });
   }
 
   // Error handling

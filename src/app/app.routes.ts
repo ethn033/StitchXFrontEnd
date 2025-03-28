@@ -29,7 +29,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
-    // canActivate: [adminGuard],
+    canActivate: [adminGuard],
     children: [
       {
         path: 'dashboard',

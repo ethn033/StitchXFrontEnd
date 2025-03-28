@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { FormsModule } from '@angular/forms';
+import { MenuItem } from 'primeng/api';
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-topbar',
   imports: [CommonModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
@@ -19,6 +21,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './topbar.component.css'
 })
 export class TopbarComponent {
+  private authService = inject(AuthService);
   @Output() sidebarToggle = new EventEmitter<void>(); // New event emitter
   @Input() sidebarCollapsed = false;
   searchText = '';
@@ -32,11 +35,11 @@ export class TopbarComponent {
     { label: 'View all notifications', icon: 'pi pi-bell' }
   ];
 
-  userMenuItems = [
+  userMenuItems: MenuItem[] = [
     { label: 'Profile', icon: 'pi pi-user' },
     { label: 'Settings', icon: 'pi pi-cog' },
     { separator: true },
-    { label: 'Sign Out', icon: 'pi pi-sign-out' }
+    { label: 'Sign Out', icon: 'pi pi-sign-out', command: () => this.authService.signOut() }
   ];
 
   filterItems(event: any) {
