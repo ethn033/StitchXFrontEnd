@@ -1,34 +1,16 @@
-<!-- Mobile Toggle Button -->
-<button [class.collapsed]="collapsed" class="mobile-menu-btn" pButton icon="pi pi-bars"
-        (click)="toggleCollapse()"></button>
-
-<!-- Sidebar -->
-<aside class="sidebar" [class.sidebar-collapsed]="isCollapsed" 
-       [class.mobile-open]="isMobileMenuOpen">
-  <div class="sidebar-header">
-    <h5 *ngIf="!isCollapsed">TailorBhai</h5>
-    <button pButton icon="pi pi-times" class="close-btn"
-            (click)="toggleCollapse()"></button>
-  </div>
+<aside class="sidebar">
 
   <nav class="sidebar-nav">
-    <a class="nav-item" routerLink="/admin/dashboard" routerLinkActive="active" 
-       (click)="isMobileMenuOpen = false">
+    <a class="nav-item" routerLink="/admin/dashboard" routerLinkActive="active">
       <i class="pi pi-home"></i>
-      <span>Dashboard</span>
     </a>
     <a class="nav-item" routerLink="/admin/orders" routerLinkActive="active"
-       (click)="isMobileMenuOpen = false">
+       >
       <i class="pi pi-shopping-bag"></i>
-      <span>Orders</span>
     </a>
     <a class="nav-item" routerLink="/admin/customers" routerLinkActive="active"
-       (click)="isMobileMenuOpen = false">
-      <i class="pi pi-users"></i>
-      <span>Customers</span>
+       >
+      <i class="pi pi-users pi-2x"></i>
     </a>
   </nav>
 </aside>
-
-<!-- Overlay -->
-<div class="sidebar-overlay" (click)="isMobileMenuOpen = false"></div>

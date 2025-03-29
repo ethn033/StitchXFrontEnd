@@ -1,38 +1,9 @@
 /* Base Styles */
 .sidebar {
-    --sidebar-width: 250px;
-    --collapsed-width: 80px;
-    
-    width: var(--sidebar-width);
     height: calc(100vh - 60px);
-    background: #2c3e50;
-    color: white;
     position: fixed;
-    left: 0;
-    top: 60px;
-    z-index: 1000;
     transition: all 0.3s ease;
     overflow-y: auto;
-  
-    .sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-  
-      h5 {
-        margin: 0;
-        font-size: 1.1rem;
-      }
-  
-      .close-btn {
-        display: none;
-        background: transparent;
-        border: none;
-        color: white;
-      }
-    }
   
     .sidebar-nav {
       padding: 0.5rem;
@@ -41,111 +12,22 @@
         display: flex;
         align-items: center;
         padding: 0.75rem 1rem;
-        color: rgba(255,255,255,0.8);
         text-decoration: none;
-        border-radius: 4px;
         margin-bottom: 0.25rem;
         transition: all 0.2s;
   
         i {
-          margin-right: 1rem;
-          font-size: 1.1rem;
+          font-size: 2.0rem
         }
   
         &:hover, &.active {
-          background: rgba(255,255,255,0.1);
-          color: white;
+          color: green;
         }
       }
     }
   
-    /* Collapsed State (Desktop) */
-    &.sidebar-collapsed {
-      width: var(--collapsed-width);
-  
-      .sidebar-header h5,
-      .nav-item span {
-        display: none;
-      }
-  
-      .nav-item {
-        justify-content: center;
-        padding: 0.75rem 0;
-        
-        i {
-          margin-right: 0;
-        }
-      }
-    }
-  }
-  
-  /* Mobile Menu Button */
-  .mobile-menu-btn {
-    position: fixed;
-    left: 1rem;
-    top: 1rem;
-    z-index: 1100;
-    display: none;
-  }
-  
-  /* Overlay */
-  .sidebar-overlay {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  
-  /* Responsive Styles */
-  @media (max-width: 991px) {
-    .sidebar {
-      transform: translateX(-100%);
-      width: 280px;
-      
-      &.mobile-open {
-        transform: translateX(0);
-      }
-  
-      .sidebar-header .close-btn {
-        display: block;
-      }
-    }
-  
-    .mobile-menu-btn {
-      display: block;
-    }
-  
-    .sidebar.mobile-open ~ .sidebar-overlay {
-      opacity: 1;
-      pointer-events: all;
-    }
-  }
-  
-  @media (min-width: 768px) and (max-width: 991px) {
-    .sidebar {
-      width: 240px;
-    }
   }
 
   aside {
-    width: 250px;
     transition: width 0.3s ease;
-    
-    &.collapsed {
-      width: 80px;
-      
-      /* Add styles for collapsed state */
-      .menu-text {
-        display: none;
-      }
-      .menu-icon {
-        margin-right: 0;
-      }
-    }
   }

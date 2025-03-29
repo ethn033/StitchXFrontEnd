@@ -22,8 +22,6 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class TopbarComponent {
   private authService = inject(AuthService);
-  @Output() sidebarToggle = new EventEmitter<void>(); // New event emitter
-  @Input() sidebarCollapsed = false;
   searchText = '';
   filteredItems: string[] = [];
   dummyItems = ['Order #1234', 'Customer: John Doe', 'Fabric Stock', 'Measurement Template'];
@@ -48,8 +46,4 @@ export class TopbarComponent {
     );
   }
 
-  // New method to toggle sidebar
-  toggleSidebar() {
-    this.sidebarToggle.emit();
-  }
 }

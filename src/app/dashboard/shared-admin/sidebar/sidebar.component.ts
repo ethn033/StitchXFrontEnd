@@ -10,14 +10,5 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
-  isCollapsed = false;
-  isMobileMenuOpen = false;
-  @Input() collapsed = false;
-  toggleCollapse() {
-    if (window.innerWidth >= 992) {
-      this.isCollapsed = !this.isCollapsed;
-    } else {
-      this.isMobileMenuOpen = !this.isMobileMenuOpen;
-    }
-  }
+  
 }
