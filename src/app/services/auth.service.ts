@@ -20,13 +20,7 @@ export class AuthService {
   authState$ = authState(this.auth);
 
   constructor() {
-    this.authState$.subscribe(user => {
-      if (user) {
-        this.router.navigate(['admin']);
-      } else {
-        this.router.navigate(['auth']);
-      }
-    });
+    
   }
 
   // Sign in with email/password
@@ -55,6 +49,7 @@ export class AuthService {
     try {
       await signOut(this.auth);
       localStorage.clear();
+      this.router.navigate(['/auth/login']);
     } catch (error) {
       throw this.handleError(error);
     }

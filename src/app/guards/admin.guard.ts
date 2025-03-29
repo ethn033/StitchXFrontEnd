@@ -7,6 +7,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
 
   console.log('Checking access for:', state.url);
   const authService = inject(AuthService);
+  const router = inject(Router);
 
   return authService.getCurrentUser().pipe(
     take(1),
@@ -14,6 +15,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
       if (user) {
         return true;
       }
+      router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
       return false;
     })
   );
