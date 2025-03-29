@@ -1,52 +1,33 @@
-<header class="topbar  py-2 px-3">
-
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-2">
-        <div class="logo" >
-          <h1 class="logo m-0 fw-bold fs-2 fs-md-3">
-            <span class="logo-text">Silai</span>
-            <span class="logo-plus">+</span>
-          </h1>
-        </div>
-      </div>
-  
-      <div class="col-8 d-flex justify-content-left align-items-center">
-        <i class="pi pi-search me-1"></i>
-          <p-autoComplete class="w-100" [(ngModel)]="searchText" [suggestions]="filteredItems" (completeMethod)="filterItems($event)" placeholder="Search Customer or Order"></p-autoComplete>
-      </div>
-  
-      <div class="col-2">
-        <div class="topbar-icons d-flex justify-content-end align-items-center">
-          <!-- Notification Button with Badge -->
-          <button pButton pRipple 
-                  icon="pi pi-bell" 
-                  class="p-button-rounded p-button-text p-button-lg mx-1 position-relative">
-            
-          </button>
-          
-          <!-- User Avatar with Dropdown -->
-          <button pButton pRipple 
-                  class="p-button-rounded p-button-text p-button-lg mx-1 position-relative"
-                  icon="pi pi-user" 
-                  (click)="userMenu.toggle($event)">
-          </button>
-          
-          <!-- Hidden Menus -->
-          <p-menu #notifMenu [model]="notificationItems" [popup]="true"></p-menu>
-          <p-menu #userMenu [model]="userMenuItems" [popup]="true"></p-menu>
-        </div>
-      </div>
+<header class="topbar">
+  <div class="container-fluid d-flex align-items-center h-100">
+    <!-- Logo - Shrinks on mobile -->
+    <div class="logo-container">
+      <h1 class="logo">
+        <span class="logo-text">Silai</span>
+        <span class="logo-plus">+</span>
+      </h1>
     </div>
-    
+
+    <!-- Search - Expands/collapses responsively -->
+    <div class="search-container">
+      <i class="pi pi-search search-icon"></i>
+      <p-autoComplete [(ngModel)]="searchText" 
+                     [suggestions]="filteredItems" 
+                     (completeMethod)="filterItems($event)" 
+                     placeholder="Search Customer or Order"
+                    
+                     [inputStyle]="{'border':'none', 'padding-left':'2.5rem'}">
+      </p-autoComplete>
+    </div>
+
+    <!-- Icons - Always visible -->
+    <div class="actions-container">
+      <button pButton icon="pi pi-bell" class="action-btn">
+        <span class="badge">3</span>
+      </button>
+      <button pButton icon="pi pi-user" class="action-btn" (click)="userMenu.toggle($event)">
+      </button>
+      <p-menu #userMenu [model]="userMenuItems" [popup]="true"></p-menu>
+    </div>
   </div>
- 
-  
-
-  <!-- Search Bar - Collapses on mobile -->
-  
-
-  <!-- Icons - Adjust spacing for mobile -->
-  
-
 </header>
