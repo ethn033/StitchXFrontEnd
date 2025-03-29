@@ -2,16 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { 
   Auth, 
   User, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
   signOut, 
-  authState,
-  updateProfile
+  authState
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { LoginRequest } from '../models/LoginRequest';
-import { SignUpRequest } from '../models/SignUpRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -42,21 +39,22 @@ export class AuthService {
   }
 
   // Sign up with email/password
-  async signUp({ email, password, name }: SignUpRequest): Promise<void> {
-    try {
-      const credential = await createUserWithEmailAndPassword(this.auth, email, password);
-      if (this.auth.currentUser) {
-        await updateProfile(this.auth.currentUser, { displayName: name });
-      }
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
+  // async signUp({ email, password, name }: SignUpRequest): Promise<void> {
+  //   try {
+  //     const credential = await createUserWithEmailAndPassword(this.auth, email, password);
+  //     if (this.auth.currentUser) {
+  //       await updateProfile(this.auth.currentUser, { displayName: name });
+  //     }
+  //   } catch (error) {
+  //     throw this.handleError(error);
+  //   }
+  // }
 
   // Sign out
   async signOut(): Promise<void> {
     try {
       await signOut(this.auth);
+      localStorage.clear();
     } catch (error) {
       throw this.handleError(error);
     }

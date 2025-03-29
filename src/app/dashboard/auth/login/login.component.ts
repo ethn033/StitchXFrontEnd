@@ -55,7 +55,6 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value as LoginRequest;
 
     try {
-      debugger
       await this.authService.signIn({ email, password });
       this.messageService.add({
         severity: 'success',

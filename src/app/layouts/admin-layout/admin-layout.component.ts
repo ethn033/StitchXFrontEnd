@@ -16,9 +16,5 @@ import { SidebarComponent } from '../../dashboard/shared-admin/sidebar/sidebar.c
   styleUrl: './admin-layout.component.css'
 })
 export class AdminLayoutComponent {
- sidebarCollapsed = false;
-
-  toggleSidebar() {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
+ 
 }

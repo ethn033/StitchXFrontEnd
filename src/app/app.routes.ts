@@ -4,8 +4,12 @@ import { adminGuard } from './guards/admin.guard';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'admin',
+    redirectTo: 'landing-page',
     pathMatch: 'full'
+  },
+  {
+    path: 'landing-page',
+    loadComponent: () => import('./layouts/landing-layout/landing-layout.component').then(m => m.LandingLayoutComponent),
   },
   {
     path: 'auth',
@@ -32,22 +36,22 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     children: [
       {
-        path: 'dashboard',
-        loadComponent: () => import('./dashboard/home/home.component').then(m => m.HomeComponent)
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       },
       {
         path: 'orders',
         loadComponent: () => import('./dashboard/orders/orders.component').then(m => m.OrdersComponent)
       },
       {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
-      }
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard/home/home.component').then(m => m.HomeComponent)
+      },
     ]
   },
   {
     path: '**',
-    redirectTo: 'admin'
+    loadComponent: () => import('./not-found/not-found.component').then(m => m.NotFoundComponent),
   }
 ];
