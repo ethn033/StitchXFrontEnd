@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
         }
     }),
     provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()), provideServiceWorker('ngsw-worker.js', {

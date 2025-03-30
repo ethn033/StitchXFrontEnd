@@ -4,146 +4,143 @@
   background-color: #f5f7fa;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
 }
 
 .login-container {
   width: 100%;
-  max-width: 480px;
-  padding: 2rem;
+  max-width: 420px;
 }
 
 .login-card {
   background: white;
   border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .login-header {
-  text-align: center;
   margin-bottom: 2rem;
-}
-
-.login-header h2 {
-  color: #2c3e50;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.logo {
-  height: 48px;
+  
+  .logo {
+    display: flex;
+    justify-content: center;
+    
+    h1 {
+      font-size: 1.75rem;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  p {
+    font-size: 0.9375rem;
+  }
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 0.9375rem;
+  }
 }
 
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #4a5568;
-  font-weight: 500;
-}
-
-.p-input-icon-left {
-  display: block;
-  position: relative;
-}
-
-.p-input-icon-left i {
-  position: absolute;
-  top: 50%;
-  left: 1rem;
-  transform: translateY(-50%);
-  color: #a0aec0;
-}
-
-.p-inputtext, .p-password input {
+.p-inputgroup {
   width: 100%;
-  padding-left: 2.5rem !important;
-  border-radius: 8px !important;
-  border: 1px solid #e2e8f0 !important;
-  transition: all 0.3s ease;
+  
+  .p-inputgroup-addon {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-right: none;
+    border-radius: 8px 0 0 8px !important;
+    
+    i {
+      color: #94a3b8;
+    }
+  }
+  
+  .p-inputtext, .p-password {
+    width: 100%;
+    border-radius: 0 8px 8px 0 !important;
+    border-left: none !important;
+    
+    &:enabled:focus {
+      box-shadow: inset 0 0 0 1px #4299e1, inset 0 0 0 1px #4299e1, inset 0 0 0 1px #4299e1, inset 0 0 0 1px #4299e1 !important;
+    }
+  }
 }
 
-.p-inputtext:enabled:hover, .p-password input:enabled:hover {
-  border-color: #cbd5e0 !important;
-}
-
-.p-inputtext:enabled:focus, .p-password input:enabled:focus {
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2) !important;
-  border-color: #4299e1 !important;
-}
-
-.p-checkbox .p-checkbox-box {
-  border-radius: 4px;
-  border: 1px solid #e2e8f0;
+.p-password {
+  display: flex;
+  
+  .p-password-input {
+    width: 100%;
+  }
 }
 
 .forgot-password {
   color: #4299e1;
-  text-decoration: none;
   font-size: 0.875rem;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: #3182ce;
+  }
 }
 
-.forgot-password:hover {
-  text-decoration: underline;
-}
-
-.primary-btn {
-  background-color: #4299e1 !important;
-  border-color: #4299e1 !important;
-  border-radius: 8px !important;
-  padding: 0.75rem !important;
-  font-weight: 500 !important;
-}
-
-.primary-btn:hover {
-  background-color: #3182ce !important;
-  border-color: #3182ce !important;
+.p-button {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  height: 42px;
 }
 
 .divider {
-  display: flex;
-  align-items: center;
-  margin: 1.5rem 0;
-  color: #a0aec0;
-}
-
-.divider::before, .divider::after {
-  content: "";
-  flex: 1;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.divider span {
-  padding: 0 1rem;
-  font-size: 0.875rem;
+  color: #94a3b8;
+  font-size: 0.8125rem;
+  
+  span {
+    position: relative;
+    top: 1px;
+  }
 }
 
 .signup-link {
   color: #4299e1;
-  text-decoration: none;
   font-weight: 500;
-  margin-left: 0.25rem;
-}
-
-.signup-link:hover {
-  text-decoration: underline;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: #3182ce;
+  }
 }
 
 .p-error {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #e53e3e;
+  margin-top: 0.25rem;
 }
 
 /* Responsive adjustments */
 @media (max-width: 576px) {
-  .login-container {
-    padding: 1rem;
-  }
-  
   .login-card {
     padding: 1.5rem;
+    box-shadow: none;
+    border: 1px solid #e2e8f0;
+  }
+  
+  .login-header {
+    margin-bottom: 1.5rem;
+    
+    .logo h1 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
   }
 }

@@ -1,21 +1,23 @@
 <div class="login-container">
   <div class="login-card">
-    <div class="login-header">
-      <!-- Logo - Shrink on mobile -->
-  <div class="logo me-3 me-lg-3" style="min-width: 180px;">
-    <h1 class="m-0 text-primary fw-bold fs-3 font-serif">
-      <span class="d-none d-sm-inline">Tailor</span><span class="text-dark">Bhai</span>
-    </h1>
-  </div>
-      <p class="text-muted">Sign in to your account</p>
+    <div class="login-header text-center mb-4">
+      <!-- Logo -->
+      <div class="logo mb-3">
+        <h1 class="m-0 text-primary fw-bold fs-3 font-serif">
+          <span class="d-none d-sm-inline">Tailor</span><span class="text-dark">Bhai</span>
+        </h1>
+      </div>
+      <p class="text-muted mb-0">Sign in to your account</p>
     </div>
 
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="w-100">
       <!-- Email Field -->
-      <div class="form-group mb-4">
+      <div class="form-group mb-3">
         <label for="email" class="form-label">Email Address</label>
-        <span class="p-input-icon-left w-100">
-          <i class="pi pi-envelope"></i>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">
+            <i class="pi pi-envelope"></i>
+          </span>
           <input
             pInputText
             id="email"
@@ -24,7 +26,7 @@
             class="w-100"
             [ngClass]="{ 'p-invalid': email?.touched && email?.invalid }"
           />
-        </span>
+        </div>
         @if (email?.touched && email?.invalid) {
           <small class="p-error block mt-1">
             @if (email?.errors?.['required']) {
@@ -38,21 +40,23 @@
       </div>
 
       <!-- Password Field -->
-      <div class="form-group mb-4">
+      <div class="form-group mb-3">
         <label for="password" class="form-label">Password</label>
-        <span class="p-input-icon-left w-100">
-          <i class="pi pi-lock"></i>
+        <div class="p-inputgroup">
+          <span class="p-inputgroup-addon">
+            <i class="pi pi-lock"></i>
+          </span>
           <p-password
             id="password"
             formControlName="password"
             placeholder="Enter your password"
             [toggleMask]="true"
             [feedback]="false"
-            class="w-100"
+            [inputStyle]="{'width': '100%'}"
             [ngClass]="{ 'p-invalid': password?.touched && password?.invalid }"
             [inputStyleClass]="'w-100'"
           ></p-password>
-        </span>
+        </div>
         @if (password?.touched && password?.invalid) {
           <small class="p-error block mt-1">
             @if (password?.errors?.['required']) {
@@ -67,17 +71,18 @@
 
       <!-- Remember Me & Forgot Password -->
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="form-check">
+        <div class="form-check d-flex align-items-center">
           <p-checkbox
             formControlName="rememberMe"
             inputId="rememberMe"
             [binary]="true"
+            class="me-2"
           ></p-checkbox>
-          <label class="form-check-label ms-2" for="rememberMe">
+          <label class="form-check-label" for="rememberMe">
             Remember me
           </label>
         </div>
-        <a routerLink="/forgot-password" class="forgot-password">
+        <a routerLink="/forgot-password" class="forgot-password text-decoration-none">
           Forgot password?
         </a>
       </div>
@@ -89,20 +94,22 @@
           label="Sign In"
           [disabled]="loginForm.invalid || isLoading"
           [loading]="isLoading"
-          styleClass="w-100 primary-btn"
+          styleClass="w-100 p-button-primary"
         ></p-button>
       </div>
 
       <!-- Divider -->
-      <div class="divider">
-        <span>OR</span>
+      <div class="divider d-flex align-items-center my-4">
+        <span class="flex-grow-1 border-top"></span>
+        <span class="px-3 text-muted">OR</span>
+        <span class="flex-grow-1 border-top"></span>
       </div>
 
       <!-- Register Link -->
       <div class="text-center mt-3">
-        <p class="text-muted">
+        <p class="text-muted mb-0">
           Don't have an account?
-          <a routerLink="/register" class="signup-link">Sign up</a>
+          <a routerLink="/register" class="signup-link text-decoration-none">Sign up</a>
         </p>
       </div>
     </form>

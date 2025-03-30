@@ -1,1 +1,256 @@
-<p>landing-layout works!</p>
+<div class="landing-page">
+    <!-- Navigation Bar -->
+    <header class="landing-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <img src="assets/images/silai-logo.png" alt="Silai+ Logo">
+            <h1>Silai<span>+</span></h1>
+          </div>
+          <nav class="nav-menu">
+            <a href="#features">Features</a>
+            <a href="#testimonials">Testimonials</a>
+            <a href="#contact">Contact</a>
+            <button pButton pRipple type="button" label="Login" class="p-button-text" routerLink="/auth/login"></button>
+            <button pButton pRipple type="button" label="Sign Up" class="p-button-outlined"></button>
+          </nav>
+        </div>
+      </div>
+    </header>
+  
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h2>Modern Tailoring Management Solution</h2>
+            <h1>Transform Your Tailoring Business with <span>Silai+</span></h1>
+            <p>Comprehensive software designed specifically for Asian tailoring businesses to streamline operations and boost productivity.</p>
+            <div class="hero-actions">
+              <button pButton pRipple type="button" label="Request a Demo" class="p-button-primary"></button>
+              <button pButton pRipple type="button" label="Start Free Trial" class="p-button-secondary p-button-outlined"></button>
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="assets/images/hero-dashboard.png" alt="Silai+ Dashboard" class="dashboard-img">
+            <img src="assets/images/hero-pattern.png" alt="Decorative Pattern" class="pattern-img">
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-subtitle">POWERFUL FEATURES</p>
+          <h2 class="section-title">Everything You Need to Grow Your Business</h2>
+        </div>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="pi pi-user-plus"></i>
+            </div>
+            <h3>Customer Management</h3>
+            <p>Store customer measurements, preferences, and order history in one centralized system.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="pi pi-shopping-bag"></i>
+            </div>
+            <h3>Order Tracking</h3>
+            <p>Monitor orders from measurement to delivery with real-time status updates.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="pi pi-chart-line"></i>
+            </div>
+            <h3>Business Analytics</h3>
+            <p>Get actionable insights with detailed reports on sales, inventory, and customer trends.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="pi pi-money-bill"></i>
+            </div>
+            <h3>Billing & Payments</h3>
+            <p>Generate invoices, track payments, and manage your finances effortlessly.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="pi pi-box"></i>
+            </div>
+            <h3>Inventory Management</h3>
+            <p>Keep track of fabrics, threads, and other materials with automated alerts.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="pi pi-mobile"></i>
+            </div>
+            <h3>Mobile Friendly</h3>
+            <p>Access your business data anytime, anywhere from your mobile device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-subtitle">TRUSTED BY TAILORS</p>
+          <h2 class="section-title">What Our Customers Say</h2>
+        </div>
+        
+        <p-carousel [value]="testimonials" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions">
+          <ng-template let-testimonial pTemplate="item">
+            <div class="testimonial-card">
+              <div class="testimonial-content">
+                <p-rating [ngModel]="testimonial.rating" [readonly]="true"></p-rating>
+                <p class="testimonial-text">"{{testimonial.text}}"</p>
+                <div class="testimonial-author">
+                  <img [src]="testimonial.avatar" [alt]="testimonial.name">
+                  <div>
+                    <h5>{{testimonial.name}}</h5>
+                    <p>{{testimonial.position}}, {{testimonial.business}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-carousel>
+      </div>
+    </section>
+  
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+      <div class="container">
+        <div class="contact-content">
+          <div class="contact-info">
+            <h2>Have Questions?</h2>
+            <p>Our team is ready to help you with any questions about Silai+</p>
+            
+            <div class="info-item">
+              <i class="pi pi-phone"></i>
+              <div>
+                <h5>Call Us</h5>
+                <p>+91 98765 43210</p>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <i class="pi pi-envelope"></i>
+              <div>
+                <h5>Email Us</h5>
+                <p>support&#64;silaiplus.com</p>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <i class="pi pi-map-marker"></i>
+              <div>
+                <h5>Visit Us</h5>
+                <p>123 Tailor Street, Fabric District, Mumbai, India</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-form">
+            <h3>Send Us a Message</h3>
+            <form [formGroup]="inquiryForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                <input pInputText formControlName="name" placeholder="Your Name">
+              </div>
+              <div class="form-group">
+                <input pInputText formControlName="email" placeholder="Your Email">
+              </div>
+              <div class="form-group">
+                <input pInputText formControlName="phone" placeholder="Phone Number">
+              </div>
+              <div class="form-group">
+                <textarea pInputTextarea formControlName="message" rows="5" placeholder="Your Message"></textarea>
+              </div>
+              <button pButton pRipple type="submit" label="Send Inquiry" class="p-button-primary"></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>Ready to Transform Your Tailoring Business?</h2>
+        <p>Join hundreds of tailors who are already using Silai+ to streamline their operations.</p>
+        <div class="cta-actions">
+          <button pButton pRipple type="button" label="Start Free Trial" class="p-button-primary"></button>
+          <button pButton pRipple type="button" label="Request a Demo" class="p-button-secondary p-button-outlined"></button>
+        </div>
+      </div>
+    </section>
+  
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-about">
+            <div class="logo">
+              <img src="assets/images/silai-logo.png" alt="Silai+ Logo">
+              <h1>Silai<span>+</span></h1>
+            </div>
+            <p>The complete tailoring business management solution for modern businesses.</p>
+            <div class="social-links">
+              <a href="#"><i class="pi pi-facebook"></i></a>
+              <a href="#"><i class="pi pi-instagram"></i></a>
+              <a href="#"><i class="pi pi-twitter"></i></a>
+              <a href="#"><i class="pi pi-linkedin"></i></a>
+            </div>
+          </div>
+          
+          <div class="footer-links">
+            <h5>Quick Links</h5>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#testimonials">Testimonials</a></li>
+              <li><a href="#contact">Contact</a></li>
+              <li><a routerLink="/auth/login">Login</a></li>
+              <li><a routerLink="/auth/register">Sign Up</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-links">
+            <h5>Resources</h5>
+            <ul>
+              <li><a href="#">Help Center</a></li>
+              <li><a href="#">Documentation</a></li>
+              <li><a href="#">API Reference</a></li>
+              <li><a href="#">Community</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-newsletter">
+            <h5>Subscribe to Newsletter</h5>
+            <p>Get updates on new features and offers</p>
+            <div class="newsletter-form">
+              <input pInputText placeholder="Your Email">
+              <button pButton pRipple type="button" icon="pi pi-send" class="p-button-primary"></button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>© 2023 Silai+. All rights reserved.</p>
+          <div class="legal-links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Cookies</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
