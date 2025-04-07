@@ -45,32 +45,37 @@ export class LoginComponent {
     rememberMe: [false]
   });
 
-  async onSubmit(): Promise<void> {
+  onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
     this.isLoading = true;
-    const { email, password } = this.loginForm.value as LoginRequest;
+    const formData = this.loginForm.value as LoginRequest;
 
-    try {
-      await this.authService.signIn({ email, password });
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Logged in successfully'
-      });
-      this.router.navigate(['admin']);
-    } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Login Failed',
-        detail: error instanceof Error ? error.message : 'Failed to login'
-      });
-    } finally {
-      this.isLoading = false;
-    }
+    this.authService.signIn(formData).subscribe({
+      next: (data: any) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Logged in successfully'
+        }); 
+
+        this.isLoading = false;
+        this.loginForm.reset();
+        this.router.navigate(['admin']);
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Login Failed',
+          detail: error instanceof Error ? error.message : 'Failed to login'
+        });
+        
+        this.isLoading = false;
+      }
+    });
   }
 
   get email() {

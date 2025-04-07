@@ -4,11 +4,13 @@ import {
   User, 
   signInWithEmailAndPassword,
   signOut, 
-  authState
+  authState,
+  createUserWithEmailAndPassword
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { LoginRequest } from '../models/LoginRequest';
+import { SignUpRequest } from '../models/SignUpRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -23,36 +25,23 @@ export class AuthService {
     
   }
 
-  // Sign in with email/password
-  async signIn({ email, password }: LoginRequest): Promise<void> {
-    try {
-      await signInWithEmailAndPassword(this.auth, email, password);
-    } catch (error) {
-      throw this.handleError(error);
-    }
+  signIn({ email, password }: LoginRequest): Observable<any> {
+    return from(signInWithEmailAndPassword(this.auth, email, password));
   }
 
   // Sign up with email/password
-  // async signUp({ email, password, name }: SignUpRequest): Promise<void> {
-  //   try {
-  //     const credential = await createUserWithEmailAndPassword(this.auth, email, password);
-  //     if (this.auth.currentUser) {
-  //       await updateProfile(this.auth.currentUser, { displayName: name });
-  //     }
-  //   } catch (error) {
-  //     throw this.handleError(error);
-  //   }
-  // }
+  async signUp(request: SignUpRequest): Promise<void> {
+      const credential = await createUserWithEmailAndPassword(this.auth, request.email, request.password);
+      if (this.auth.currentUser) {
+        // await updateProfile(this.auth.currentUser, { displayName: name });
+      }
+  }
 
   // Sign out
   async signOut(): Promise<void> {
-    try {
-      await signOut(this.auth);
-      localStorage.clear();
-      this.router.navigate(['/auth/login']);
-    } catch (error) {
-      throw this.handleError(error);
-    }
+    await signOut(this.auth);
+    localStorage.clear();
+    this.router.navigate(['/auth/login']);
   }
 
   // Get current user
@@ -60,23 +49,4 @@ export class AuthService {
     return this.authState$;
   }
 
-  // Error handling
-  private handleError(error: unknown): Error {
-    let message = 'Authentication failed';
-    if (error instanceof Error && 'code' in error) {
-      switch (error.code) {
-        case 'auth/invalid-email':
-          message = 'Invalid email';
-          break;
-        case 'auth/user-not-found':
-        case 'auth/wrong-password':
-          message = 'Invalid email or password';
-          break;
-        case 'auth/email-already-in-use':
-          message = 'Email already in use';
-          break;
-      }
-    }
-    return new Error(message);
-  }
 }
