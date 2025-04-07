@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword,
   signOut, 
   authState,
-  createUserWithEmailAndPassword
+  createUserWithEmailAndPassword,
+  updateProfile
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
@@ -33,7 +34,7 @@ export class AuthService {
   async signUp(request: SignUpRequest): Promise<void> {
       const credential = await createUserWithEmailAndPassword(this.auth, request.email, request.password);
       if (this.auth.currentUser) {
-        // await updateProfile(this.auth.currentUser, { displayName: name });
+         await updateProfile(this.auth.currentUser, { displayName: request.name });
       }
   }
 
