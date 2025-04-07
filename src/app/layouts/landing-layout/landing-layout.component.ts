@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CardModule } from 'primeng/card';
 
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,7 +7,9 @@ import { CarouselModule } from 'primeng/carousel';
 import { RatingModule } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
-
+import { AuthService } from '../../services/auth.service';
+import { Observable } from 'rxjs';
+import { User } from '@angular/fire/auth';
 @Component({
   selector: 'app-landing-layout',
   imports: [CommonModule, CardModule, FormsModule, ReactiveFormsModule, CarouselModule, RatingModule, ButtonModule, RouterLink],
@@ -16,7 +18,10 @@ import { RouterLink } from '@angular/router';
 })
 export class LandingLayoutComponent {
   inquiryForm: FormGroup;
-  
+  authService = inject(AuthService);
+
+  currentUser : Observable<User | null> = this.authService.getCurrentUser(); 
+
   testimonials = [
     {
       name: 'Rajesh Kumar',
@@ -85,9 +90,6 @@ export class LandingLayoutComponent {
 
   onSubmit(): void {
     if (this.inquiryForm.valid) {
-      console.log('Form submitted:', this.inquiryForm.value);
-      // Add your form submission logic here
-      alert('Thank you for your inquiry! We will contact you soon.');
       this.inquiryForm.reset();
     }
   }

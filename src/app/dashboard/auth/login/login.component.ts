@@ -57,6 +57,7 @@ export class LoginComponent {
     this.authService.signIn(formData).subscribe({
       next: (data: any) => {
         this.messageService.add({
+          key: 'global-toast',
           severity: 'success',
           summary: 'Success',
           detail: 'Logged in successfully'
@@ -68,6 +69,7 @@ export class LoginComponent {
       },
       error: (error) => {
         this.messageService.add({
+          key: 'global-toast',
           severity: 'error',
           summary: 'Login Failed',
           detail: error instanceof Error ? error.message : 'Failed to login'

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { 
   Auth, 
   User, 
@@ -25,8 +25,8 @@ export class AuthService {
     
   }
 
-  signIn({ email, password }: LoginRequest): Observable<any> {
-    return from(signInWithEmailAndPassword(this.auth, email, password));
+  signIn(request: LoginRequest): Observable<any> {
+    return from(signInWithEmailAndPassword(this.auth, request.email, request.password));
   }
 
   // Sign up with email/password
@@ -48,5 +48,4 @@ export class AuthService {
   getCurrentUser(): Observable<User | null> {
     return this.authState$;
   }
-
 }

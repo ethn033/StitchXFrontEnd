@@ -23,13 +23,17 @@ export const appConfig: ApplicationConfig = {
             }
         }
     }),
-    provideZoneChangeDetection({ eventCoalescing: true }), 
+    provideZoneChangeDetection({ 
+      eventCoalescing: true,
+      runCoalescing: true
+    }), 
     provideRouter(routes, withComponentInputBinding()),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }),
+    provideFirestore(() => getFirestore()), 
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
 };

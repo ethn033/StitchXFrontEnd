@@ -7,6 +7,7 @@ import { RippleModule } from 'primeng/ripple';
 import { FormsModule } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../services/auth.service';
+
 @Component({
   selector: 'app-topbar',
   imports: [CommonModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
@@ -45,5 +46,4 @@ export class TopbarComponent {
       item.toLowerCase().includes(event.query.toLowerCase())
     );
   }
-
 }
