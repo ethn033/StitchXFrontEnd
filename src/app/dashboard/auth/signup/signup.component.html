@@ -1,1 +1,122 @@
-<p>signup works!</p>
+<div class="signup-container">
+    <div class="signup-card">
+        <div class="signup-header text-center mb-4">
+            <div class="logo mb-3">
+                <h1 class="m-0 text-primary fw-bold fs-3 font-serif">
+                    <span class="d-none d-sm-inline">Tailor</span><span class="text-dark">Bhai</span>
+                </h1>
+            </div>
+            <p class="text-muted mb-0">Create your account</p>
+        </div>
+
+        <form [formGroup]="signupForm" (ngSubmit)="onSignup()" novalidate class="w-100">
+            <!-- Name Field -->
+            <div class="form-group mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-user"></i>
+                    </span>
+                    <input
+                        pInputText
+                        id="name"
+                        formControlName="name"
+                        placeholder="Enter your full name"
+                        class="w-100"
+                        [ngClass]="{ 'p-invalid': name?.touched && name?.invalid }"
+                    />
+                </div>
+                <small *ngIf="name?.touched && name?.invalid" class="p-error block mt-1">
+                    <span *ngIf="name?.errors?.['required']">Name is required</span>
+                </small>
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-envelope"></i>
+                    </span>
+                    <input
+                        pInputText
+                        id="email"
+                        formControlName="email"
+                        placeholder="Enter your email"
+                        class="w-100"
+                        [ngClass]="{ 'p-invalid': email?.touched && email?.invalid }"
+                    />
+                </div>
+                <small *ngIf="email?.touched && email?.invalid" class="p-error block mt-1">
+                    <span *ngIf="email?.errors?.['required']">Email is required</span>
+                    <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
+                </small>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-lock"></i>
+                    </span>
+                    <p-password
+                        id="password"
+                        formControlName="password"
+                        placeholder="Enter your password"
+                        [toggleMask]="true"
+                        [feedback]="false"
+                        [ngClass]="{ 'p-invalid': password?.touched && password?.invalid }"
+                        [inputStyleClass]="'w-100'"
+                    ></p-password>
+                </div>
+                <small *ngIf="password?.touched && password?.invalid" class="p-error block mt-1">
+                    <span *ngIf="password?.errors?.['required']">Password is required</span>
+                    <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
+                </small>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="form-group mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-lock"></i>
+                    </span>
+                    <p-password
+                        id="confirmPassword"
+                        formControlName="confirmPassword"
+                        placeholder="Confirm your password"
+                        [toggleMask]="true"
+                        [feedback]="false"
+                        [ngClass]="{ 'p-invalid': confirmPassword?.touched && confirmPassword?.invalid }"
+                        [inputStyleClass]="'w-100'"
+                    ></p-password>
+                </div>
+                <small *ngIf="confirmPassword?.touched && confirmPassword?.invalid" class="p-error block mt-1">
+                    <span *ngIf="confirmPassword?.errors?.['required']">Confirm Password is required</span>
+                    <span *ngIf="confirmPassword?.errors?.['mustMatch']">Passwords must match</span>
+                </small>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid mb-3">
+                <p-button
+                    type="submit"
+                    label="Sign Up"
+                    [disabled]="signupForm.invalid || isLoading"
+                    [loading]="isLoading"
+                    styleClass="w-100 p-button-primary"
+                ></p-button>
+            </div>
+
+            <!-- Login Link -->
+            <div class="text-center mt-3">
+                <p class="text-muted mb-0">
+                    Already have an account?
+                    <a routerLink="/login" class="login-link text-decoration-none">Sign in</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
