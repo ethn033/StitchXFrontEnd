@@ -1,219 +1,228 @@
 <!-- customer-dialog.component.html -->
-<form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="p-fluid">
-    <div class="p-grid p-fluid">
-      <!-- Personal Information -->
-      <div class="p-col-12 p-md-6">
-        <div class="field">
-          <label for="firstName">First Name*</label>
-          <input 
-            pInputText 
-            id="firstName" 
-            formControlName="firstName" 
-            placeholder="Enter first name"
-            [ngClass]="{ 'p-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }"
-          >
-          <small *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched" class="p-error">
-            First name is required (max 50 characters)
-          </small>
-        </div>
-      </div>
-  
-      <div class="p-col-12 p-md-6">
-        <div class="field">
-          <label for="lastName">Last Name*</label>
-          <input 
-            pInputText 
-            id="lastName" 
-            formControlName="lastName" 
-            placeholder="Enter last name"
-            [ngClass]="{ 'p-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }"
-          >
-          <small *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="p-error">
-            Last name is required (max 50 characters)
-          </small>
-        </div>
-      </div>
-  
-      <div class="p-col-12 p-md-6">
-        <div class="field">
-          <label for="phone">Phone</label>
-          <input 
-            pInputText 
-            id="phone" 
-            formControlName="phone" 
-            placeholder="Enter phone number"
-            [ngClass]="{ 'p-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }"
-          >
-          <small *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="p-error">
-            Please enter a valid phone number (10-15 digits)
-          </small>
-        </div>
-      </div>
-  
-      <div class="p-col-12 p-md-6">
-        <div class="field">
-          <label for="email">Email</label>
-          <input 
-            pInputText 
-            id="email" 
-            formControlName="email" 
-            placeholder="Enter email"
-            [ngClass]="{ 'p-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }"
-          >
-          <small *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="p-error">
-            Please enter a valid email
-          </small>
-        </div>
-      </div>
-  
-      <div class="p-col-12">
-        <div class="field">
-          <label for="address">Address</label>
-          <textarea 
-            pInputTextarea 
-            id="address" 
-            formControlName="address" 
-            placeholder="Enter address"
-            rows="3"
-            [ngClass]="{ 'p-invalid': customerForm.get('address')?.invalid && customerForm.get('address')?.touched }"
-          ></textarea>
-          <small *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched" class="p-error">
-            Maximum 200 characters
-          </small>
-        </div>
-      </div>
-  
-      <div class="p-col-12 p-md-6">
-        <div class="field">
-          <label for="age">Age</label>
-          <p-inputNumber 
-            id="age" 
-            formControlName="age" 
-            placeholder="Enter age"
-            [min]="12" 
-            [max]="120"
-            [ngClass]="{ 'p-invalid': customerForm.get('age')?.invalid && customerForm.get('age')?.touched }"
-          ></p-inputNumber>
-          <small *ngIf="customerForm.get('age')?.invalid && customerForm.get('age')?.touched" class="p-error">
-            Age must be between 12-120
-          </small>
-        </div>
-      </div>
-  
-      <!-- Measurements Section -->
-      <div class="p-col-12">
-        <h4>Measurements (in inches)</h4>
-        <div class="p-grid">
-          <div class="p-col-6 p-md-3">
-            <div class="field">
-              <label for="chest">Chest</label>
-              <p-inputNumber 
-                id="chest" 
-                formControlName="chest" 
-                placeholder="Chest"
-                [min]="0"
-                mode="decimal"
-                [minFractionDigits]="1"
-                [maxFractionDigits]="1"
-              ></p-inputNumber>
-            </div>
-          </div>
-  
-          <div class="p-col-6 p-md-3">
-            <div class="field">
-              <label for="waist">Waist</label>
-              <p-inputNumber 
-                id="waist" 
-                formControlName="waist" 
-                placeholder="Waist"
-                [min]="0"
-                mode="decimal"
-                [minFractionDigits]="1"
-                [maxFractionDigits]="1"
-              ></p-inputNumber>
-            </div>
-          </div>
-  
-          <div class="p-col-6 p-md-3">
-            <div class="field">
-              <label for="hips">Hips</label>
-              <p-inputNumber 
-                id="hips" 
-                formControlName="hips" 
-                placeholder="Hips"
-                [min]="0"
-                mode="decimal"
-                [minFractionDigits]="1"
-                [maxFractionDigits]="1"
-              ></p-inputNumber>
-            </div>
-          </div>
-  
-          <div class="p-col-6 p-md-3">
-            <div class="field">
-              <label for="sleeveLength">Sleeve</label>
-              <p-inputNumber 
-                id="sleeveLength" 
-                formControlName="sleeveLength" 
-                placeholder="Sleeve"
-                [min]="0"
-                mode="decimal"
-                [minFractionDigits]="1"
-                [maxFractionDigits]="1"
-              ></p-inputNumber>
-            </div>
-          </div>
-  
-          <div class="p-col-6 p-md-3">
-            <div class="field">
-              <label for="inseam">Inseam</label>
-              <p-inputNumber 
-                id="inseam" 
-                formControlName="inseam" 
-                placeholder="Inseam"
-                [min]="0"
-                mode="decimal"
-                [minFractionDigits]="1"
-                [maxFractionDigits]="1"
-              ></p-inputNumber>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Notes -->
-      <div class="p-col-12">
-        <div class="field">
-          <label for="notes">Notes</label>
-          <textarea 
-            pInputTextarea 
-            id="notes" 
-            formControlName="notes" 
-            placeholder="Additional notes"
-            rows="3"
-          ></textarea>
+<form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="container-fluid p-3">
+  <div class="row g-3">
+    <!-- Personal Information Section -->
+    <div class="col-12">
+      <h5 class="mb-3">Personal Information</h5>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="firstName" class="form-label">First Name*</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="firstName" 
+          formControlName="firstName" 
+          placeholder="Enter first name"
+          [ngClass]="{ 'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }"
+        >
+        <div *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched" class="invalid-feedback">
+          First name is required (max 50 characters)
         </div>
       </div>
     </div>
-  
-    <div class="p-d-flex p-jc-end p-mt-4">
-      <button 
-        pButton 
-        type="button" 
-        label="Cancel" 
-        icon="pi pi-times" 
-        class="p-button-text"
-        (click)="onCancel()"
-        [disabled]="loading"
-      ></button>
-      <button 
-        pButton 
-        type="submit" 
-        label="Save" 
-        icon="pi pi-check" 
-        class="p-ml-2"
-        [disabled]="customerForm.invalid || loading"
-        [loading]="loading"
-      ></button>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="lastName" class="form-label">Last Name*</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="lastName" 
+          formControlName="lastName" 
+          placeholder="Enter last name"
+          [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }"
+        >
+        <div *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="invalid-feedback">
+          Last name is required (max 50 characters)
+        </div>
+      </div>
     </div>
-  </form>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="phone" class="form-label">Phone</label>
+        <input 
+          type="text" 
+          class="form-control" 
+          id="phone" 
+          formControlName="phone" 
+          placeholder="Enter phone number"
+          [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }"
+        >
+        <div *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="invalid-feedback">
+          Please enter a valid phone number (10-15 digits)
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <input 
+          type="email" 
+          class="form-control" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Enter email"
+          [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }"
+        >
+        <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">
+          Please enter a valid email
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="age" class="form-label">Age</label>
+        <input 
+          type="number" 
+          class="form-control" 
+          id="age" 
+          formControlName="age" 
+          placeholder="Enter age"
+          min="12" 
+          max="120"
+          [ngClass]="{ 'is-invalid': customerForm.get('age')?.invalid && customerForm.get('age')?.touched }"
+        >
+        <div *ngIf="customerForm.get('age')?.invalid && customerForm.get('age')?.touched" class="invalid-feedback">
+          Age must be between 12-120
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="form-group">
+        <label for="address" class="form-label">Address</label>
+        <textarea 
+          class="form-control" 
+          id="address" 
+          formControlName="address" 
+          placeholder="Enter address"
+          rows="3"
+          [ngClass]="{ 'is-invalid': customerForm.get('address')?.invalid && customerForm.get('address')?.touched }"
+        ></textarea>
+        <div *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched" class="invalid-feedback">
+          Maximum 200 characters
+        </div>
+      </div>
+    </div>
+
+    <!-- Measurements Section -->
+    <div class="col-12 mt-4">
+      <h5 class="mb-3">Measurements (in inches)</h5>
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <div class="form-group">
+            <label for="chest" class="form-label">Chest</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="chest" 
+              formControlName="chest" 
+              placeholder="0.0"
+              step="0.1"
+              min="0"
+            >
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="form-group">
+            <label for="waist" class="form-label">Waist</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="waist" 
+              formControlName="waist" 
+              placeholder="0.0"
+              step="0.1"
+              min="0"
+            >
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="form-group">
+            <label for="hips" class="form-label">Hips</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="hips" 
+              formControlName="hips" 
+              placeholder="0.0"
+              step="0.1"
+              min="0"
+            >
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="form-group">
+            <label for="sleeveLength" class="form-label">Sleeve</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="sleeveLength" 
+              formControlName="sleeveLength" 
+              placeholder="0.0"
+              step="0.1"
+              min="0"
+            >
+          </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <div class="form-group">
+            <label for="inseam" class="form-label">Inseam</label>
+            <input 
+              type="number" 
+              class="form-control" 
+              id="inseam" 
+              formControlName="inseam" 
+              placeholder="0.0"
+              step="0.1"
+              min="0"
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="col-12 mt-4">
+      <div class="form-group">
+        <label for="notes" class="form-label">Notes</label>
+        <textarea 
+          class="form-control" 
+          id="notes" 
+          formControlName="notes" 
+          placeholder="Additional notes"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <button 
+      type="button" 
+      class="btn btn-outline-secondary" 
+      (click)="onCancel()"
+      [disabled]="loading"
+    >
+      Cancel
+    </button>
+    <button 
+      type="submit" 
+      class="btn btn-primary" 
+      [disabled]="customerForm.invalid || loading"
+    >
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+      Save
+    </button>
+  </div>
+</form>
