@@ -13,6 +13,7 @@ import { CustomerService } from '../../services/customer.service';
 import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.component';
 import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
 import { Menu } from 'primeng/menu';
+import { addDoc } from '@angular/fire/firestore';
 @Component({
   selector: 'app-customers',
   imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule],
@@ -23,10 +24,9 @@ import { Menu } from 'primeng/menu';
 export class CustomersComponent {
 
   @ViewChild('dt') dt!: Table;
-  @ViewChild('filterMenu') filterMenu!: Menu;
   
   customers: Customer[] = [];
-  loading = true;
+  loading = false;
   filterItems: MenuItem[] = [
     { label: 'All Customers', icon: 'pi pi-users', command: () => this.filterCustomers('all') },
     { label: 'With Orders', icon: 'pi pi-shopping-bag', command: () => this.filterCustomers('withOrders') },
@@ -40,6 +40,7 @@ customerService: CustomerService = inject(CustomerService);
  messageService: MessageService = inject(MessageService);
 
   constructor( ) {
+    
   }
 
   ngOnInit(): void {
@@ -47,8 +48,10 @@ customerService: CustomerService = inject(CustomerService);
   }
 
   loadCustomers(): void {
+    this.loading = true;
     this.customerService.getCustomers().subscribe(customers => {
       this.customers = customers;
+      this.loading = false;
     });
   }
 
@@ -65,9 +68,6 @@ customerService: CustomerService = inject(CustomerService);
     // This would filter the customers array based on the selected filter
   }
 
-  toggleFilterMenu(event: Event): void {
-    this.filterMenu.toggle(event);
-  }
 
   viewCustomer(customer: Customer): void {
     this.dialogService.open(ViewCustomerComponent, {
