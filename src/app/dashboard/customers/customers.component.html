@@ -6,11 +6,14 @@
 </div>
 
 
-<p-table [value]="customers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" [loading]="loading" stripedRows size="small">
+<p-table [value]="customers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadCustomers($event)" [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" [scrollable]="true" scrollHeight="flex" scrollDirection="both" [showGridlines]="true">
+    
 <ng-template pTemplate="header">
   <tr>
     <th pSortableColumn="firstName">Customer <p-sortIcon field="firstName"></p-sortIcon></th>
     <th>Contact</th>
+    <th>Email</th>
+    <th>Address</th>
     <th>Orders</th>
     <th>Status</th>
     <th>Outstanding</th>
@@ -21,26 +24,26 @@
 <ng-template pTemplate="body" let-customer>
   <tr>
     <td>
-      <div class="customer-name">
-        <span class="font-medium">{{ customer.firstName }} {{ customer.lastName }}</span>
-        <small class="block text-color-secondary">{{ customer.address | truncate:30 }}</small>
-      </div>
+        {{ customer.firstName }} {{ customer.lastName }}
     </td>
     <td>
-      <div class="customer-contact">
         <div *ngIf="customer.phone" class="flex align-items-center mb-1">
-          <i class="pi pi-phone mr-2"></i>
+          <i class="pi pi-phone me-1"></i>
           <span>{{ customer.phone }}</span>
         </div>
-        <div *ngIf="customer.email" class="flex align-items-center">
-          <i class="pi pi-envelope mr-2"></i>
-          <span>{{ customer.email | truncate:20 }}</span>
-        </div>
+    </td>
+    <td>
+      <div *ngIf="customer.email" class="flex align-items-center">
+        <i class="pi pi-envelope me-1"></i>
+        <span>{{ customer.email | truncate:20 }}</span>
       </div>
     </td>
     <td>
-      <span class="font-medium">{{ customer.totalOrders || 0 }}</span>
-      <small class="block text-color-secondary">total</small>
+      {{ customer.address | truncate:30 }}
+    </td>
+    <td>
+      <span class="font-medium me-1">{{ customer.totalOrders || 0 }}</span>
+      <small>total</small>
     </td>
     <td>
       <p-tag  [severity]="customer.pendingOrders ? 'warn' : 'success'" 
@@ -100,7 +103,7 @@
 <ng-template pTemplate="emptymessage">
   <tr>
     <td colspan="6" class="text-center py-5">
-      <div *ngIf="!loading" class="flex flex-column align-items-center">
+      <div class="flex flex-column align-items-center">
         <i class="pi pi-users text-4xl text-400 mb-3"></i>
         <h4 class="text-900 mb-1">No Customers Found</h4>
         <p class="text-600">Add your first customer to get started</p>

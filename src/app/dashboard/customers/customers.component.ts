@@ -7,13 +7,13 @@ import { CommonModule } from '@angular/common';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from '../../pipe/truncate.pipe';
-import { Table, TableModule } from 'primeng/table';
+import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { Customer } from '../../models/customer-model';
 import { CustomerService } from '../../services/customer.service';
 import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.component';
 import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
 import { Menu } from 'primeng/menu';
-import { addDoc } from '@angular/fire/firestore';
+import { addDoc, DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
 @Component({
   selector: 'app-customers',
   imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule],
@@ -26,7 +26,6 @@ export class CustomersComponent {
   @ViewChild('dt') dt!: Table;
   
   customers: Customer[] = [];
-  loading = false;
   filterItems: MenuItem[] = [
     { label: 'All Customers', icon: 'pi pi-users', command: () => this.filterCustomers('all') },
     { label: 'With Orders', icon: 'pi pi-shopping-bag', command: () => this.filterCustomers('withOrders') },
@@ -35,23 +34,34 @@ export class CustomersComponent {
   ];
   
   dialogService: DialogService = inject(DialogService);
-customerService: CustomerService = inject(CustomerService);
+  customerService: CustomerService = inject(CustomerService);
  confirmationService: ConfirmationService = inject(ConfirmationService);
  messageService: MessageService = inject(MessageService);
-
+ totalCustomersCount: number = 0;
+ 
   constructor( ) {
-    
+    this.customerService.getCustomersCount().subscribe(count => {
+      this.totalCustomersCount = count;
+    });
   }
 
   ngOnInit(): void {
-    this.loadCustomers();
+
   }
 
-  loadCustomers(): void {
-    this.loading = true;
-    this.customerService.getCustomers().subscribe(customers => {
+  lastVisible: DocumentSnapshot<DocumentData, DocumentData> | undefined = undefined;
+  loadCustomers(event: TableLazyLoadEvent): void {
+    
+    const first = event.first ?? 0;
+    let rows = first + (event.rows ?? 0);
+    this.customerService.getCustomers(2, this.lastVisible).subscribe(customers => {
       this.customers = customers;
-      this.loading = false;
+      if(this.customers.length > 0) {
+        // this.lastVisible = customers[customers.length - 1];
+      } 
+      else {
+        this.lastVisible = undefined;
+      }
     });
   }
 
@@ -88,12 +98,15 @@ customerService: CustomerService = inject(CustomerService);
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
+      modal: true,
+      closable: true,
+      closeOnEscape: true,
       data: { customer }
     });
 
     ref.onClose.subscribe((result) => {
       if (result) {
-        this.loadCustomers();
+        // this.loadCustomers();
       }
     });
   }
@@ -105,6 +118,9 @@ customerService: CustomerService = inject(CustomerService);
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
+      modal: true,
+      closable: true,
+      closeOnEscape: true,
       data: {}
     });
 
