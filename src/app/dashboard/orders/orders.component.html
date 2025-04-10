@@ -1,1 +1,59 @@
-<p>orders works!</p>
+<div class="container mt-5">
+    <h2 class="text-center">Tailor Dress Order</h2>
+    <form (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group mb-3">
+            <label for="customerName">Customer Name</label>
+            <input
+                type="text"
+                id="customerName"
+                formControlName="customerName"
+                class="form-control"
+                placeholder="Enter customer name"
+                required
+            />
+            <div *ngIf="orderForm.get('customerName').invalid && orderForm.get('customerName').touched" class="text-danger">
+                Name is required.
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="contactNumber">Contact Number</label>
+            <input
+                type="text"
+                id="contactNumber"
+                formControlName="contactNumber"
+                class="form-control"
+                placeholder="Enter contact number"
+                required
+            />
+            <div *ngIf="orderForm.get('contactNumber').invalid && orderForm.get('contactNumber').touched" class="text-danger">
+                Contact number is required.
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="dressType">Dress Type</label>
+            <!-- <p-dropdown [options]="dressTypes" formControlName="dressType" placeholder="Select dress type"></p-dropdown> -->
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="measurements">Measurements</label>
+            <textarea
+                id="measurements"
+                formControlName="measurements"
+                class="form-control"
+                placeholder="Enter measurements"
+                rows="4"
+            ></textarea>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="deliveryDate">Delivery Date</label>
+            <!-- <p-calendar formControlName="deliveryDate" [showIcon]="true"></p-calendar> -->
+        </div>
+
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary" [disabled]="orderForm.invalid">Submit Order</button>
+        </div>
+    </form>
+</div>

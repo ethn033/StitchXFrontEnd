@@ -1,4 +1,12 @@
-p {
-    color: red;
-    font-size: 50px;
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.text-danger {
+    font-size: 0.875em;
 }
