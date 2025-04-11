@@ -12,7 +12,6 @@ import { Customer } from '../../models/customer-model';
 import { CustomerService } from '../../services/customer.service';
 import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.component';
 import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
-import { Menu } from 'primeng/menu';
 import { addDoc, DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
 @Component({
   selector: 'app-customers',
@@ -54,7 +53,7 @@ export class CustomersComponent {
     
     const first = event.first ?? 0;
     let rows = first + (event.rows ?? 0);
-    this.customerService.getCustomers(2, this.lastVisible).subscribe(customers => {
+    this.customerService.getCustomers(4, this.lastVisible).subscribe(customers => {
       this.customers = customers;
       if(this.customers.length > 0) {
         // this.lastVisible = customers[customers.length - 1];

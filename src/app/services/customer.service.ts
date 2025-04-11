@@ -1,31 +1,34 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnInit } from '@angular/core';
 import { Customer } from '../models/customer-model';
-import { from, map, Observable } from 'rxjs';
-import { addDoc, collection, collectionData, doc, docData, DocumentSnapshot, Firestore, getDocs, limit, orderBy, query, startAfter, Timestamp } from '@angular/fire/firestore';
+import { from, map, Observable, take } from 'rxjs';
+import { addDoc, collection, collectionData, doc, docData, DocumentSnapshot, Firestore, getDocs, limit, orderBy, query, QuerySnapshot, startAfter, Timestamp } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerService {
+export class CustomerService implements OnInit {
  
-  
-  private customersRef: any;
   constructor(private firestore: Firestore) {
-    this.customersRef = collection(this.firestore, 'customers');
+    
+  }
+
+  ngOnInit(): void {
   }
 
   getCustomersCount(): Observable<number> {
-    const querySnapshotPromise = getDocs(this.customersRef);
+    const customersRef = collection(this.firestore, 'customers');
+    const querySnapshotPromise = getDocs(customersRef);
     return from(querySnapshotPromise).pipe(
       map(querySnapshot => querySnapshot.size)
     );
   }
 
   getCustomers(pageSize: number, lastVisible?: DocumentSnapshot): Observable<Customer[]> {
+    const customersRef = collection(this.firestore, 'customers');
     let customersQuery;
     if(lastVisible) {
       customersQuery = query(
-        this.customersRef,
+        customersRef,
         orderBy('createdAt'),
         limit(pageSize),
         startAfter(lastVisible)
@@ -33,13 +36,13 @@ export class CustomerService {
     }
     else {
       customersQuery = query(
-        this.customersRef,
+        customersRef,
         orderBy('createdAt'),
         limit(pageSize)
       );
     }
 
-    return collectionData(customersQuery) as Observable<Customer[]>;
+    return collectionData(customersQuery).pipe() as Observable<Customer[]>;
   }
 
   getCustomer(id: string): Observable<Customer | undefined> {

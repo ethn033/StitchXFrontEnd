@@ -1,52 +1,4 @@
-// import { Component, OnInit } from '@angular/core';
-
-// @Component({
-//   selector: 'app-orders',
-//   imports: [],
-//   templateUrl: './orders.component.html',
-//   styleUrl: './orders.component.css'
-// })
-// export class OrdersComponent implements OnInit{
-//   ngOnInit(): void {
-//     console.log('Orders component initialized');
-    
-//   }
-
-
-// }
-
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { ReactiveFormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
-import { ButtonModule } from 'primeng/button';
-
 import { CommonModule } from '@angular/common';
-import { AppComponent } from '../../app.component';
-import { RouterModule } from '@angular/router';
-
-
-@NgModule({
-  declarations: [],
-  imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    InputTextModule,
-    DropdownModule,
-    CalendarModule,
-    ButtonModule,
-    AppComponent
-  ],
-  providers: [],
-  bootstrap: []
-})
-export class AppModule { }
-
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -54,6 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   selector: 'app-order',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
+  imports: [CommonModule]
 })
 export class OrderComponent implements OnInit {
   orderForm: FormGroup;

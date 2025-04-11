@@ -11,7 +11,7 @@
                 placeholder="Enter customer name"
                 required
             />
-            <div *ngIf="orderForm.get('customerName').invalid && orderForm.get('customerName').touched" class="text-danger">
+            <div *ngIf="orderForm.get('customerName')?.invalid && orderForm.get('customerName')?.touched" class="text-danger">
                 Name is required.
             </div>
         </div>
@@ -26,7 +26,7 @@
                 placeholder="Enter contact number"
                 required
             />
-            <div *ngIf="orderForm.get('contactNumber').invalid && orderForm.get('contactNumber').touched" class="text-danger">
+            <div *ngIf="orderForm.get('contactNumber')?.invalid && orderForm.get('contactNumber')?.touched" class="text-danger">
                 Contact number is required.
             </div>
         </div>
