@@ -13,6 +13,7 @@ import { CustomerService } from '../../services/customer.service';
 import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.component';
 import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
 import { addDoc, DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
+import { LoadingService } from '../../services/loading.service';
 @Component({
   selector: 'app-customers',
   imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule],
@@ -37,15 +38,13 @@ export class CustomersComponent {
  confirmationService: ConfirmationService = inject(ConfirmationService);
  messageService: MessageService = inject(MessageService);
  totalCustomersCount: number = 0;
- 
-  constructor( ) {
+ loadingService: LoadingService = inject(LoadingService);
+  constructor( ) { }
+  
+  ngOnInit(): void {
     this.customerService.getCustomersCount().subscribe(count => {
       this.totalCustomersCount = count;
     });
-  }
-
-  ngOnInit(): void {
-
   }
 
   lastVisible: DocumentSnapshot<DocumentData, DocumentData> | undefined = undefined;
