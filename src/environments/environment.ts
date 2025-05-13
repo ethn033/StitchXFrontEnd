@@ -8,5 +8,23 @@ export const environment = {
         messagingSenderId: "959465911664",
         appId: "1:959465911664:web:3bf3e6ee1ccf96e15e4bb5",
         measurementId: "G-6KDTXT6FTX"
+    },
+    api: {
+        baseUrl: 'http://tailorbhai.runasp.net/api/',
+        customer: {
+            getAll: 'Customer',
+        },
+        auth: {
+            login: '/auth/login',
+            register: '/auth/register',
+            logout: '/auth/logout'
+        },
+        products: {
+            getAll: '/products',
+            getById: (id: string) => `/products/${id}`,
+            create: '/products/create',
+            update: (id: string) => `/products/update/${id}`,
+            delete: (id: string) => `/products/delete/${id}`
+        }
     }
   };

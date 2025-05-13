@@ -12,7 +12,7 @@ import { Customer } from '../../models/customer-model';
 import { CustomerService } from '../../services/customer.service';
 import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.component';
 import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
-import { addDoc, DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
+import { DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
 import { LoadingService } from '../../services/loading.service';
 @Component({
   selector: 'app-customers',
@@ -22,7 +22,7 @@ import { LoadingService } from '../../services/loading.service';
   styleUrl: './customers.component.css'
 })
 export class CustomersComponent {
-
+  
   @ViewChild('dt') dt!: Table;
   
   customers: Customer[] = [];
@@ -35,48 +35,40 @@ export class CustomersComponent {
   
   dialogService: DialogService = inject(DialogService);
   customerService: CustomerService = inject(CustomerService);
- confirmationService: ConfirmationService = inject(ConfirmationService);
- messageService: MessageService = inject(MessageService);
- totalCustomersCount: number = 0;
- loadingService: LoadingService = inject(LoadingService);
-  constructor( ) { }
+  confirmationService: ConfirmationService = inject(ConfirmationService);
+  messageService: MessageService = inject(MessageService);
+  totalCustomersCount: number = 0;
+  loadingService: LoadingService = inject(LoadingService);
   
   ngOnInit(): void {
-    this.customerService.getCustomersCount().subscribe(count => {
-      this.totalCustomersCount = count;
-    });
+    
   }
-
+  
   lastVisible: DocumentSnapshot<DocumentData, DocumentData> | undefined = undefined;
   loadCustomers(event: TableLazyLoadEvent): void {
     
     const first = event.first ?? 0;
     let rows = first + (event.rows ?? 0);
-    this.customerService.getCustomers(4, this.lastVisible).subscribe(customers => {
+    this.customerService.getCustomers().subscribe(customers => {
       this.customers = customers;
-      if(this.customers.length > 0) {
-        // this.lastVisible = customers[customers.length - 1];
-      } 
-      else {
-        this.lastVisible = undefined;
-      }
+      this.totalCustomersCount = this.customers.length;
     });
   }
-
+  
   deleteCustomer(id: string): void {
     // this.customerService.deleteCustomer(id).then(() => {
     //   this.loadCustomers();
     // });
   }
-
-
-
+  
+  
+  
   filterCustomers(type: string): void {
     // Implement your filtering logic here
     // This would filter the customers array based on the selected filter
   }
-
-
+  
+  
   viewCustomer(customer: Customer): void {
     this.dialogService.open(ViewCustomerComponent, {
       header: `Customer Details - ${customer.firstName} ${customer.lastName}`,
@@ -87,8 +79,8 @@ export class CustomersComponent {
       data: { customer, viewMode: true }
     });
   }
-
-
+  
+  
   editCustomer(customer: Customer): void {
     const ref = this.dialogService.open(CustomerCreateComponent, {
       header: `Edit Customer - ${customer.firstName} ${customer.lastName}`,
@@ -101,14 +93,14 @@ export class CustomersComponent {
       closeOnEscape: true,
       data: { customer }
     });
-
+    
     ref.onClose.subscribe((result) => {
       if (result) {
         // this.loadCustomers();
       }
     });
   }
-
+  
   showNewCustomerDialog(): void {
     const ref = this.dialogService.open(CustomerCreateComponent, {
       header: 'Add New Customer',
@@ -121,14 +113,14 @@ export class CustomersComponent {
       closeOnEscape: true,
       data: {}
     });
-
+    
     ref.onClose.subscribe((result) => {
       if (result) {
         // Refresh customer list or show success message
       }
     });
   }
-
+  
   takeOrder(customer: Customer): void {
     this.dialogService.open(TakeOrderComponent, {
       header: `New Order - ${customer.firstName} ${customer.lastName}`,
@@ -139,8 +131,8 @@ export class CustomersComponent {
       data: { customer }
     });
   }
-
-
+  
+  
   confirmDelete(customer: Customer): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${customer.firstName} ${customer.lastName}?`,
@@ -151,5 +143,5 @@ export class CustomersComponent {
       }
     });
   }
-
+  
 }
