@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 /* Import Bootstrap */
 @import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'css_variables.css';
 
 /* Import PrimeNG theme */
 @import 'primeicons/primeicons.css';
@@ -30,4 +31,16 @@ html, body {
 /* Fix for dashboard cards */
 .card {
   min-width: 0; /* Prevent flexbox overflow */
+}
+
+.clr-dark-grey {
+  color: var(--gray-dark) !important;
+}
+
+.fw-bold {
+  font-weight: var(--font-weight-bold) !important;
+}
+
+.fw-extra-bold {
+  font-weight: var(--font-weight-extra-bold) !important;
 }

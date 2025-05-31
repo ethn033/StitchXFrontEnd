@@ -14,16 +14,15 @@ import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.co
 import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
 import { DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
 import { LoadingService } from '../../services/loading.service';
+import { TooltipModule } from 'primeng/tooltip';
 @Component({
   selector: 'app-customers',
-  imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule],
+  imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule, TooltipModule],
   providers: [DialogService, ConfirmationService, TruncatePipe, MessageService],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css'
 })
 export class CustomersComponent {
-  
-  @ViewChild('dt') dt!: Table;
   
   customers: Customer[] = [];
   filterItems: MenuItem[] = [
@@ -44,11 +43,12 @@ export class CustomersComponent {
     
   }
   
+  refresh() {
+    this.loadCustomers();
+  }
+
   lastVisible: DocumentSnapshot<DocumentData, DocumentData> | undefined = undefined;
-  loadCustomers(event: TableLazyLoadEvent): void {
-    
-    const first = event.first ?? 0;
-    let rows = first + (event.rows ?? 0);
+  loadCustomers(event?: TableLazyLoadEvent): void {
     this.customerService.getCustomers().subscribe(customers => {
       this.customers = customers;
       this.totalCustomersCount = this.customers.length;
