@@ -1,7 +1,6 @@
 import { inject, Injectable, OnInit } from '@angular/core';
-import { Customer } from '../models/customer-model';
-import { from, map, Observable, take } from 'rxjs';
-import { addDoc, collection, collectionData, doc, docData, DocumentSnapshot, Firestore, getDocs, limit, orderBy, query, QuerySnapshot, startAfter, Timestamp } from '@angular/fire/firestore';
+import { Customer } from '../models/customers/customer-model';
+import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { environment } from '../../environments/environment';
 
@@ -13,7 +12,7 @@ export class CustomerService {
   apiService: ApiService = inject(ApiService);
 
   getCustomers() : Observable<Customer[]> {
-    return this.apiService.get(this.endPoint.getAll);
+    return this.apiService.get(this.endPoint.enpoint);
   }
 
 }

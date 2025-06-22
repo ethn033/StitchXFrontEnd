@@ -1,20 +1,18 @@
-import { Component, inject, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
-import { CustomerCreateComponent } from '../dialogs/customer-create/customer-create.component';
+import { CustomerCreateComponent } from './dialogs/customer-create/customer-create.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from '../../pipe/truncate.pipe';
-import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { Customer } from '../../models/customer-model';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { CustomerService } from '../../services/customer.service';
-import { ViewCustomerComponent } from '../dialogs/view-customer/view-customer.component';
-import { TakeOrderComponent } from '../dialogs/take-order/take-order.component';
-import { DocumentData, DocumentSnapshot } from '@angular/fire/firestore';
+import { ViewCustomerComponent } from './dialogs/view-customer/view-customer.component';
 import { LoadingService } from '../../services/loading.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { Customer } from '../../models/customers/customer-model';
 @Component({
   selector: 'app-customers',
   imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule, TooltipModule],
@@ -25,6 +23,8 @@ import { TooltipModule } from 'primeng/tooltip';
 export class CustomersComponent {
   
   customers: Customer[] = [];
+
+  // Removed invalid instantiation of Customer, as it is only a type
   filterItems: MenuItem[] = [
     { label: 'All Customers', icon: 'pi pi-users', command: () => this.filterCustomers('all') },
     { label: 'With Orders', icon: 'pi pi-shopping-bag', command: () => this.filterCustomers('withOrders') },
@@ -40,14 +40,13 @@ export class CustomersComponent {
   loadingService: LoadingService = inject(LoadingService);
   
   ngOnInit(): void {
-    
+    this.loadCustomers();
   }
   
   refresh() {
     this.loadCustomers();
   }
 
-  lastVisible: DocumentSnapshot<DocumentData, DocumentData> | undefined = undefined;
   loadCustomers(event?: TableLazyLoadEvent): void {
     this.customerService.getCustomers().subscribe(customers => {
       this.customers = customers;
@@ -122,7 +121,7 @@ export class CustomersComponent {
   }
   
   takeOrder(customer: Customer): void {
-    this.dialogService.open(TakeOrderComponent, {
+    this.dialogService.open(ViewCustomerComponent, {
       header: `New Order - ${customer.firstName} ${customer.lastName}`,
       width: '90%',
       styleClass: 'order-dialog',

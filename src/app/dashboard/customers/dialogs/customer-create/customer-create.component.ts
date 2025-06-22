@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
-
-import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { MessageService } from 'primeng/api';
-import { Customer } from '../../../models/customer-model';
+import { CustomerCreate } from '../../../../models/customers/customer-create-model';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -61,26 +59,16 @@ export class CustomerCreateComponent {
     this.loading = true;
     try {
       const formValue = this.customerForm.value;
-      const customerData: Customer = {
+      const customerData: CustomerCreate = {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
-        phone: formValue.phone || undefined,
+        phoneNumber: formValue.phone || undefined,
         email: formValue.email || undefined,
         address: formValue.address || undefined,
-        age: formValue.age ? Number(formValue.age) : undefined,
-        measurements: {
-          chest: formValue.chest ? Number(formValue.chest) : undefined,
-          waist: formValue.waist ? Number(formValue.waist) : undefined,
-          hips: formValue.hips ? Number(formValue.hips) : undefined,
-          sleeveLength: formValue.sleeveLength ? Number(formValue.sleeveLength) : undefined,
-          inseam: formValue.inseam ? Number(formValue.inseam) : undefined
-        },
-        notes: formValue.notes || undefined,
-        createdAt: this.config.data?.customer?.createdAt || new Date(),
-        updatedAt: new Date()
+        city: formValue.city || undefined,
       };
 
-      if (this.config.data?.customer?.id) {
+      if (this.config.data?.customer?.customerId) {
         // Update existing customer
         // await this.firestore.collection('customers').doc(this.config.data.customer.id).update(customerData);
         this.messageService.add({

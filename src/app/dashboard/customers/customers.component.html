@@ -5,8 +5,9 @@
     <button pButton label="New Customer" (click)="showNewCustomerDialog()" icon="pi pi-plus" class="btn btn-primary"></button>
 </div>
 
-
-<p-table [value]="customers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadCustomers($event)" [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" [scrollable]="true" scrollHeight="flex" scrollDirection="both" [showGridlines]="true">
+<!-- (onLazyLoad)="loadCustomers($event)"  -->
+ <!--   -->
+<p-table [value]="customers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false"  [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
     
 <ng-template pTemplate="header">
   <tr>
@@ -27,9 +28,9 @@
         {{ customer.firstName }} {{ customer.lastName }}
     </td>
     <td>
-        <div *ngIf="customer.phone" class="flex align-items-center mb-1">
+        <div *ngIf="customer.phoneNumber" class="flex align-items-center mb-1">
           <i class="pi pi-phone me-1"></i>
-          <span>{{ customer.phone }}</span>
+          <span>{{ customer.phoneNumber }}</span>
         </div>
     </td>
     <td>

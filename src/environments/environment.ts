@@ -1,3 +1,4 @@
+import { Customer } from './../app/models/customers/customer-model';
 export const environment = {
     production: false,
     firebase : {
@@ -12,7 +13,13 @@ export const environment = {
     api: {
         baseUrl: 'http://tailorbhai.runasp.net/api/',
         customer: {
-            getAll: 'Customer',
+            enpoint: 'Customer',
+        },
+        orders: {
+            endpoint: 'Order',
+        },
+        measurment: {
+            endpoint: 'Measurement'
         },
         auth: {
             login: '/auth/login',
