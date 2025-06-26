@@ -1,12 +1,47 @@
 .container {
-    max-width: 600px;
-    margin: auto;
+  max-width: 600px;
+  margin: auto;
 }
 
 h2 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .text-danger {
-    font-size: 0.875em;
+  font-size: 0.875em;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px 0;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-content {
+  margin-bottom: 10px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.col {
+  flex: 1;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+/* testing  */
+:host ::ng-deep .p-dialog .product-image {
+  width: 150px;
+  margin: 0 auto 2rem auto;
+  display: block;
 }

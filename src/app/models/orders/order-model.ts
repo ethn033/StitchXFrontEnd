@@ -1,4 +1,6 @@
-export interface Order {
+import { ModleBase } from "../../contracts/base-modal";
+
+export interface Order extends ModleBase {
     orderId: string;
     orderDate: Date;
     deliveryDate?: Date | null;

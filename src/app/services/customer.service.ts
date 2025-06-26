@@ -14,5 +14,4 @@ export class CustomerService {
   getCustomers() : Observable<Customer[]> {
     return this.apiService.get(this.endPoint.enpoint);
   }
-
 }

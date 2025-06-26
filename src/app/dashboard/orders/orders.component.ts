@@ -13,12 +13,15 @@ import { TruncatePipe } from '../../pipe/truncate.pipe';
 import { TooltipModule } from 'primeng/tooltip';
 import { ViewOrderComponent } from './dialogs/view-order/view-order.component';
 import { CreateOrderComponent } from './dialogs/create-order/create-order.component';
+import { CardModule } from 'primeng/card';
+
+
 
 @Component({
   selector: 'app-order',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule, TooltipModule],
+  imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, CardModule, TableModule, TooltipModule],
   providers: [DialogService, ConfirmationService, TruncatePipe, MessageService],
 })
 export class OrderComponent implements OnInit {
@@ -41,7 +44,40 @@ export class OrderComponent implements OnInit {
 
   loadOrders(event?: TableLazyLoadEvent): void {
     this.orderService.getOrders().subscribe(orders => {
+      orders.push(
+        {
+          orderId: '1',
+          orderDate: new Date(),
+          deliveryDate: null,
+          fabricDetails: 'Cotton',
+          stichingFit: 'Slim fit',
+          fabricColor: 'Blue',
+          quantity: 2,
+          price: 5000,
+          amountPaid: 5000,
+          amountRemaining: 0,
+          paymentMethod: 'Cash',
+          paymentStatus: 'Paid',
+          deliveryMethod: 'Pickup',
+          deliveryAddress: '123 Tailor St',
+          deliveryStatus: 'Delivered',
+          buckramType: 'normal',
+          status: 'Ready',
+          notes: 'Handle with care',
+          lastUpdated: new Date(),
+          completedDate: new Date(),
+          cancelledDate: null,
+          cancellationReason: null,
+          customerId: 'C123',
+          garmentTypeId: 'G123',
+          isActive: true,
+          isDeleted: false,
+          createdAtDateTime: new Date(),
+          updatedAtDateTime: new Date()
+        }
+      );
       this.orders = orders;
+
       this.totalOrdersCount = this.orders.length;
     });
   }

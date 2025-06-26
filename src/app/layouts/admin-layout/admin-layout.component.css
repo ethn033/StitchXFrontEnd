@@ -1,0 +1,11 @@
+/* Default margin for all screens */
+.content-container {
+  margin-top: 60px;
+}
+
+/* Mobile devices (less than 768px) */
+@media (max-width: 767.98px) {
+  .content-container {
+    margin-top: 135px;
+  }
+}
