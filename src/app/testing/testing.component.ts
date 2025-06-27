@@ -54,7 +54,7 @@ interface ExportColumn {
 
 @Component({
   selector: 'app-testing',
-  imports: [ButtonModule, TableModule, Dialog, RatingModule, Ripple, SelectModule, ToastModule, ToolbarModule, ConfirmDialog, InputTextModule, TextareaModule, CommonModule, FileUpload, DropdownModule, Tag, RadioButton, Rating, InputTextModule, FormsModule, InputNumber, IconFieldModule, InputIconModule],
+  imports: [ButtonModule, TableModule, RatingModule, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, FileUpload, DropdownModule, Tag, Rating, InputTextModule, FormsModule, IconFieldModule, InputIconModule],
   providers: [MessageService, ConfirmationService],
   styles: [
     `:host ::ng-deep .p-dialog .product-image {
