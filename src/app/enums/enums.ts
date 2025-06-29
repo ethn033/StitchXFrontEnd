@@ -21,20 +21,14 @@ export enum DeliveryMethod {
   Delivery = 2
 }
 
-export enum DeliveryStatus {
-  Pending = 1,
-  Shipped = 2,
-  Delivered = 3
-}
-
 export enum BuckramType {
   Normal = 1,
   Original = 2
 }
 
 export enum OrderStatus {
-  Received = 1,
-  InProgress = 2,
-  Ready = 3,
+  All = 0,
+  Ordered = 2,
+  Processing = 3,
   Delivered = 4
 }

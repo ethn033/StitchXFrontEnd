@@ -1,4 +1,3 @@
-import { TestingComponent } from './../../testing/testing.component';
 import { Order } from '../../models/orders/order-model';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
@@ -17,8 +16,6 @@ import { CreateOrderComponent } from './dialogs/create-order/create-order.compon
 import { CardModule } from 'primeng/card';
 import { ToolbarModule } from 'primeng/toolbar';
 import { SelectModule } from 'primeng/select';
-// import { DropDownItem } from '../../contracts/dropdown-item';
-import { DeliveryStatus } from '../../enums/enums';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -26,18 +23,29 @@ import moment from 'moment';
 import { DropDownItem } from '../../contracts/dropdown-item';
 import { dateFilterValues } from '../../utils/utils';
 import { DialogModule } from 'primeng/dialog';
+import { StepperModule } from 'primeng/stepper';
+import { ExcludeFirstItemPipe } from "../../pipe/exclude-first-item.pipe";
+import { OrderStatus } from '../../enums/enums';
 
+
+interface EventItem {
+  status?: string;
+  date?: string;
+  icon?: string;
+  color?: string;
+  image?: string;
+}
 
 @Component({
   selector: 'app-order',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, FormsModule, DialogModule, DatePickerModule, ButtonModule, ConfirmDialogModule, DropdownModule, SelectModule, TagModule, ToolbarModule, CardModule, TableModule,  TooltipModule],
+  imports: [CommonModule, FormsModule, StepperModule, DialogModule, DatePickerModule, ButtonModule, ConfirmDialogModule, DropdownModule, SelectModule, TagModule, ToolbarModule, CardModule, TableModule, TooltipModule, ExcludeFirstItemPipe],
   providers: [DialogService, ConfirmationService, TruncatePipe],
 })
 
 export class OrderComponent implements OnInit {
-    
+  
   orders: Order[] = [];
   dialogService: DialogService = inject(DialogService);
   orderService: OrdersService = inject(OrdersService);
@@ -45,29 +53,24 @@ export class OrderComponent implements OnInit {
   messageService: MessageService = inject(MessageService);
   totalOrdersCount: number = 0;
   loadingService: LoadingService = inject(LoadingService);
-
-  orderStatuses: DropDownItem[] = [ 
-    { id: '0', value: 'All Statuses' },
-    ...Object.keys(DeliveryStatus)
+  
+  orderStatuses: DropDownItem[] = [
+    ...Object.keys(OrderStatus)
     .filter(key => isNaN(Number(key)))
     .map(key => ({
-      id: DeliveryStatus[key as keyof typeof DeliveryStatus].toString(),
+      id: OrderStatus[key as keyof typeof OrderStatus],
       value: key
     }))
   ];
-
+  
   selectedOrderStatus: DropDownItem = this.orderStatuses[0]; // Default to 'All Statuses'
-
-
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
   dateRanges = dateFilterValues();
   selectedDateFilter: DropDownItem = this.dateRanges[0]; // Default to 'This Week'
-
+  
   constructor() {
-    debugger
-
+    
   }
-
   
   ngOnInit(): void {
     this.refresh();
@@ -76,57 +79,44 @@ export class OrderComponent implements OnInit {
   showCustomDateRangeDialog: boolean = false;
   onDateFilterChanged($event: any) {
     debugger
-    if (this.selectedDateFilter.id === '7') { // Custom Range
+    if (this.selectedDateFilter.id === 7) { // Custom Range
       this.showCustomDateRangeDialog = true;
     } else {
       const todayDate = moment().toDate();
       switch (this.selectedDateFilter.id) {
-        case '1': // This Week
-          this.dateRange = [moment().startOf('week').toDate(), todayDate];
-          break;
-        case '3': // This Month
-          this.dateRange = [moment().startOf('month').toDate(), todayDate];
-          break;
-        case '4': // Last Month
-          this.dateRange = [moment().subtract(1, 'month').startOf('month').toDate(), moment().subtract(1, 'month').endOf('month').toDate()];
-          break;
-        case '5': // This Year
-          this.dateRange = [moment().startOf('year').toDate(), todayDate];
-          break;
-        case '6': // Last Year
-          this.dateRange = [moment().subtract(1, 'year').startOf('year').toDate(), moment().subtract(1, 'year').endOf('year').toDate()];
-          break;
-        case '8': // All Time
-          this.dateRange = [];
-          break;
+        case 1: // This Week
+        this.dateRange = [moment().startOf('week').toDate(), todayDate];
+        break;
+        case 3: // This Month
+        this.dateRange = [moment().startOf('month').toDate(), todayDate];
+        break;
+        case 4: // Last Month
+        this.dateRange = [moment().subtract(1, 'month').startOf('month').toDate(), moment().subtract(1, 'month').endOf('month').toDate()];
+        break;
+        case 5: // This Year
+        this.dateRange = [moment().startOf('year').toDate(), todayDate];
+        break;
+        case 6: // Last Year
+        this.dateRange = [moment().subtract(1, 'year').startOf('year').toDate(), moment().subtract(1, 'year').endOf('year').toDate()];
+        break;
+        case 8: // All Time
+        this.dateRange = [];
+        break;
       }
-      this.onDateFilterSelected(this.dateRange);
-    }
-  }
-
-  onDateFilterSelected(event: any) {
-    if(this.dateRange.length === 2) {
-      if (this.dateRange[0] && this.dateRange[1]) {
-        // Perform filtering logic here
-        console.log('Selected Date Range:', this.dateRange[0], this.dateRange[1]);
-        // You can call a service to filter orders based on the selected date range
-        // this.orderService.filterOrdersByDateRange(startDate, endDate).subscribe(...);
-      }
+      
+      this.refresh();
     }
   }
   
-  onDateRangeClear() {
-    const startDate = moment().subtract(1, 'week').toDate();
-    const todayDate = moment().toDate();
-    this.dateRange = [startDate, todayDate];
-  }
-
-
+  
   refresh() {
     this.loadOrders();
   }
-
+  
   loadOrders(event?: TableLazyLoadEvent): void {
+    debugger
+    
+    // send this.dateRange to the backend if needed
     this.loadingService.show();
     this.orderService.getOrders().subscribe({
       next: (orders) => {

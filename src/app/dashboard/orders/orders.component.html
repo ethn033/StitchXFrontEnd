@@ -1,123 +1,117 @@
+<p-dialog  header="Custom Date Range Filter" [modal]="true" 
+[(visible)]="showCustomDateRangeDialog" [style]="{ width: '35rem' }">
+<div class="w-full px-3">
+  <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" 
+  showButtonBar="true" 
+  inline="true" 
+  selectionMode="range" 
+  [style]="{ width: '100%' }"
+  [readonlyInput]="true"
+  >  <!-- Makes datepicker fill container -->
+</p-datepicker>
+</div>
 
-
-    <p-dialog header="Edit Profile" [modal]="true" [(visible)]="showCustomDateRangeDialog" [style]="{ width: '25rem' }">
-        <span class="p-text-secondary block mb-8">Update your information.</span>
-        <div class="flex items-center gap-4 mb-4">
-            <label for="username" class="font-semibold w-24">Username</label>
-            <input pInputText id="username" class="flex-auto" autocomplete="off" />
-        </div>
-        <div class="flex items-center gap-4 mb-8">
-            <label for="email" class="font-semibold w-24">Email</label>
-            <input pInputText id="email" class="flex-auto" autocomplete="off" />
-        </div>
-        <div class="flex justify-end gap-2">
-            <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
-            <p-button label="Save" (click)="showCustomDateRangeDialog = false" />
-        </div>
-    </p-dialog>
+<!-- Buttons - Right Aligned -->
+<div class="flex justify-end gap-2 mt-3 p-3">
+  <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
+  <p-button label="Save" (click)="showCustomDateRangeDialog = false; refresh()" />  <!-- Recommend separate handler -->
+</div>
+</p-dialog>
 
 
 <div class="d-flex justify-content-between align-items-center mb-5">
   <!-- Left: Title with refresh button -->
   <h5 class="fw-bold m-0">
     <p-button 
-      rounded="true" 
-      size="large" 
-      pTooltip="Refresh Orders" 
-      (onClick)="refresh()" 
-      icon="pi pi-refresh" 
-      styleClass="clr-dark-grey fw-bold" 
-      [link]="true"
+    rounded="true" 
+    size="large" 
+    pTooltip="Refresh Orders" 
+    (onClick)="refresh()" 
+    icon="pi pi-refresh" 
+    styleClass="clr-dark-grey fw-bold" 
+    [link]="true"
     ></p-button>
     Orders
   </h5>
-
-
+  
+  
   
   <!-- Right: Dropdown + New Order button -->
   <div class="d-flex align-items-center gap-3">
+    <p-select pTooltip="Filter Orders by Status" tooltipPosition="top" size="small" [options]="orderStatuses" [(ngModel)]="selectedOrderStatus" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
     
-    <p-select 
-    styleClass="minimal-select"
-      [options]="orderStatuses" 
-      [(ngModel)]="selectedOrderStatus" 
-      optionLabel="value" 
-      placeholder="Select a Status" 
-      class="min-w-[200px]"
-    ></p-select>
-
-    <p-select 
-    styleClass="minimal-select"
-      [options]="dateRanges" 
-      [(ngModel)]="selectedDateFilter"
-      (onChange)="onDateFilterChanged($event)"
-      optionLabel="value" 
-      placeholder="Select a Status" 
-      class="min-w-[200px]"
-    ></p-select>
-
-    <button 
-      pButton 
-      size="small" 
-      label="New Order" 
-      (click)="showNewCustomerDialog()" 
-      icon="pi pi-plus" 
-      class="p-button-primary"
-    ></button>
+    <p-select pTooltip="Filter Orders by Date" tooltipPosition="top" size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+    
+    <button pTooltip="new Order" tooltipPosition="top" pButton size="small" label="Order" (click)="showNewCustomerDialog()" icon="pi pi-plus" class="p-button-primary"></button>
   </div>
 </div>
 
 <p-table [value]="orders" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
   
   <ng-template pTemplate="body" let-order>
-    <p-card *ngFor="let order of orders" class="order-card" [style]="{'margin': '5px'}">
+    <p-card *ngFor="let order of orders" class="order-card" [style]="{'margin': '10px'}">
       <div class="card-content">
+        <p-stepper [value]="order.status" class="basis-[50rem]">
+          <p-step-list>
+            <p-step *ngFor="let status of orderStatuses | excludeFirstItem" [value]="status.id-1"> {{ status.value }}</p-step>
+          </p-step-list>
+        </p-stepper>
         <div class="row">
-          <div class="col-6">
-            <strong>Order ID:</strong> {{ order.orderId }}
+          <div class="col-10 p-0">
+            <div class="row">
+              <div class="col-6">
+                <strong>Order ID:</strong> {{ order.orderId }}
+              </div>
+              <div class="col-6 text-right">
+                <strong>Order Date:</strong> {{ order.orderDate | date:'short' }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <strong>Delivery Date:</strong> {{ order.deliveryDate | date:'short' }}
+              </div>
+              <div class="col-6 text-right">
+                <strong>Fabric:</strong> {{ order.fabricDetails }} ({{ order.fabricColor }})
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <strong>Fit:</strong> {{ order.stichingFit }}
+              </div>
+              <div class="col-6 text-right">
+                <strong>Quantity:</strong> {{ order.quantity }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <strong>Amount Paid:</strong> {{ order.amountPaid | currency:'INR' }}
+              </div>
+              <div class="col-6 text-right">
+                <strong>Payment Status:</strong> <p-tag size="small" [severity]="order.paymentStatus === 'Paid' ? 'success' : 'warn'" [value]="order.paymentStatus"></p-tag>
+              </div>
+            </div>
           </div>
-          <div class="col-6 text-right">
-            <strong>Order Date:</strong> {{ order.orderDate | date:'short' }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <strong>Delivery Date:</strong> {{ order.deliveryDate | date:'short' }}
-          </div>
-          <div class="col-6 text-right">
-            <strong>Fabric:</strong> {{ order.fabricDetails }} ({{ order.fabricColor }})
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <strong>Fit:</strong> {{ order.stichingFit }}
-          </div>
-          <div class="col-6 text-right">
-            <strong>Quantity:</strong> {{ order.quantity }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <strong>Amount Paid:</strong> {{ order.amountPaid | currency:'INR' }}
-          </div>
-          <div class="col-6 text-right">
-            <strong>Payment Status:</strong> <p-tag [severity]="order.paymentStatus === 'Paid' ? 'success' : 'warn'" [value]="order.paymentStatus"></p-tag>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <strong>Delivery Method:</strong> {{ order.deliveryMethod }}
-          </div>
-          <div class="col-6 text-right">
-            <strong>Delivery Status:</strong> {{ order.deliveryStatus }}
-          </div>
-        </div>
-      </div>
-      <div class="card-actions">
-        <div class="flex flex-wrap gap-1">
-          <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View" tooltipPosition="top" (click)="viewCustomer(order)"></button>
-          <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" tooltipPosition="top" (click)="editCustomer(order)"></button>
-          <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger" pTooltip="Delete" tooltipPosition="top" (click)="confirmDelete(order)"></button>
+          <div class="col-2">
+  <div class="card-actions h-full flex align-items-center justify-content-center">
+    <div class="flex flex-col gap-2"> <!-- Changed to flex-col for vertical stacking -->
+      <button pButton icon="pi pi-eye" 
+              class="p-button-sm p-button-rounded p-button-text" 
+              pTooltip="View" 
+              tooltipPosition="top" 
+              (click)="viewCustomer(order)"></button>
+      <button pButton icon="pi pi-pencil" 
+              class="p-button-sm p-button-rounded p-button-text" 
+              pTooltip="Edit" 
+              tooltipPosition="top" 
+              (click)="editCustomer(order)"></button>
+      <button pButton icon="pi pi-trash" 
+              class="p-button-sm p-button-rounded p-button-text p-button-danger" 
+              pTooltip="Delete" 
+              tooltipPosition="top" 
+              (click)="confirmDelete(order)"></button>
+    </div>
+  </div>
+</div>
         </div>
       </div>
     </p-card>

@@ -19,7 +19,7 @@ export interface Order extends ModleBase {
     buckramType: string; // e.g., normal, original
 
     // Status tracking
-    status: string; // e.g., Received, InProgress, Ready, Delivered
+    status: number; // e.g., Received, InProgress, Ready, Delivered
     notes?: string | null; // e.g., Special instructions
     lastUpdated: Date;
     completedDate?: Date | null;

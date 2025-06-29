@@ -13,9 +13,16 @@ import { ViewCustomerComponent } from './dialogs/view-customer/view-customer.com
 import { LoadingService } from '../../services/loading.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { Customer } from '../../models/customers/customer-model';
+import { SelectModule } from 'primeng/select';
+import { DropDownItem } from '../../contracts/dropdown-item';
+import moment from 'moment';
+import { customerStatusValues, dateFilterValues } from '../../utils/utils';
+import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
+import { DatePickerModule } from 'primeng/datepicker';
 @Component({
   selector: 'app-customers',
-  imports: [CommonModule, ButtonModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule, TooltipModule],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule, TooltipModule],
   providers: [DialogService, ConfirmationService, TruncatePipe, MessageService],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css'
@@ -23,7 +30,14 @@ import { Customer } from '../../models/customers/customer-model';
 export class CustomersComponent {
   
   customers: Customer[] = [];
-
+  
+  customerStatuses: DropDownItem[] = customerStatusValues();
+  
+  selectedCustomerStatus: DropDownItem = this.customerStatuses[0]; // Default to 'All Statuses'
+  dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
+  dateRanges = dateFilterValues();
+  selectedDateFilter: DropDownItem = this.dateRanges[0]; // Default to 'This Week'
+  
   // Removed invalid instantiation of Customer, as it is only a type
   filterItems: MenuItem[] = [
     { label: 'All Customers', icon: 'pi pi-users', command: () => this.filterCustomers('all') },
@@ -40,18 +54,58 @@ export class CustomersComponent {
   loadingService: LoadingService = inject(LoadingService);
   
   ngOnInit(): void {
-    this.loadCustomers();
+    this.refresh();
   }
   
   refresh() {
     this.loadCustomers();
   }
-
+  
   loadCustomers(event?: TableLazyLoadEvent): void {
-    this.customerService.getCustomers().subscribe(customers => {
-      this.customers = customers;
-      this.totalCustomersCount = this.customers.length;
+    this.loadingService.show();
+    this.customerService.getCustomers().subscribe({
+      next: (customers) => {
+        this.loadingService.hide();
+        this.customers = customers;
+        this.totalCustomersCount = this.customers.length;
+      },
+      error: (error) => {
+        this.loadingService.hide();
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
+      }
     });
+  }
+  
+  showCustomDateRangeDialog: boolean = false;
+  onDateFilterChanged($event: any) {
+    debugger
+    if (this.selectedDateFilter.id === 7) { // Custom Range
+      this.showCustomDateRangeDialog = true;
+    } else {
+      const todayDate = moment().toDate();
+      switch (this.selectedDateFilter.id) {
+        case 1: // This Week
+        this.dateRange = [moment().startOf('week').toDate(), todayDate];
+        break;
+        case 3: // This Month
+        this.dateRange = [moment().startOf('month').toDate(), todayDate];
+        break;
+        case 4: // Last Month
+        this.dateRange = [moment().subtract(1, 'month').startOf('month').toDate(), moment().subtract(1, 'month').endOf('month').toDate()];
+        break;
+        case 5: // This Year
+        this.dateRange = [moment().startOf('year').toDate(), todayDate];
+        break;
+        case 6: // Last Year
+        this.dateRange = [moment().subtract(1, 'year').startOf('year').toDate(), moment().subtract(1, 'year').endOf('year').toDate()];
+        break;
+        case 8: // All Time
+        this.dateRange = [];
+        break;
+      }
+      
+      this.refresh();
+    }
   }
   
   deleteCustomer(id: string): void {
