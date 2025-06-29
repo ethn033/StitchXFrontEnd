@@ -14,4 +14,8 @@ export class OrdersService {
   getOrders() : Observable<Order[]> {
     return this.apiService.get(this.endPoint.endpoint);
   }
+  
+  deleteOrder(orderId: string) : Observable<Order[]> {
+    return this.apiService.delete(`${this.endPoint.endpoint}/${orderId}`);
+  }
 }

@@ -17,11 +17,6 @@ html, body {
   overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
-/* Ensure PrimeNG components don't overflow */
-.p-autocomplete {
-  width: 100% !important;
-}
-
 /* Fix for Bootstrap rows */
 .row {
   margin-right: 0;
@@ -43,4 +38,49 @@ html, body {
 
 .fw-extra-bold {
   font-weight: var(--font-weight-extra-bold) !important;
+}
+
+
+
+
+
+
+/* 
+  Minimal Select Style (opt-in with class="minimal-select")
+  - Add to p-select for borderless + green hover effect
+  - Regular p-select components remain unaffected
+*/
+.p-select.minimal-select {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.p-select.minimal-select .p-select-label {
+  color: #4a4a4a !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 0 !important;
+  transition: color 0.2s !important;
+}
+
+.p-select.minimal-select .p-select-trigger-icon {
+  color: #4a4a4a !important;
+  transition: color 0.2s !important;
+}
+
+/* Hover states */
+.p-select.minimal-select:not(.p-disabled):hover {
+  background: transparent !important;
+}
+.p-select.minimal-select:not(.p-disabled):hover .p-select-label,
+.p-select.minimal-select:not(.p-disabled):hover .p-select-trigger-icon {
+  color: #22C55E !important;
+}
+
+/* Focus state */
+.p-select.minimal-select.p-focus {
+  box-shadow: none !important;
+}
+.p-select.minimal-select.p-focus .p-select-label {
+  color: #22C55E !important;
 }

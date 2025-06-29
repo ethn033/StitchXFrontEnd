@@ -1,34 +1,34 @@
 <header class="topbar">
   <div class="container-fluid h-100">
-    <div class="row align-items-center h-100">
+    <div class="row align-items-center h-100 g-0">
       <!-- Logo - Shrinks on mobile -->
-      <div class="bg-success col-2 col-sm-4 col-md-3 col-lg-2 logo-container"> 
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2 logo-container"> 
         <h1 class="logo mb-0">
           <span class="logo-text">Stitch</span>
-          <span class="logo-plus">X</span>
+          <span class="logo-x">X</span>
         </h1>
       </div>
 
       <!-- Search - Expands/collapses responsively -->
-      <div class="bg-dark col-12 col-sm-8 col-md-6 col-lg-7 order-sm-1 order-md-0 search-container px-2 py-1 py-sm-0">
-        <div class="position-relative w-100">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-7 order-sm-1 order-md-0 search-container px-3 px-sm-2 py-2 py-sm-0">
+        <div class="position-relative w-100 h-100 d-flex align-items-center">
           <i class="pi pi-search search-icon position-absolute"></i>
           <p-autoComplete [(ngModel)]="searchText" 
                          [suggestions]="filteredItems" 
                          (completeMethod)="filterItems($event)" 
                          placeholder="Search Customer or Order"
-                         [inputStyle]="{'border':'none', 'padding-left':'2.5rem', 'width': '100%'}"
+                         [inputStyle]="{'border':'none', 'padding-left':'2.5rem', 'width': '100% !imporant'}"
                          >
           </p-autoComplete>
         </div>
       </div>
 
       <!-- Icons - Always visible -->
-      <div class="bg-danger col-6 col-sm-12 col-md-3 col-lg-3 actions-container d-flex justify-content-end">
+      <div class="col-6 col-sm-12 col-md-3 col-lg-3 actions-container d-flex justify-content-end pe-3 pe-sm-2">
         <button pButton icon="pi pi-bell" class="p-button-rounded p-button-text action-btn position-relative">
           <span class="badge position-absolute top-0 start-100 translate-middle">3</span>
         </button>
-        <button pButton icon="pi pi-user" class="p-button-rounded p-button-text action-btn ms-2" 
+        <button pButton icon="pi pi-user" class="p-button-rounded p-button-text action-btn ms-2 ms-sm-3" 
                 (click)="userMenu.toggle($event)">
         </button>
         <p-menu #userMenu [model]="userMenuItems" [popup]="true"></p-menu>
