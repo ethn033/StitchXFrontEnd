@@ -30,5 +30,6 @@ export enum OrderStatus {
   All = 0,
   Ordered = 2,
   Processing = 3,
-  Delivered = 4
+  Delivered = 4,
+  OverDue = 5
 }

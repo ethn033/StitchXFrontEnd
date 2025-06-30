@@ -3,7 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { Router } from '@angular/router';
 
 @Component({

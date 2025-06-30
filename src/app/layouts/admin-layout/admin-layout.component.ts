@@ -1,7 +1,7 @@
-import { LoadingService } from './../../services/loading.service';
+import { LoadingService } from '../../services/generics/loading.service';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, NavigationStart, Router, RouterOutlet } from '@angular/router';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TopbarComponent } from '../../dashboard/shared-admin/topbar/topbar.component';
 import { SidebarComponent } from '../../dashboard/shared-admin/sidebar/sidebar.component';
 import { LoadingComponent } from '../../components/shared/loading/loading.component';
@@ -18,7 +18,7 @@ import { LoadingComponent } from '../../components/shared/loading/loading.compon
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.css'
 })
-export class AdminLayoutComponent implements OnInit {
+export class AdminLayoutComponent  {
 
   loadingService: LoadingService = inject(LoadingService);
   constructor(private router: Router) {
@@ -29,9 +29,5 @@ export class AdminLayoutComponent implements OnInit {
         this.loadingService.hide();
       }
     });
-  }
-  
-  ngOnInit(): void {
-  }
-
+  } 
 }

@@ -7,9 +7,9 @@ import { CarouselModule } from 'primeng/carousel';
 import { RatingModule } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { User } from '@angular/fire/auth';
+import { AuthService } from '../../services/auth/auth.service';
 @Component({
   selector: 'app-landing-layout',
   imports: [CommonModule, CardModule, FormsModule, ReactiveFormsModule, CarouselModule, RatingModule, ButtonModule, RouterLink],

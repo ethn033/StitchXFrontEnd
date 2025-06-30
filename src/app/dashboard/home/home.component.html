@@ -1,17 +1,18 @@
-<div class="row">
-  <div class="col-12">
-  <div class="dashboard-header mb-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <div>
-        <h2 class="fs-4 fs-md-3 mb-1 mb-md-2">Dashboard Overview</h2>
-        <p class="text-muted mb-0 fs-8 fs-md-2">Today: {{ today | date:'fullDate' }}</p>
+<div class="row p-0">
+  <div class="col-12 p-0">
+    <div class="dashboard-header mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="fs-4 fs-md-3 mb-1 mb-md-2">Dashboard Overview</h2>
+          <p class="text-muted mb-0 fs-8 fs-md-2">Today: {{ today | date:'fullDate' }}</p>
+        </div>
+        <button pButton label="New Order" icon="pi pi-plus" class="btn btn-primary"></button>
       </div>
-      <button pButton label="New Order" icon="pi pi-plus" class="btn btn-primary"></button>
     </div>
   </div>
-
+  <div class="col-12 p-0">
   <!-- Metrics Cards -->
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 mb-4">
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2 mb-4">
     <div class="col" *ngFor="let metric of metrics">
       <div class="card h-100">
         <div class="card-body text-center">
@@ -27,10 +28,12 @@
   </div>
 
   <!-- Recent Orders -->
-  <div class="card mb-4">
+   <div class="row p-0">
+    <div class="col p-0">
+       <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Recent Orders</h5>
-      <button pButton label="View All" class="btn btn-outline-primary btn-sm"></button>
+      <button pButton label="View All" routerLink="/admin/orders" class="btn btn-outline-primary btn-sm"></button>
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
@@ -46,21 +49,28 @@
           </thead>
           <tbody>
             <tr *ngFor="let order of recentOrders">
-              <td>#{{ order.id }}</td>
-              <td>{{ order.customer }}</td>
-              <td>{{ order.item }}</td>
+              <td>#{{ order.orderId }}</td>
+              <td>{{ order.customerId }}</td>
+              <td>{{ order.garmentTypeId }}</td>
               <td>
-                <span [class]="'badge bg-' + getStatusSeverity(order.status)">
-                  {{ order.status }}
-                </span>
+                <p-badge [severity]="getStatusSeverity(order.status)" [value]="order.status | orderStatusString"></p-badge>
+                <!-- <p-badge severity="contrast" value="contrast"></p-badge>
+                <p-badge severity="danger" value="danger"></p-badge>
+                <p-badge severity="info" value="info"></p-badge>
+                <p-badge severity="secondary" value="secondary"></p-badge>
+                <p-badge severity="success" value="success"></p-badge>
+                <p-badge severity="warn" value="warn"></p-badge> -->
               </td>
-              <td>{{ order.dueDate }}</td>
+              <td>{{ order.deliveryDate | date:'dd/MM/yyyy' }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
+    </div>
+   </div>
+ 
 
   <!-- Quick Actions -->
   <div class="card">

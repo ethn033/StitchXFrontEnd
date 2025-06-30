@@ -8,7 +8,7 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
 import { MessageService } from 'primeng/api';
 import { LoginRequest } from '../../../models/LoginRequest';
 @Component({

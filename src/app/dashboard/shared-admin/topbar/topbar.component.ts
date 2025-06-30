@@ -6,17 +6,20 @@ import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { FormsModule } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
+import { RouterModule } from '@angular/router';
+import { LogoComponent } from '../../../components/shared/logo/logo.component';
 
 @Component({
   selector: 'app-topbar',
-  imports: [CommonModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
+  imports: [CommonModule, RouterModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
     CommonModule,
   FormsModule,
   AutoCompleteModule,
   MenuModule,
   ButtonModule,
-  RippleModule // For pRipple effect
+  RippleModule,
+  LogoComponent
   ],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css'

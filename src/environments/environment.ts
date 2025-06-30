@@ -32,6 +32,9 @@ export const environment = {
             create: '/products/create',
             update: (id: string) => `/products/update/${id}`,
             delete: (id: string) => `/products/delete/${id}`
-        }
+        },
+        home: {
+            getRecentOrders: 'GetRecentOrders',
+        },
     }
   };

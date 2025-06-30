@@ -10,106 +10,86 @@
       <div class="form-group">
         <label for="firstName" class="form-label">First Name*</label>
         <input 
-          type="text" 
-          class="form-control" 
-          id="firstName" 
-          formControlName="firstName" 
-          placeholder="Enter first name"
-          [ngClass]="{ 'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }"
+        type="text" 
+        class="form-control" 
+        id="firstName" 
+        formControlName="firstName" 
+        placeholder="Enter first name"
+        [ngClass]="{ 'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }"
         >
         <div *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched" class="invalid-feedback">
           First name is required (max 50 characters)
         </div>
       </div>
     </div>
-
+    
     <div class="col-md-6">
       <div class="form-group">
         <label for="lastName" class="form-label">Last Name*</label>
         <input 
-          type="text" 
-          class="form-control" 
-          id="lastName" 
-          formControlName="lastName" 
-          placeholder="Enter last name"
-          [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }"
+        type="text" 
+        class="form-control" 
+        id="lastName" 
+        formControlName="lastName" 
+        placeholder="Enter last name"
+        [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }"
         >
         <div *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="invalid-feedback">
           Last name is required (max 50 characters)
         </div>
       </div>
     </div>
-
+    
     <div class="col-md-6">
       <div class="form-group">
         <label for="phone" class="form-label">Phone</label>
         <input 
-          type="text" 
-          class="form-control" 
-          id="phone" 
-          formControlName="phone" 
-          placeholder="Enter phone number"
-          [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }"
+        type="text" 
+        class="form-control" 
+        id="phone" 
+        formControlName="phone" 
+        placeholder="Enter phone number"
+        [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }"
         >
         <div *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="invalid-feedback">
           Please enter a valid phone number (10-15 digits)
         </div>
       </div>
     </div>
-
+    
     <div class="col-md-6">
       <div class="form-group">
         <label for="email" class="form-label">Email</label>
-        <input 
-          type="email" 
-          class="form-control" 
-          id="email" 
-          formControlName="email" 
-          placeholder="Enter email"
-          [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }"
-        >
-        <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">
-          Please enter a valid email
-        </div>
+        <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email" [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }">
+        <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
       </div>
     </div>
-
+    
     <div class="col-md-6">
       <div class="form-group">
         <label for="age" class="form-label">Age</label>
-        <input 
-          type="number" 
-          class="form-control" 
-          id="age" 
-          formControlName="age" 
-          placeholder="Enter age"
-          min="12" 
-          max="120"
-          [ngClass]="{ 'is-invalid': customerForm.get('age')?.invalid && customerForm.get('age')?.touched }"
-        >
-        <div *ngIf="customerForm.get('age')?.invalid && customerForm.get('age')?.touched" class="invalid-feedback">
-          Age must be between 12-120
-        </div>
+        <input type="number" class="form-control" id="age" formControlName="age" placeholder="Enter age" min="12" 
+        max="120">
       </div>
     </div>
-
+    
     <div class="col-12">
       <div class="form-group">
         <label for="address" class="form-label">Address</label>
         <textarea 
-          class="form-control" 
-          id="address" 
-          formControlName="address" 
-          placeholder="Enter address"
-          rows="3"
-          [ngClass]="{ 'is-invalid': customerForm.get('address')?.invalid && customerForm.get('address')?.touched }"
+        class="form-control" 
+        id="address" 
+        formControlName="address" 
+        placeholder="Enter address"
+        rows="3"
+        [ngClass]="{ 'is-invalid': customerForm.get('address')?.invalid && customerForm.get('address')?.touched }"
         ></textarea>
         <div *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched" class="invalid-feedback">
           Maximum 200 characters
         </div>
       </div>
     </div>
-
+    
     <!-- Measurements Section -->
     <div class="col-12 mt-4">
       <h5 class="mb-3">Measurements (in inches)</h5>
@@ -118,111 +98,111 @@
           <div class="form-group">
             <label for="chest" class="form-label">Chest</label>
             <input 
-              type="number" 
-              class="form-control" 
-              id="chest" 
-              formControlName="chest" 
-              placeholder="0.0"
-              step="0.1"
-              min="0"
+            type="number" 
+            class="form-control" 
+            id="chest" 
+            formControlName="chest" 
+            placeholder="0.0"
+            step="0.1"
+            min="0"
             >
           </div>
         </div>
-
+        
         <div class="col-6 col-md-3">
           <div class="form-group">
             <label for="waist" class="form-label">Waist</label>
             <input 
-              type="number" 
-              class="form-control" 
-              id="waist" 
-              formControlName="waist" 
-              placeholder="0.0"
-              step="0.1"
-              min="0"
+            type="number" 
+            class="form-control" 
+            id="waist" 
+            formControlName="waist" 
+            placeholder="0.0"
+            step="0.1"
+            min="0"
             >
           </div>
         </div>
-
+        
         <div class="col-6 col-md-3">
           <div class="form-group">
             <label for="hips" class="form-label">Hips</label>
             <input 
-              type="number" 
-              class="form-control" 
-              id="hips" 
-              formControlName="hips" 
-              placeholder="0.0"
-              step="0.1"
-              min="0"
+            type="number" 
+            class="form-control" 
+            id="hips" 
+            formControlName="hips" 
+            placeholder="0.0"
+            step="0.1"
+            min="0"
             >
           </div>
         </div>
-
+        
         <div class="col-6 col-md-3">
           <div class="form-group">
             <label for="sleeveLength" class="form-label">Sleeve</label>
             <input 
-              type="number" 
-              class="form-control" 
-              id="sleeveLength" 
-              formControlName="sleeveLength" 
-              placeholder="0.0"
-              step="0.1"
-              min="0"
+            type="number" 
+            class="form-control" 
+            id="sleeveLength" 
+            formControlName="sleeveLength" 
+            placeholder="0.0"
+            step="0.1"
+            min="0"
             >
           </div>
         </div>
-
+        
         <div class="col-6 col-md-3">
           <div class="form-group">
             <label for="inseam" class="form-label">Inseam</label>
             <input 
-              type="number" 
-              class="form-control" 
-              id="inseam" 
-              formControlName="inseam" 
-              placeholder="0.0"
-              step="0.1"
-              min="0"
+            type="number" 
+            class="form-control" 
+            id="inseam" 
+            formControlName="inseam" 
+            placeholder="0.0"
+            step="0.1"
+            min="0"
             >
           </div>
         </div>
       </div>
     </div>
-
+    
     <!-- Notes Section -->
     <div class="col-12 mt-4">
       <div class="form-group">
         <label for="notes" class="form-label">Notes</label>
         <textarea 
-          class="form-control" 
-          id="notes" 
-          formControlName="notes" 
-          placeholder="Additional notes"
-          rows="3"
+        class="form-control" 
+        id="notes" 
+        formControlName="notes" 
+        placeholder="Additional notes"
+        rows="3"
         ></textarea>
       </div>
     </div>
   </div>
-
+  
   <!-- Form Actions -->
   <div class="d-flex justify-content-end gap-2 mt-4">
     <button 
-      type="button" 
-      class="btn btn-outline-secondary" 
-      (click)="onCancel()"
-      [disabled]="loading"
+    type="button" 
+    class="btn btn-outline-secondary" 
+    (click)="onCancel()"
+    [disabled]="loading"
     >
-      Cancel
-    </button>
-    <button 
-      type="submit" 
-      class="btn btn-primary" 
-      [disabled]="customerForm.invalid || loading"
-    >
-      <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
-      Save
-    </button>
-  </div>
+    Cancel
+  </button>
+  <button 
+  type="submit" 
+  class="btn btn-primary" 
+  [disabled]="customerForm.invalid || loading"
+  >
+  <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+  Save
+</button>
+</div>
 </form>

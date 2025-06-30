@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { Component } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastModule],
+  imports: [RouterModule, ToastModule],
   providers: [MessageService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

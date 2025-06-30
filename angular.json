@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "TailorsApp": {
+    "StitchX": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/TailorsApp",
+            "outputPath": "dist/StitchX",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -61,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "TailorsApp:build:production"
+              "buildTarget": "StitchX:build:production"
             },
             "development": {
-              "buildTarget": "TailorsApp:build:development"
+              "buildTarget": "StitchX:build:development"
             }
           },
           "defaultConfiguration": "development"

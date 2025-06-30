@@ -10,8 +10,8 @@ import {
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { from, Observable } from 'rxjs';
-import { LoginRequest } from '../models/LoginRequest';
-import { SignUpRequest } from '../models/SignUpRequest';
+import { LoginRequest } from '../../models/LoginRequest';
+import { SignUpRequest } from '../../models/SignUpRequest';
 
 @Injectable({
   providedIn: 'root'

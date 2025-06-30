@@ -3,7 +3,7 @@ import { ModleBase } from "../../contracts/base-modal";
 export interface Order extends ModleBase {
     orderId: string;
     orderDate: Date;
-    deliveryDate?: Date | null;
+    deliveryDate: Date;
     fabricDetails: string;
     stichingFit: string; // e.g., Enum (Slim fit, Regular fit)
     fabricColor: string; // e.g., Blue, Black

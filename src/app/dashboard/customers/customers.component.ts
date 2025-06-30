@@ -8,9 +8,9 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from '../../pipe/truncate.pipe';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { CustomerService } from '../../services/customer.service';
+import { CustomerService } from '../../services/customers/customer.service';
 import { ViewCustomerComponent } from './dialogs/view-customer/view-customer.component';
-import { LoadingService } from '../../services/loading.service';
+import { LoadingService } from '../../services/generics/loading.service';
 import { TooltipModule } from 'primeng/tooltip';
 import { Customer } from '../../models/customers/customer-model';
 import { SelectModule } from 'primeng/select';
@@ -71,7 +71,7 @@ export class CustomersComponent {
       },
       error: (error) => {
         this.loadingService.hide();
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
       }
     });
   }

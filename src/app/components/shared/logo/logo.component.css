@@ -1,0 +1,38 @@
+/* Logo Container */
+.logo-container {
+  padding-left: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.logo-text {
+  color: var(--dark-gray);
+  transition: color 0.3s ease;
+}
+
+.logo-x {
+  color: var(--primary-green);
+  margin-left: 2px;
+  font-weight: 900;
+  transform: scale(1.1);
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.logo:hover .logo-text {
+  color: var(--primary-green);
+}
+
+.logo:hover .logo-x {
+  color: var(--accent-teal);
+  transform: scale(1.2);
+}

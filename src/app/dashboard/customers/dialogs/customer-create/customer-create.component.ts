@@ -29,7 +29,7 @@ export class CustomerCreateComponent {
       phone: ['', [Validators.pattern(/^[0-9]{10,15}$/)]],
       email: ['', [Validators.email]],
       address: ['', [Validators.maxLength(200)]],
-      age: ['', [Validators.min(12), Validators.max(120)]],
+      age: [''],
       chest: [''],
       waist: [''],
       hips: [''],
