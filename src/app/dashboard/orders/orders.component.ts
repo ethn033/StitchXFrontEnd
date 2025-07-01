@@ -114,7 +114,7 @@ export class OrderComponent implements OnInit {
   }
   
   loadOrders(event?: TableLazyLoadEvent): void {
-    debugger
+    
     
     // send this.dateRange to the backend if needed
     this.loadingService.show();

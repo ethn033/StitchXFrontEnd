@@ -14,18 +14,15 @@ body {
 
 /* styles.css */
 html, body { 
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Fix for Bootstrap rows */
 .row {
   margin-right: 0;
   margin-left: 0;
-}
-
-/* Fix for dashboard cards */
-.card {
-  min-width: 0; /* Prevent flexbox overflow */
 }
 
 .clr-dark-grey {

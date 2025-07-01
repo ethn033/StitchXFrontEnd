@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { MenuModule } from 'primeng/menu';
 import { ButtonModule } from 'primeng/button';
@@ -8,18 +8,21 @@ import { FormsModule } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../services/auth/auth.service';
 import { RouterModule } from '@angular/router';
-import { LogoComponent } from '../../../components/shared/logo/logo.component';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { Toolbar } from 'primeng/toolbar';
+import { AvatarModule } from 'primeng/avatar';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIcon } from 'primeng/inputicon';
 
 @Component({
   selector: 'app-topbar',
-  imports: [CommonModule, RouterModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
+  imports: [CommonModule, IconFieldModule, InputIcon, RouterModule, OverlayBadgeModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
     CommonModule,
   FormsModule,
   AutoCompleteModule,
   MenuModule,
   ButtonModule,
-  RippleModule,
-  LogoComponent
+  RippleModule, Toolbar, AvatarModule
   ],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css'
