@@ -22,22 +22,22 @@
   
   <!-- Right: Dropdown + New Order button -->
   <div class="d-flex align-items-center gap-3">
-    <p-select pTooltip="Filter Orders by Status" tooltipPosition="top" size="small" [options]="orderStatuses" [(ngModel)]="selectedOrderStatus" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
-    
+    <!-- <p-select pTooltip="Filter Orders by Status" tooltipPosition="top" size="small" [options]="orderStatuses" [(ngModel)]="selectedOrderStatus" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+     -->
     <p-select pTooltip="Filter Orders by Date" tooltipPosition="top" size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
     
     <button pTooltip="Add new Order" tooltipPosition="left" pButton size="small" label="Order" (click)="showNewCustomerDialog()" icon="pi pi-plus" class="p-button-primary"></button>
   </div>
 </div>
 
-<p-table [value]="orders" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
+<!-- <p-table [value]="orders" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
   
   <ng-template pTemplate="body" let-order>
     <p-card *ngFor="let order of orders" class="order-card" [style]="{'margin': '10px'}">
       <div class="card-content">
         <p-stepper [value]="order.status" class="basis-[50rem]">
           <p-step-list>
-            <p-step *ngFor="let status of orderStatuses | excludeFirstItem" [value]="status.id-1"> {{ status.value }}</p-step>
+            <p-step *ngFor="let status of orderStatuses | excludeFirstItem" [value]="status.id-1"> {{ status.value }}</p-step> 
           </p-step-list>
         </p-stepper>
         <div class="row">
@@ -77,7 +77,7 @@
           </div>
           <div class="col-2">
             <div class="card-actions h-full flex align-items-center justify-content-center">
-              <div class="flex flex-col gap-2"> <!-- Changed to flex-col for vertical stacking -->
+              <div class="flex flex-col gap-2"> 
                 <button pButton icon="pi pi-eye" 
                 class="p-button-sm p-button-rounded p-button-text" 
                 pTooltip="View" 
@@ -122,7 +122,7 @@
       </td>
     </tr>
   </ng-template>
-</p-table>
+</p-table> -->
 
 <p-confirmDialog 
 [style]="{width: '450px'}" 

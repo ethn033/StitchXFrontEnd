@@ -10,7 +10,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AuthService } from '../../../services/auth/auth.service';
 import { MessageService } from 'primeng/api';
-import { LoginRequest } from '../../../models/LoginRequest';
+import { LoginDto } from '../../../Dtos/requests/requestDto';
+import { ApiResponse } from '../../../models/base-response';
 @Component({
   selector: 'app-login',
   imports: [
@@ -52,20 +53,30 @@ export class LoginComponent {
     }
 
     this.isLoading = true;
-    const formData = this.loginForm.value as LoginRequest;
+    const formData = this.loginForm.value as LoginDto;
 
     this.authService.signIn(formData).subscribe({
       next: (data: any) => {
+        debugger
+        if(data.statusCode == 200 && data.isSuccess === false) {
+          this.messageService.add({
+            key: 'global-toast',
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Logged in successfully'
+          });
+          this.isLoading = false;
+          this.loginForm.reset();
+          this.router.navigate(['admin']);
+          return;
+        }
         this.messageService.add({
           key: 'global-toast',
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Logged in successfully'
-        }); 
-
+          severity: 'error',
+          summary: 'Login Failed',
+          detail: data.message || 'Failed to login'
+        });
         this.isLoading = false;
-        this.loginForm.reset();
-        this.router.navigate(['admin']);
       },
       error: (error) => {
         this.messageService.add({

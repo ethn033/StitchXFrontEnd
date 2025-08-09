@@ -11,6 +11,10 @@ import { ToastModule } from 'primeng/toast';
 })
 export class AppComponent {
 
-  constructor() {
+  constructor(private messageService: MessageService) {
+    
   }
+  ngOnInit(): void {
+   this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
   }
+}

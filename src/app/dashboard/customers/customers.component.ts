@@ -8,11 +8,11 @@ import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from '../../pipe/truncate.pipe';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { CustomerService } from '../../services/customers/customer.service';
+// import { CustomerService } from '../../services/customers/customer.service';
 import { ViewCustomerComponent } from './dialogs/view-customer/view-customer.component';
 import { LoadingService } from '../../services/generics/loading.service';
 import { TooltipModule } from 'primeng/tooltip';
-import { Customer } from '../../models/customers/customer-model';
+// import { Customer } from '../../models/customers/customer-model';
 import { SelectModule } from 'primeng/select';
 import { DropDownItem } from '../../contracts/dropdown-item';
 import moment from 'moment';
@@ -20,16 +20,17 @@ import { customerStatusValues, dateFilterValues } from '../../utils/utils';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
+import { LoginResponse } from '../../Dtos/responses/loginResponseDto';
 @Component({
   selector: 'app-customers',
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TruncatePipe, TableModule, TooltipModule],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule,  TableModule, TooltipModule],
   providers: [DialogService, ConfirmationService, TruncatePipe, MessageService],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css'
 })
 export class CustomersComponent {
   
-  customers: Customer[] = [];
+  // customers: Customer[] = [];
   
   customerStatuses: DropDownItem[] = customerStatusValues();
   
@@ -47,7 +48,7 @@ export class CustomersComponent {
   ];
   
   dialogService: DialogService = inject(DialogService);
-  customerService: CustomerService = inject(CustomerService);
+  // customerService: CustomerService = inject(CustomerService);
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
   totalCustomersCount: number = 0;
@@ -63,17 +64,17 @@ export class CustomersComponent {
   
   loadCustomers(event?: TableLazyLoadEvent): void {
     this.loadingService.show();
-    this.customerService.getCustomers().subscribe({
-      next: (customers) => {
-        this.loadingService.hide();
-        this.customers = customers;
-        this.totalCustomersCount = this.customers.length;
-      },
-      error: (error) => {
-        this.loadingService.hide();
-        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
-      }
-    });
+    // this.customerService.getCustomers().subscribe({
+    //   next: (customers: any) => {
+    //     this.loadingService.hide();
+    //     this.customers = customers;
+    //     this.totalCustomersCount = this.customers.length;
+    //   },
+    //   error: (error: any) => {
+    //     this.loadingService.hide();
+    //     this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
+    //   }
+    // });
   }
   
   showCustomDateRangeDialog: boolean = false;
@@ -122,9 +123,9 @@ export class CustomersComponent {
   }
   
   
-  viewCustomer(customer: Customer): void {
+  viewCustomer(customer: LoginResponse): void {
     this.dialogService.open(ViewCustomerComponent, {
-      header: `Customer Details - ${customer.firstName} ${customer.lastName}`,
+      header: `Customer Details - ${customer.user.firstName} ${customer.user.lastName}`,
       width: '90%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
@@ -134,9 +135,9 @@ export class CustomersComponent {
   }
   
   
-  editCustomer(customer: Customer): void {
+  editCustomer(customer: LoginResponse): void {
     const ref = this.dialogService.open(CustomerCreateComponent, {
-      header: `Edit Customer - ${customer.firstName} ${customer.lastName}`,
+      header: `Edit Customer - ${customer.user.firstName} ${customer.user.lastName}`,
       width: '90%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
@@ -174,9 +175,9 @@ export class CustomersComponent {
     });
   }
   
-  takeOrder(customer: Customer): void {
+  takeOrder(customer: LoginResponse): void {
     this.dialogService.open(ViewCustomerComponent, {
-      header: `New Order - ${customer.firstName} ${customer.lastName}`,
+      header: `New Order - ${customer.user.firstName} ${customer.user.lastName}`,
       width: '90%',
       styleClass: 'order-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
@@ -186,9 +187,9 @@ export class CustomersComponent {
   }
   
   
-  confirmDelete(customer: Customer): void {
+  confirmDelete(customer: LoginResponse): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${customer.firstName} ${customer.lastName}?`,
+      message: `Are you sure you want to delete ${customer.user.firstName} ${customer.user.lastName}?`,
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {

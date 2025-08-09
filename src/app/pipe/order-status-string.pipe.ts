@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Order } from '../models/orders/order-model';
-import { OrderStatus } from '../enums/enums';
+import { EOrderStatus } from '../enums/enums';
 
 @Pipe({
   name: 'orderStatusString'
@@ -8,7 +7,7 @@ import { OrderStatus } from '../enums/enums';
 export class OrderStatusStringPipe implements PipeTransform {
 transform(value: number): string {
     if (value === 0) return 'All';
-    const statusName = OrderStatus[value];
+    const statusName = EOrderStatus[value];
     return statusName || 'Unknown';
   }
 

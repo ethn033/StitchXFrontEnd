@@ -10,7 +10,7 @@
             <a href="#features">Features</a>
             <a href="#testimonials">Testimonials</a>
             <a href="#contact">Contact</a>
-            <button pButton pRipple type="button" [label]="(currentUser | async) ? 'Dashboard' : 'Login'" class="p-button-text" [routerLink]="(currentUser ) ? '/admin/dashboard' : '/auth/login'"></button>
+            <button pButton pRipple type="button" label="Login" class="p-button-text" [routerLink]="'/auth/login'"></button>
             <button pButton pRipple routerLink="/auth/sign-up" type="button" label="Sign Up" class="p-button-outlined"></button>
           </nav>
         </div>
@@ -216,7 +216,7 @@
               <li><a href="#features">Features</a></li>
               <li><a href="#testimonials">Testimonials</a></li>
               <li><a href="#contact">Contact</a></li>
-              <li><a routerLink="/auth/login">{{ (currentUser ) ? 'Login' : 'Logout' }}</a></li>
+              <li><a routerLink="/auth/login">Login</a></li>
               <li><a routerLink="/auth/register">Sign Up</a></li>
             </ul>
           </div>

@@ -1,9 +1,7 @@
-import { Order } from '../../models/orders/order-model';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
-import { OrdersService } from '../../services/orders/orders.service';
 import { LoadingService } from '../../services/generics/loading.service';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -24,8 +22,7 @@ import { DropDownItem } from '../../contracts/dropdown-item';
 import { dateFilterValues } from '../../utils/utils';
 import { DialogModule } from 'primeng/dialog';
 import { StepperModule } from 'primeng/stepper';
-import { ExcludeFirstItemPipe } from "../../pipe/exclude-first-item.pipe";
-import { OrderStatus } from '../../enums/enums';
+import { OrderHistoryItemResponseDto, OrderHistoryResponseDto } from '../../Dtos/responses/orderResponseDto';
 
 
 interface EventItem {
@@ -40,30 +37,29 @@ interface EventItem {
   selector: 'app-order',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, FormsModule, StepperModule, DialogModule, DatePickerModule, ButtonModule, ConfirmDialogModule, DropdownModule, SelectModule, TagModule, ToolbarModule, CardModule, TableModule, TooltipModule, ExcludeFirstItemPipe],
+  imports: [CommonModule, FormsModule, StepperModule, DialogModule, DatePickerModule, ButtonModule, ConfirmDialogModule, DropdownModule, SelectModule, TagModule, ToolbarModule, CardModule, TableModule, TooltipModule],
   providers: [DialogService, ConfirmationService, TruncatePipe],
 })
 
 export class OrderComponent implements OnInit {
   
-  orders: Order[] = [];
+  orders: OrderHistoryResponseDto[] = [];
   dialogService: DialogService = inject(DialogService);
-  orderService: OrdersService = inject(OrdersService);
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
   totalOrdersCount: number = 0;
   loadingService: LoadingService = inject(LoadingService);
   
-  orderStatuses: DropDownItem[] = [
-    ...Object.keys(OrderStatus)
-    .filter(key => isNaN(Number(key)))
-    .map(key => ({
-      id: OrderStatus[key as keyof typeof OrderStatus],
-      value: key
-    }))
-  ];
+  // orderStatuses: DropDownItem[] = [
+  //   ...Object.keys(OrderStatus)
+  //   .filter(key => isNaN(Number(key)))
+  //   .map(key => ({
+  //     id: OrderStatus[key as keyof typeof OrderStatus],
+  //     value: key
+  //   }))
+  // ];
   
-  selectedOrderStatus: DropDownItem = this.orderStatuses[0]; // Default to 'All Statuses'
+  // selectedOrderStatus: DropDownItem = this.orderStatuses[0]; // Default to 'All Statuses'
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
   dateRanges = dateFilterValues();
   selectedDateFilter: DropDownItem = this.dateRanges[0]; // Default to 'This Week'
@@ -118,17 +114,17 @@ export class OrderComponent implements OnInit {
     
     // send this.dateRange to the backend if needed
     this.loadingService.show();
-    this.orderService.getOrders().subscribe({
-      next: (orders) => {
-        this.orders = [...orders, ...orders];
-        this.totalOrdersCount = this.orders.length;
-        this.loadingService.hide();
-      },
-      error: (error) => {
-        this.loadingService.hide();
-        this.messageService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load orders' });
-      }
-    });
+    // this.orderService.getOrders().subscribe({
+    //   next: (orders: any) => {
+    //     this.orders = [...orders, ...orders];
+    //     this.totalOrdersCount = this.orders.length;
+    //     this.loadingService.hide();
+    //   },
+    //   error: (error: any) => {
+    //     this.loadingService.hide();
+    //     this.messageService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load orders' });
+    //   }
+    // });
   }
   
   deleteCustomer(id: string): void {
@@ -145,9 +141,9 @@ export class OrderComponent implements OnInit {
   }
   
   
-  viewCustomer(order: Order): void {
+  viewCustomer(order: OrderHistoryItemResponseDto): void {
     this.dialogService.open(ViewOrderComponent, {
-      header: `Customer Details - ${order.customerId} ${order.amountPaid}`,
+      header: `Customer Details - ${order.customerId} ${order.customerId}`,
       width: '90%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
@@ -157,9 +153,9 @@ export class OrderComponent implements OnInit {
   }
   
   
-  editCustomer(order: Order): void {
+  editCustomer(order: OrderHistoryItemResponseDto): void {
     const ref = this.dialogService.open(CreateOrderComponent, {
-      header: `Edit Customer - ${order.customerId} ${order.amountPaid}`,
+      header: `Edit Customer - ${order.customerId} ${order.paidAmount}`,
       width: '90%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
@@ -197,9 +193,9 @@ export class OrderComponent implements OnInit {
     });
   }
   
-  takeOrder(order: Order): void {
+  takeOrder(order: OrderHistoryItemResponseDto): void {
     this.dialogService.open(CreateOrderComponent, {
-      header: `New Order - ${order.amountPaid} ${order.amountPaid}`,
+      header: `New Order - ${order.paidAmount} ${order.paidAmount}`,
       width: '90%',
       styleClass: 'order-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
@@ -209,24 +205,24 @@ export class OrderComponent implements OnInit {
   }
   
   
-  confirmDelete(order: Order): void {
+  confirmDelete(order: OrderHistoryItemResponseDto): void {
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${order.amountPaid} ${order.amountPaid}?`,
+      message: `Are you sure you want to delete ${order.paidAmount} ${order.paidAmount}?`,
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.loadingService.show();
-        this.orderService.deleteOrder(order.orderId+'dad').subscribe({
-          next: () => {
-            this.loadingService.hide();
-            this.loadOrders();
-            this.messageService.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: 'Order deleted successfully' });
-          },
-          error: (error) => {
-            this.loadingService.hide();
-            this.messageService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to delete order' });
-          }
-        });
+        // this.orderService.deleteOrder(order.orderId+'dad').subscribe({
+        //   next: () => {
+        //     this.loadingService.hide();
+        //     this.loadOrders();
+        //     this.messageService.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: 'Order deleted successfully' });
+        //   },
+        //   error: (error: any) => {
+        //     this.loadingService.hide();
+        //     this.messageService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to delete order' });
+        //   }
+        // });
       },
       reject: () => {
         

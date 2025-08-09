@@ -6,23 +6,19 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { BadgeModule } from 'primeng/badge';
 import { FormsModule } from '@angular/forms';
-import { HomeService } from '../../services/dashboard/home.service';
 import { LoadingService } from '../../services/generics/loading.service';
 import { MessageService } from 'primeng/api';
-import { Order } from '../../models/orders/order-model';
-import { OrderStatus } from '../../enums/enums';
-import { generateDummyOrders } from '../../utils/utils';
-import { OrderStatusStringPipe } from '../../pipe/order-status-string.pipe';
+import { EOrderStatus } from '../../enums/enums';
 import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, RouterModule, BadgeModule, OrderStatusStringPipe, CardModule, ButtonModule, TagModule, CheckboxModule, FormsModule],
+  imports: [CommonModule, RouterModule, BadgeModule, CardModule, ButtonModule, TagModule, CheckboxModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
   recentOrdersLimit = 10;
-  homeService = inject(HomeService);
+  // homeService = inject(HomeService);
   loadingService = inject(LoadingService);
   messageService = inject(MessageService);
   today = new Date();
@@ -46,26 +42,26 @@ export class HomeComponent {
   
   getStatusSeverity(status: number): any {
     switch(status) {
-      case OrderStatus.Ordered: return 'info';        // Blue - indicates new order
-      case OrderStatus.Processing: return 'warning';  // Orange/Yellow - in progress
-      case OrderStatus.Delivered: return 'success';   // Green - successfully completed
-      case OrderStatus.OverDue: return 'danger';      // Red - urgent/attention needed
+      case EOrderStatus.RECEIVED: return 'info';        // Blue - indicates new order
+      case EOrderStatus.IN_PROGRESS: return 'warning';  // Orange/Yellow - in progress
+      case EOrderStatus.DELIVERED: return 'success';   // Green - successfully completed
+      case EOrderStatus.OVER_DUE: return 'danger';      // Red - urgent/attention needed
       default: return 'contrast';                    // Gray - unknown status
     }
   }
   
   
-  recentOrders: Order[] = generateDummyOrders(); //;
+  recentOrders = [];// generateDummyOrders(); //;
   getRecentOrders() {
-    return this.homeService.getRecentOrders(this.recentOrdersLimit).subscribe({
-      next: (data) => {
+    // return this.homeService.getRecentOrders(this.recentOrdersLimit).subscribe({
+    //   next: (data: any) => {
         
         
-        this.recentOrders = data;
-      },
-      error: (error) => {
-        this.messageService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to fetch recent orders.' });
-      }
-    });
+    //     this.recentOrders = data;
+    //   },
+    //   error: (error: any) => {
+    //     this.messageService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to fetch recent orders.' });
+    //   }
+    // });
   }
 }

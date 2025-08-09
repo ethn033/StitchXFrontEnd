@@ -5,7 +5,7 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { OrderCreateModel } from '../../../../models/orders/order-create-model';
+import { CreateOrderRequestDto } from '../../../../Dtos/requests/requestDto';
 
 @Component({
   selector: 'app-create-order',
@@ -60,14 +60,14 @@ customerForm: FormGroup;
     this.loading = true;
     try {
       const formValue = this.customerForm.value;
-      const customerData: OrderCreateModel = {
-        firstName: formValue.firstName,
-        lastName: formValue.lastName,
-        phoneNumber: formValue.phone || undefined,
-        email: formValue.email || undefined,
-        address: formValue.address || undefined,
-        city: formValue.city || undefined,
-      };
+      // const customerData: CreateOrderRequestDto = {
+      //   firstName: formValue.firstName,
+      //   lastName: formValue.lastName,
+      //   phoneNumber: formValue.phone || undefined,
+      //   email: formValue.email || undefined,
+      //   address: formValue.address || undefined,
+      //   city: formValue.city || undefined,
+      // };
 
       if (this.config.data?.customer?.customerId) {
         // Update existing customer

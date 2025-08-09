@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
-import { CustomerCreate } from '../../../../models/customers/customer-create-model';
+// import { CustomerCreate } from '../../../../models/customers/customer-create-model';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -59,14 +59,14 @@ export class CustomerCreateComponent {
     this.loading = true;
     try {
       const formValue = this.customerForm.value;
-      const customerData: CustomerCreate = {
-        firstName: formValue.firstName,
-        lastName: formValue.lastName,
-        phoneNumber: formValue.phone || undefined,
-        email: formValue.email || undefined,
-        address: formValue.address || undefined,
-        city: formValue.city || undefined,
-      };
+      // const customerData: CustomerCreate = {
+      //   firstName: formValue.firstName,
+      //   lastName: formValue.lastName,
+      //   phoneNumber: formValue.phone || undefined,
+      //   email: formValue.email || undefined,
+      //   address: formValue.address || undefined,
+      //   city: formValue.city || undefined,
+      // };
 
       if (this.config.data?.customer?.customerId) {
         // Update existing customer

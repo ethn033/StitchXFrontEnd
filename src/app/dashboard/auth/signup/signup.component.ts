@@ -41,11 +41,11 @@ export class SignupComponent implements OnInit {
   onSignup() {
     if (this.signupForm.valid) {
       this.isLoading = true;
-      this.authService.signUp(this.signupForm.value).then(() => { 
-        this.isLoading = false;
-        this.signupForm.reset();
-        this.router.navigate(['/auth/login']);
-      });
+      // this.authService.signUp(this.signupForm.value).then(() => { 
+      //   this.isLoading = false;
+      //   this.signupForm.reset();
+      //   this.router.navigate(['/auth/login']);
+      // });
     }
   }
 

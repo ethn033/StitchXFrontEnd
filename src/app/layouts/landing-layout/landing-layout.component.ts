@@ -8,7 +8,6 @@ import { RatingModule } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { User } from '@angular/fire/auth';
 import { AuthService } from '../../services/auth/auth.service';
 @Component({
   selector: 'app-landing-layout',
@@ -19,8 +18,6 @@ import { AuthService } from '../../services/auth/auth.service';
 export class LandingLayoutComponent {
   inquiryForm: FormGroup;
   authService = inject(AuthService);
-
-  currentUser : Observable<User | null> = this.authService.getCurrentUser(); 
 
   testimonials = [
     {

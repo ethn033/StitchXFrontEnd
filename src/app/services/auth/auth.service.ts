@@ -1,52 +1,28 @@
+import { environment } from './../../../environments/environment';
 import { Injectable, inject } from '@angular/core';
-import { 
-  Auth, 
-  User, 
-  signInWithEmailAndPassword,
-  signOut, 
-  authState,
-  createUserWithEmailAndPassword,
-  updateProfile
-} from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { from, Observable } from 'rxjs';
-import { LoginRequest } from '../../models/LoginRequest';
-import { SignUpRequest } from '../../models/SignUpRequest';
+import { Observable, of } from 'rxjs';
+import { LoginDto, RegisterDto } from '../../Dtos/requests/requestDto';
+import { ApiService } from '../generics/api.service';
+import { ApiResponse } from '../../models/base-response';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
-  private auth: Auth = inject(Auth);
+export class AuthService extends ApiService {
+  private readonly endpoint: string = environment.api.auth.controller +environment.api.auth.enpoints.Login;
   private router = inject(Router);
 
-  authState$ = authState(this.auth);
-
-  constructor() {
-    
+  signIn<T>(request: LoginDto): Observable<ApiResponse<T>> {
+    return this.post(this.endpoint, request);
   }
 
-  signIn(request: LoginRequest): Observable<any> {
-    return from(signInWithEmailAndPassword(this.auth, request.email, request.password));
+  signUp(request: RegisterDto): Observable<any> {
+      return of(1);
   }
 
-  // Sign up with email/password
-  async signUp(request: SignUpRequest): Promise<void> {
-      const credential = await createUserWithEmailAndPassword(this.auth, request.email, request.password);
-      if (this.auth.currentUser) {
-         await updateProfile(this.auth.currentUser, { displayName: request.name });
-      }
-  }
-
-  // Sign out
-  async signOut(): Promise<void> {
-    await signOut(this.auth);
+  async signOut() {
     localStorage.clear();
     this.router.navigate(['/auth/login']);
-  }
-
-  // Get current user
-  getCurrentUser(): Observable<User | null> {
-    return this.authState$;
   }
 }

@@ -3,13 +3,14 @@ import { inject, Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ApiResponse } from '../../models/base-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   
-  http: HttpClient = inject(HttpClient);
+  protected http: HttpClient = inject(HttpClient);
   baseUrl: string = environment.api.baseUrl;
   
   /**
@@ -19,7 +20,8 @@ export class ApiService {
   * @param headers - Optional headers
   * @returns Observable of type T or T[]
   */
-  get(endPoint: string, params?: any, headers?: any) : Observable<any> {
+  protected get<T>(endPoint: string, params?: any, headers?: any) : Observable<ApiResponse<T>> {
+   
     let httpParams = new HttpParams();
     
     if (params) {
@@ -35,7 +37,7 @@ export class ApiService {
       headers: headers
     }
     
-    return this.http.get<any>(`${this.baseUrl+endPoint}`, options);
+    return this.http.get<ApiResponse<T>>(`${this.baseUrl+endPoint}`, options);
   }
   
   /**
@@ -45,9 +47,8 @@ export class ApiService {
   * @param headers - Optional headers
   * @returns Observable of type T
   */
-  
-  post(endpoint: string, body: any, headers?: HttpHeaders): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/${endpoint}`, body, { headers });
+  protected post<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<ApiResponse<T>> {
+    return this.http.post<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, { headers });
   }
   
   /**
@@ -57,8 +58,8 @@ export class ApiService {
   * @param headers - Optional headers
   * @returns Observable of type T
   */
-  put(endpoint: string, body: any, headers?: HttpHeaders): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${endpoint}`, body, { headers });
+  protected put<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<ApiResponse<T>> {
+    return this.http.put<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`, body, { headers });
   }
   
   /**
@@ -68,8 +69,8 @@ export class ApiService {
   * @param headers - Optional headers
   * @returns Observable of type T
   */
-  patch(endpoint: string, body: any, headers?: HttpHeaders): Observable<any> {
-    return this.http.patch<any>(`${this.baseUrl}/${endpoint}`, body, { headers });
+  protected patch<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<ApiResponse<T>> {
+    return this.http.patch<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`, body, { headers });
   }
   
   /**
@@ -78,8 +79,8 @@ export class ApiService {
   * @param headers - Optional headers
   * @returns Observable of any (can be customized to return specific type)
   */
-  delete(endpoint: string, headers?: HttpHeaders): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${endpoint}`, { headers });
+  protected delete<T>(endpoint: string, headers?: HttpHeaders): Observable<ApiResponse<T>> {
+    return this.http.delete<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`, { headers });
   }
   
   /**
@@ -99,7 +100,6 @@ export class ApiService {
         }
       });
     }
-    
     const options = {
       params: httpParams,
       headers: headers,
