@@ -11,17 +11,18 @@ import { RouterModule } from '@angular/router';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { AvatarModule } from 'primeng/avatar';
 import { IconFieldModule } from 'primeng/iconfield';
+import { ToolbarModule } from 'primeng/toolbar';
+import { InputIcon } from "primeng/inputicon";
 
 @Component({
   selector: 'app-topbar',
   imports: [CommonModule, IconFieldModule, RouterModule, OverlayBadgeModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
     CommonModule,
-  FormsModule,
-  AutoCompleteModule,
-  MenuModule,
-  ButtonModule,
-  RippleModule, AvatarModule
-  ],
+    FormsModule,
+    AutoCompleteModule,
+    MenuModule,
+    ButtonModule,
+    RippleModule, AvatarModule, ToolbarModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css'
 })
@@ -49,5 +50,16 @@ export class TopbarComponent {
     this.filteredItems = this.dummyItems.filter(item => 
       item.toLowerCase().includes(event.query.toLowerCase())
     );
+  }
+
+  showMobileSearch = false;
+  toggleMobileSearch() {
+    this.showMobileSearch = !this.showMobileSearch;
+  }
+  hasNotifications = true;
+
+  toggleMobileMenu() {
+    // Implement mobile menu toggle logic
+    // You might want to emit an event to a parent component
   }
 }

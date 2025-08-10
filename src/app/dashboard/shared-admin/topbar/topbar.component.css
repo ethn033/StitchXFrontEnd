@@ -1,268 +1,144 @@
-:root {
-  --primary-green: #2e7d32;
-  --primary-green-light: #4caf50;
-  --accent-teal: #26a69a;
-  --dark-gray: #263238;
-  --light-gray: #f5f5f5;
-}
-
-.topbar {
+/* Base toolbar styling */
+.single-row-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
   height: 60px;
-  background-color: #ffffff;
+  width: 100%;
+  background: white;
   border-bottom: 1px solid #e0e0e0;
-  /* position: fixed; */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
+  overflow: hidden; /* Prevent wrapping */
 }
 
+/* Logo section - fixed width */
 .logo-container {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  min-width: 120px;
+  padding-right: 0.5rem;
 }
 
 .logo {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: -0.5px;
   display: flex;
   align-items: center;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .logo-text {
-  color: var(--dark-gray);
-  transition: color 0.3s ease;
+  color: #263238;
 }
 
 .logo-x {
-  color: var(--primary-green);
+  color: #2e7d32;
   margin-left: 2px;
   font-weight: 900;
-  transform: scale(1.1);
-  display: inline-block;
-  transition: all 0.3s ease;
 }
 
-.logo:hover .logo-text {
-  color: var(--primary-green);
-}
-
-.logo:hover .logo-x {
-  color: var(--accent-teal);
-  transform: scale(1.2);
-}
-
+/* Search container - takes remaining space */
 .search-container {
-  flex-grow: 1;
-  flex-shrink: 1;
-  display: flex;
-  align-items: center;
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 50px;
+  padding: 0 0.5rem;
+  position: relative;
 }
 
 .search-wrapper {
-  max-width: 500px;
   width: 100%;
+  position: relative;
 }
 
 .search-icon {
   position: absolute;
+  left: 1rem;
   top: 50%;
-  left: 8px;
   transform: translateY(-50%);
-  color: #757575;
-  z-index: 10;
-  font-size: 1rem;
+  z-index: 2;
+  color: #6c757d;
 }
 
-.p-autocomplete {
-  width: 100%;
-  min-width: 0;
+/* Full-width AutoComplete styling */
+::ng-deep .full-width-autocomplete {
+  width: 100% !important;
+  display: block !important;
 }
 
-.p-autocomplete-input {
-  background-color: var(--light-gray);
-  border-radius: 24px;
-  padding: 0.6rem 1rem 0.6rem 2rem;
-  font-size: 0.95rem;
+::ng-deep .full-width-autocomplete .p-autocomplete-input {
+  width: 100% !important;
+  padding-left: 2rem !important;
+  border-radius: 20px;
+  background-color: #f5f5f5;
   border: 1px solid transparent;
-  transition: all 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
+  height: 36px;
+  font-size: 0.9rem;
 }
 
-.p-autocomplete-input:focus {
-  background-color: white;
-  border-color: var(--primary-green-light);
-  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
-}
-
+/* Actions container - fixed width */
 .actions-container {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  gap: 0.25rem;
-  min-width: 80px;
+  gap: 0.5rem;
+  min-width: fit-content;
 }
 
 .action-btn {
-  color: var(--dark-gray);
-  transition: all 0.3s ease;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 36px;
+  height: 36px;
 }
 
-.action-btn:hover {
-  color: var(--primary-green);
-  background-color: rgba(46, 125, 50, 0.1);
+.small-avatar {
+  width: 32px !important;
+  height: 32px !important;
 }
 
-.action-btn .pi {
-  font-size: 1.25rem;
-}
-
-.badge {
-  background-color: var(--primary-green);
-  color: white;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 0.6rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid white;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-  .topbar {
-    height: 56px;
+/* Media queries for smaller screens */
+@media (max-width: 576px) {
+  .single-row-toolbar {
+    padding: 0.5rem 0.25rem;
   }
-
+  
   .logo {
-    font-size: 1.6rem;
+    font-size: 1.1rem;
   }
-
-  .search-wrapper {
-    max-width: 300px;
-  }
-
-  .p-autocomplete-input {
-    padding: 0.55rem 0.75rem 0.55rem 2rem;
-  }
-
-  .search-icon {
-    left: 8px;
-  }
-}
-
-@media (max-width: 769px) {
-  .topbar {
-    height: auto;
-    min-height: 56px;
-    padding: 0.5rem 0;
-  }
-
-  .row {
-    flex-wrap: wrap;
-    margin: 0;
-  }
-
-  .logo-container {
-    flex: 0 0 auto;
-    padding-left: 0.5rem;
-  }
-
-  .logo {
-    font-size: 1.5rem;
-  }
-
+  
   .search-container {
-    flex: 1 1 100%;
-    padding: 0.25rem 0.5rem;
-    margin-top: 0.25rem;
+    padding: 0 0.25rem;
   }
-
-  .search-wrapper {
-    max-width: none;
-  }
-
-  .p-autocomplete-input {
-    padding: 0.5rem 0.75rem 0.5rem 2rem;
-    font-size: 0.9rem;
-  }
-
-  .search-icon {
-    left: 8px;
-    font-size: 0.9rem;
-  }
-
-  .actions-container {
-    flex: 0 0 auto;
-    padding-right: 0.5rem;
-  }
-}
-
-@media (max-width: 500px) {
-  .topbar {
-    padding: 0.25rem 0;
-  }
-
-  .logo {
-    font-size: 1.4rem;
-  }
-
-  .search-container {
-    padding: 0.25rem 0.25rem;
-  }
-
-  .search-wrapper {
-    max-width: 150px;
-  }
-
-  .p-autocomplete-input {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.5rem 0.4rem 1.75rem;
-  }
-
-  .search-icon {
-    left: 6px;
+  
+  ::ng-deep .full-width-autocomplete .p-autocomplete-input {
+    padding-left: 1.75rem !important;
     font-size: 0.8rem;
   }
-
-  .action-btn {
-    width: 32px;
-    height: 32px;
+  
+  .search-icon {
+    left: 0.75rem;
+    font-size: 0.9rem;
   }
+  
+  .actions-container {
+    gap: 0.25rem;
+  }
+}
 
-  .action-btn .pi {
+@media (max-width: 360px) {
+  .logo {
     font-size: 1rem;
   }
-
-  .badge {
-    width: 14px;
-    height: 14px;
-    font-size: 0.5rem;
+  
+  ::ng-deep .full-width-autocomplete .p-autocomplete-input {
+    font-size: 0.75rem;
+    padding-left: 1.5rem !important;
   }
-
-  .actions-container {
-    gap: 0.125rem;
-    min-width: 70px;
-    padding-right: 0.25rem;
+  
+  .search-icon {
+    left: 0.5rem;
+    font-size: 0.8rem;
   }
 }

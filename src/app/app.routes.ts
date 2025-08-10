@@ -61,6 +61,17 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'clint-setup',
+    canActivate: [authGuard],
+    loadComponent: () => import('./dashboard/client-setting/client-setup/client-setup.component').then(m => m.ClientSetupComponent),
+    children: [
+       {
+        path: 'create-branch',
+        loadComponent: () => import('./dashboard/client-setting/branch-setup/branch-setup.component').then(m => m.BranchSetupComponent)
+      }
+    ]
+  },
+  {
     path: '**',
     loadComponent: () => import('./components/not-found/not-found.component').then(m => m.NotFoundComponent),
   }
