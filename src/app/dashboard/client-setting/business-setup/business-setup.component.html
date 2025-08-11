@@ -1,0 +1,67 @@
+<div class="container-fluid p-0 min-vh-100 d-flex justify-content-center align-items-center bg-light">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5 p-2">
+        <p-card header="Create New Business" class="shadow">
+            <form [formGroup]="businessForm" (ngSubmit)="onSubmit()" class="p-fluid">
+                <!-- Business Name -->
+                <div class="mb-3">
+                    <label for="name" class="form-label">Business Name*</label>
+                    <input id="name" type="text" pInputText class="form-control" formControlName="name" placeholder="Enter business name" [ngClass]="{ 'is-invalid': businessForm.get('name')?.invalid && businessForm.get('name')?.touched }">
+                    
+                    <div class="invalid-feedback d-block">
+                        @if (businessForm.get('name')?.hasError('required') && businessForm.get('name')?.touched) {
+                            <div>Name is required.</div>
+                        }
+                        @if (businessForm.get('name')?.hasError('maxlength')) {
+                            <div>Name cannot exceed 100 characters.</div>
+                        }
+                    </div>
+                </div>
+                
+                <!-- Address -->
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address*</label>
+                    <textarea id="address" pInputTextarea class="form-control" formControlName="address" rows="3" placeholder="Enter business address" [ngClass]="{ 'is-invalid': businessForm.get('address')?.invalid && businessForm.get('address')?.touched }">
+                    </textarea>
+                    
+                    <div class="invalid-feedback d-block">
+                        @if (businessForm.get('address')?.hasError('required') && businessForm.get('address')?.touched) {
+                            <div>Address is required.</div>
+                        }
+                        @if (businessForm.get('address')?.hasError('maxlength')) {
+                            <div>Address cannot exceed 200 characters.</div>
+                        }
+                    </div>
+                </div>
+                
+                
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input id="phone" type="tel" pInputText  class="form-control" formControlName="phone" placeholder="Enter phone number" [ngClass]="{ 'is-invalid': businessForm.get('phone')?.invalid && businessForm.get('phone')?.touched }">
+                    
+                    <div class="invalid-feedback d-block">
+                        @if (businessForm.get('phone')?.hasError('maxlength')) {
+                            <div>Phone number cannot exceed 20 characters.</div>
+                        }
+                    </div>
+                </div>
+                
+                <!-- Website -->
+                <div class="mb-3">
+                    <label for="website" class="form-label">Website (if any)</label>
+                    <input id="website" type="text" pInputText  class="form-control" formControlName="website" placeholder="Enter website link">
+                </div>
+                
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" pInputTextarea class="form-control" formControlName="description" rows="3" placeholder="Enter business description"></textarea>
+                </div>            
+            <!-- Submit Button -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <p-button type="submit" [loading]="isLoading" label="Create Business" [disabled]="businessForm.invalid" icon="pi pi-check" styleClass="p-button-primary"></p-button>
+            </div>
+        </form>
+    </p-card>
+</div>
+</div>

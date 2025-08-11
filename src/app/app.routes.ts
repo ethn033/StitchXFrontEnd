@@ -1,3 +1,4 @@
+import { BusinessSetupComponent } from './dashboard/client-setting/business-setup/business-setup.component';
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
 import { authGuard } from './guards/auth.guard';
@@ -21,19 +22,19 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./layouts/auth-layout/auth-layout.component').then(m => m.AuthLayoutComponent),
     children: [
-          {
-            path: 'login',
-            loadComponent: () => import('./dashboard/auth/login/login.component').then(m => m.LoginComponent)
-          },
-          {
-            path: 'sign-up',
-            loadComponent: () => import('./dashboard/auth/signup/signup.component').then(m => m.SignupComponent)
-          },
-          {
-            path: '',
-            redirectTo: 'login',
-            pathMatch: 'full'
-          }
+      {
+        path: 'login',
+        loadComponent: () => import('./dashboard/auth/login/login.component').then(m => m.LoginComponent)
+      },
+      {
+        path: 'sign-up',
+        loadComponent: () => import('./dashboard/auth/signup/signup.component').then(m => m.SignupComponent)
+      },
+      {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+      }
     ]
   },
   {
@@ -65,7 +66,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./dashboard/client-setting/client-setup/client-setup.component').then(m => m.ClientSetupComponent),
     children: [
-       {
+      {
+        path: 'create-business',
+        loadComponent: () => import('./dashboard/client-setting/business-setup/business-setup.component').then(m => m.BusinessSetupComponent)
+      },
+      {
         path: 'create-branch',
         loadComponent: () => import('./dashboard/client-setting/branch-setup/branch-setup.component').then(m => m.BranchSetupComponent)
       }

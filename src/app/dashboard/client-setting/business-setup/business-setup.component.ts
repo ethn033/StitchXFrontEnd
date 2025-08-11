@@ -1,25 +1,29 @@
-import { BranchCreateUpdateDto } from './../../../Dtos/requests/requestDto';
+import { BranchCreateUpdateDto, BusinessCreateUpdateDto } from './../../../Dtos/requests/requestDto';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
 import { InputNumber } from 'primeng/inputnumber';
-import { BranchService } from '../../../services/branch/branch.service';
 import { ApiResponse } from '../../../models/base-response';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { APP_USER } from '../../../utils/global-contstants';
 import { UserRespnse } from '../../../Dtos/responses/loginResponseDto';
+import { BusinessService } from '../../../services/business/business.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
-  selector: 'app-branch-setup',
+  selector: 'app-business-setup',
   imports: [CommonModule, ReactiveFormsModule, Button, Card, InputNumber],
-  templateUrl: './branch-setup.component.html',
-  styleUrl: './branch-setup.component.css'
+  templateUrl: './business-setup.component.html',
+  styleUrl: './business-setup.component.css'
 })
-export class BranchSetupComponent {
-  private readonly as = inject(BranchService);
+export class BusinessSetupComponent {
+  
+  isLoading = false;
+  private ms = inject(MessageService);
+  private readonly bs = inject(BusinessService);
   private router = inject(Router);
   private ls = inject(LocalStorageService);
   businessForm!: FormGroup;
@@ -35,14 +39,14 @@ export class BranchSetupComponent {
     
   }
   
-  
   initForm() {
     this.businessForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       address: ['', [Validators.required, Validators.maxLength(200)]],
-      phone: ['', [Validators.maxLength(100)]],
-      latitude:  [undefined],
-      longitude: [undefined],
+      phone: ['', [Validators.required, Validators.maxLength(100)]],
+      ownerId: [this.userResponse?.id],
+      description: ['', Validators.maxLength(500)],
+      website: ['']
     });
   }
   
@@ -52,23 +56,29 @@ export class BranchSetupComponent {
     if (!this.businessForm?.valid)
       return;
     
-    let request: BranchCreateUpdateDto = new {
-      ...this.businessForm.value,
-      applicationUserId: this.userResponse?.id,
-      businessId: this.userResponse?.business.id,
-      isActive: true,
-      ownerId: this.userResponse?.id
+    // Create the request object using the form value
+    let request: BusinessCreateUpdateDto = {
+      ...this.businessForm.value // Default value if not set
     };
-
-    this.as.createBranch(request).subscribe({
+    
+    this.isLoading = true;
+    this.bs.createBusiness(request).subscribe({
       next: (data: any) => {
+        this.isLoading = false;
         let resp = data as ApiResponse<any>;
         if(resp.statusCode == 200 && resp.isSuccess) {
           this.router.navigate(['admin'], { replaceUrl: true  });
         }
       },
       error: (err: any) => {
+        this.ms.add({
+          key: 'auth-toast',
+          severity: 'error',
+          summary: 'Login Failed',
+          detail: err instanceof Error ? err.message : 'Failed to login'
+        });
         
+        this.isLoading = false;
       }
     });
   }

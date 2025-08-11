@@ -260,6 +260,7 @@ export interface BusinessCreateUpdateDto {
   /** Required owner ID */
   ownerId: number;
   phone?: string;
+  address?: string;
   website?: string;
   /** Description (500 chars max) */
   description?: string;

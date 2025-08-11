@@ -15,6 +15,8 @@ import { ApiResponse } from '../../../models/base-response';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { ERole, ERoleToString } from '../../../enums/enums';
 import { APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
+import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
+import { LoadingService } from '../../../services/generics/loading.service';
 
 @Component({
   selector: 'app-login',
@@ -36,41 +38,48 @@ import { APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
+  private loading = inject(LoadingService);
   private ls = inject(LocalStorageService);
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
   private router = inject(Router);
-
   
   isLoading = false;
   isPasswordVisible = false;
-
+  
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     rememberMe: [false]
   });
-
+  
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
-
+    
     this.isLoading = true;
     const formData = this.loginForm.value as LoginDto;
-
+    
     this.authService.signIn(formData).subscribe({
       next: (data: any) => {
-        let response = data as ApiResponse<any>;
+        let response = data as ApiResponse<LoginResponse>;
         if(response.statusCode == 200 && data.isSuccess) {
           if(response.data && response.data.user && response.data.tokenResponse) {
             this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: 'Logged in successfully'});
             if(response.data.user.roles.includes(ERoleToString[ERole.SOFT_OWNER]) || response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-              if(response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) 
-                this.router.navigate(['clint-setup/create-branch'], { replaceUrl: true });
-              else 
-                this.router.navigate(['admin'], { replaceUrl: true  });
+              if(response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
+                if(response.data.user.business == null) {
+                  this.router.navigate(['clint-setup/create-business'], { replaceUrl: true });
+                  return
+                }
+                if(response.data.user.business.branches == null) {
+                  this.router.navigate(['clint-setup/create-branch'], { replaceUrl: true });
+                  return;
+                }
+              }
+              this.router.navigate(['admin'], { replaceUrl: true  });
             }
             else if(response.data.user.roles.includes(ERoleToString[ERole.TAILOR]) || response.data.user.roles.includes(ERoleToString[ERole.CUTTER])) {
               this.router.navigate(['tailor'], { replaceUrl: true });
@@ -86,7 +95,7 @@ export class LoginComponent {
           return;
         }
         this.messageService.add({
-          key: 'global-toast',
+          key: 'auth-toast',
           severity: 'error',
           summary: 'Login Failed',
           detail: data.message || 'Failed to login'
@@ -96,7 +105,7 @@ export class LoginComponent {
       error: (error) => {
         debugger
         this.messageService.add({
-          key: 'global-toast',
+          key: 'auth-toast',
           severity: 'error',
           summary: 'Login Failed',
           detail: error instanceof Error ? error.message : 'Failed to login'
@@ -106,11 +115,11 @@ export class LoginComponent {
       }
     });
   }
-
+  
   get email() {
     return this.loginForm.get('email');
   }
-
+  
   get password() {
     return this.loginForm.get('password');
   }
