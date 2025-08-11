@@ -1,3 +1,4 @@
+import { UserDto } from './../../../Dtos/responses/UsersResponse';
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -15,10 +16,13 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { customerStatusValues, dateFilterValues } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
-import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
+import { LoginResponse, UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { ViewCustomerComponent } from '../../customers/dialogs/view-customer/view-customer.component';
 import { CustomerCreateComponent } from '../../customers/dialogs/customer-create/customer-create.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
+import { UsersResponse } from '../../../Dtos/responses/UsersResponse';
+import { UsersService } from '../../../services/client/users.service';
+import { ApiResponse } from '../../../models/base-response';
 @Component({
   selector: 'app-users',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe],
@@ -27,10 +31,9 @@ import { TruncatePipe } from '../../../pipe/truncate.pipe';
   styleUrl: './users.component.css'
 })
 export class UsersComponent {
-// customers: Customer[] = [];
-  
+
+  users: UserDto[] = [];
   customerStatuses: DropDownItem[] = customerStatusValues();
-  
   selectedCustomerStatus: DropDownItem = this.customerStatuses[0]; // Default to 'All Statuses'
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
   dateRanges = dateFilterValues();
@@ -45,7 +48,7 @@ export class UsersComponent {
   ];
   
   dialogService: DialogService = inject(DialogService);
-  // customerService: CustomerService = inject(CustomerService);
+  us: UsersService = inject(UsersService);
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
   totalCustomersCount: number = 0;
@@ -56,28 +59,28 @@ export class UsersComponent {
   }
   
   refresh() {
-    this.loadCustomers();
+    this.loadUsers();
   }
   
-  loadCustomers(event?: TableLazyLoadEvent): void {
+  loadUsers(event?: TableLazyLoadEvent): void {
     this.loadingService.show();
-    // this.customerService.getCustomers().subscribe({
-    //   next: (customers: any) => {
-    //     this.loadingService.hide();
-    //     this.customers = customers;
-    //     this.totalCustomersCount = this.customers.length;
-    //   },
-    //   error: (error: any) => {
-    //     this.loadingService.hide();
-    //     this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
-    //   }
-    // });
+    this.us.getUsers<ApiResponse<UsersResponse>>().subscribe({
+      next: (data: any) => {
+        this.loadingService.hide();
+        let usersResp = data as ApiResponse<UsersResponse>;
+        this.users = usersResp.data.users;
+        this.totalCustomersCount = this.users.length;
+      },
+      error: (error: any) => {
+        this.loadingService.hide();
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
+      }
+    });
   }
   
   showCustomDateRangeDialog: boolean = false;
   onDateFilterChanged($event: any) {
-    debugger
-    if (this.selectedDateFilter.id === 7) { // Custom Range
+    if (this.selectedDateFilter.id === 7) {
       this.showCustomDateRangeDialog = true;
     } else {
       const todayDate = moment().toDate();
@@ -106,10 +109,18 @@ export class UsersComponent {
     }
   }
   
-  deleteCustomer(id: string): void {
-    // this.customerService.deleteCustomer(id).then(() => {
-    //   this.loadCustomers();
-    // });
+  deleteCustomer(id: number): void {
+    this.us.deleteUser<ApiResponse<any>>(id).subscribe({
+      next: (response: any) => {
+        let resp = response as ApiResponse<any>;
+        if(resp.isSuccess && resp.statusCode == 200){
+          this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: 'User has been deleted suc.' });
+        }
+      },
+      error: (err: any) => {
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to delete user.'});
+      }
+    });
   }
   
   

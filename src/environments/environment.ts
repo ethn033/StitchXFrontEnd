@@ -7,6 +7,8 @@ export const environment = {
             enpoints: {
                 Login: 'Login',
                 Register: 'Register',
+                GetAllUsers: 'GetAllUsers',
+                DeleteUser: 'DeleteUser'
                 
             },
         },

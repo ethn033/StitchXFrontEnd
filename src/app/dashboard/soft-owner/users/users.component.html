@@ -15,7 +15,7 @@
 <div class="d-flex justify-content-between align-items-center mb-5">
     <!-- Left: Title with refresh button -->
     <h5 class="fw-bold m-0">
-        <p-button rounded="true" size="large" pTooltip="Refresh Customers" (onClick)="refresh()" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Shop Owners
+        <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="refresh()" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Users
     </h5>
     
     <!-- Right: Dropdown + New Order button -->
@@ -31,7 +31,7 @@
 </div>
 <!-- (onLazyLoad)="loadCustomers($event)"  -->
 
-<p-table #dt [value]="customers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false"  [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
+<p-table #dt [value]="users" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false"  [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
     
     <ng-template pTemplate="header">
         <tr>
