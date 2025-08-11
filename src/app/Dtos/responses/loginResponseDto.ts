@@ -1,11 +1,11 @@
 import { ERole } from "../../enums/enums";
 
 export interface LoginResponse {
-  user: UserRespnse;
+  user: UserResponse;
   tokenResponse: TokenResponse;
 }
 
-export interface UserRespnse {
+export interface UserResponse {
   id: number;
   userId?: string;
   firstName?: string;

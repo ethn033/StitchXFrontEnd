@@ -1,13 +1,28 @@
 <aside class="sidebar">
   <nav class="sidebar-nav">
-    <a class="nav-item" pTooltip="Home" routerLink="/admin/dashboard" routerLinkActive="active">
-      <i class="pi pi-home"></i>
-    </a>
-    <a class="nav-item" pTooltip="Orders" routerLink="/admin/orders" routerLinkActive="active">
-      <i class="pi pi-shopping-bag"></i>
-    </a>
-    <a class="nav-item" pTooltip="Customers" routerLink="/admin/customers" routerLinkActive="active">
-      <i class="pi pi-users"></i>
-    </a>
+    @if(currentRole == roles.SOFT_OWNER) {
+      <a class="nav-item" pTooltip="Home" routerLink="/admin/dashboard" routerLinkActive="active">
+        <i class="pi pi-home"></i>
+      </a>
+      <a class="nav-item" pTooltip="Shop Owners" routerLink="/admin/shop-owners" routerLinkActive="active">
+        <i class="pi pi-users"></i>
+      </a>
+      <a class="nav-item" pTooltip="Customers" routerLink="/admin/customers" routerLinkActive="active">
+        <i class="pi pi-users"></i>
+      </a>
+    }
+
+    @if(currentRole == roles.SHOP_OWNER) {
+      <a class="nav-item" pTooltip="Home" routerLink="/admin/dashboard" routerLinkActive="active">
+        <i class="pi pi-home"></i>
+      </a>
+      <a class="nav-item" pTooltip="Orders" routerLink="/admin/orders" routerLinkActive="active">
+        <i class="pi pi-shopping-bag"></i>
+      </a>
+      <a class="nav-item" pTooltip="Customers" routerLink="/admin/customers" routerLinkActive="active">
+        <i class="pi pi-users"></i>
+      </a>
+    }
+    
   </nav>
 </aside>

@@ -32,7 +32,6 @@ import { LoadingService } from '../../../services/generics/loading.service';
     CheckboxModule,
     ProgressSpinnerModule
   ],
-  providers: [MessageService], // Provide MessageService here
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -41,7 +40,6 @@ export class LoginComponent {
   private loading = inject(LoadingService);
   private ls = inject(LocalStorageService);
   private authService = inject(AuthService);
-  private messageService = inject(MessageService);
   private router = inject(Router);
   
   isLoading = false;
@@ -53,6 +51,11 @@ export class LoginComponent {
     rememberMe: [false]
   });
   
+
+  constructor(private messageService: MessageService) {
+
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -67,18 +70,17 @@ export class LoginComponent {
         let response = data as ApiResponse<LoginResponse>;
         if(response.statusCode == 200 && data.isSuccess) {
           if(response.data && response.data.user && response.data.tokenResponse) {
-            this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: 'Logged in successfully'});
             if(response.data.user.roles.includes(ERoleToString[ERole.SOFT_OWNER]) || response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-              if(response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-                if(response.data.user.business == null) {
-                  this.router.navigate(['clint-setup/create-business'], { replaceUrl: true });
-                  return
-                }
-                if(response.data.user.business.branches == null) {
-                  this.router.navigate(['clint-setup/create-branch'], { replaceUrl: true });
-                  return;
-                }
-              }
+              // if(response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
+              //   if(response.data.user.business == null) {
+              //     this.router.navigate(['clint-setup/create-business'], { replaceUrl: true });
+              //     return
+              //   }
+              //   if(response.data.user.business.branches == null) {
+              //     this.router.navigate(['clint-setup/create-branch'], { replaceUrl: true });
+              //     return;
+              //   }
+              // }
               this.router.navigate(['admin'], { replaceUrl: true  });
             }
             else if(response.data.user.roles.includes(ERoleToString[ERole.TAILOR]) || response.data.user.roles.includes(ERoleToString[ERole.CUTTER])) {
@@ -94,23 +96,12 @@ export class LoginComponent {
           this.loginForm.reset();
           return;
         }
-        this.messageService.add({
-          key: 'auth-toast',
-          severity: 'error',
-          summary: 'Login Failed',
-          detail: data.message || 'Failed to login'
-        });
+        this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: data.message || 'Failed to login'});
         this.isLoading = false;
       },
       error: (error) => {
-        debugger
-        this.messageService.add({
-          key: 'auth-toast',
-          severity: 'error',
-          summary: 'Login Failed',
-          detail: error instanceof Error ? error.message : 'Failed to login'
+        this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: error instanceof Error ? error.message : 'Failed to login'
         });
-        
         this.isLoading = false;
       }
     });

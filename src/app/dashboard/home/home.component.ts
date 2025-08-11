@@ -10,6 +10,8 @@ import { LoadingService } from '../../services/generics/loading.service';
 import { MessageService } from 'primeng/api';
 import { EOrderStatus } from '../../enums/enums';
 import { RouterModule } from '@angular/router';
+import { ShareDataService } from '../../services/shared/share-data.service';
+import { UserResponse } from '../../Dtos/responses/loginResponseDto';
 @Component({
   selector: 'app-home',
   imports: [CommonModule, RouterModule, BadgeModule, CardModule, ButtonModule, TagModule, CheckboxModule, FormsModule],
@@ -17,6 +19,8 @@ import { RouterModule } from '@angular/router';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
+  private sds = inject(ShareDataService);
+  userResponse?: UserResponse | null;
   recentOrdersLimit = 10;
   // homeService = inject(HomeService);
   loadingService = inject(LoadingService);
@@ -38,6 +42,10 @@ export class HomeComponent {
 
   constructor() {
     this.getRecentOrders();
+    this.sds.userData.subscribe(response => {
+      debugger
+      this.userResponse = response;
+    });
   }
   
   getStatusSeverity(status: number): any {

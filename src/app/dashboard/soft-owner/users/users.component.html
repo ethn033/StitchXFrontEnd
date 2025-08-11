@@ -1,0 +1,138 @@
+<p-dialog  header="Custom Date Range Filter" [modal]="true" 
+[(visible)]="showCustomDateRangeDialog" [style]="{ width: '35rem' }">
+<div class="w-full px-3">
+    <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" showButtonBar="true" inline="true" selectionMode="range"  [style]="{ width: '100%' }" [readonlyInput]="true">
+    </p-datepicker>
+</div>
+
+<!-- Buttons - Right Aligned -->
+<div class="flex justify-end gap-2 mt-3 p-3">
+    <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
+    <p-button label="Save" (click)="showCustomDateRangeDialog = false; refresh()" />  <!-- Recommend separate handler -->
+</div>
+</p-dialog>
+
+<div class="d-flex justify-content-between align-items-center mb-5">
+    <!-- Left: Title with refresh button -->
+    <h5 class="fw-bold m-0">
+        <p-button rounded="true" size="large" pTooltip="Refresh Customers" (onClick)="refresh()" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Shop Owners
+    </h5>
+    
+    <!-- Right: Dropdown + New Order button -->
+    <div class="d-flex align-items-center gap-3">
+        
+        <p-select size="small" [options]="customerStatuses" [(ngModel)]="selectedCustomerStatus" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+        
+        <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)"
+        optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+        
+        <button pButton size="small" label="Customer" (click)="showNewCustomerDialog()" icon="pi pi-plus" class="p-button-primary"></button>
+    </div>
+</div>
+<!-- (onLazyLoad)="loadCustomers($event)"  -->
+
+<p-table #dt [value]="customers" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false"  [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
+    
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="firstName">Customer <p-sortIcon field="firstName"></p-sortIcon></th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Orders</th>
+            <th>Status</th>
+            <th>Outstanding</th>
+            <th style="width: 120px">Actions</th>
+        </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-customer>
+        <tr>
+            <td>
+                {{ customer.firstName }} {{ customer.lastName }}
+            </td>
+            <td>
+                <div *ngIf="customer.phoneNumber" class="flex align-items-center mb-1">
+                    <i class="pi pi-phone me-1"></i>
+                    <span>{{ customer.phoneNumber }}</span>
+                </div>
+            </td>
+            <td>
+                <div *ngIf="customer.email" class="flex align-items-center">
+                    <i class="pi pi-envelope me-1"></i>
+                    <span>{{ customer.email | truncate:20 }}</span>
+                </div>
+            </td>
+            <td>
+                {{ customer.address | truncate:30 }}
+            </td>
+            <td>
+                <span class="font-medium me-1">{{ customer.totalOrders || 0 }}</span>
+                <small>total</small>
+            </td>
+            <td>
+                <p-tag  [severity]="customer.isActive ? 'success' : 'danger'" [value]="customer.isActive ? 'ACTIVE' : 'INACTIVE'"
+                ></p-tag>
+            </td>
+            <td>
+                <span class="font-medium" [ngClass]="{'text-red-500': customer.outstandingAmount > 0}">
+                    {{ customer.outstandingAmount | currency:'INR' }}
+                </span>
+                <small *ngIf="customer.outstandingAmount > 0" class="block text-color-secondary">
+                    Due {{ customer.lastOrderDate | date:'shortDate' }}
+                </small>
+            </td>
+            <td>
+                <div class="flex flex-wrap gap-1">
+                    <button 
+                    pButton 
+                    icon="pi pi-eye" 
+                    class="p-button-sm p-button-rounded p-button-text"
+                    pTooltip="View" 
+                    tooltipPosition="top"
+                    (click)="viewCustomer(customer)"
+                    ></button>
+                    <button 
+                    pButton 
+                    icon="pi pi-pencil" 
+                    class="p-button-sm p-button-rounded p-button-text"
+                    pTooltip="Edit" 
+                    tooltipPosition="top"
+                    (click)="editCustomer(customer)"
+                    ></button>
+                    <button 
+                    pButton 
+                    icon="pi pi-shopping-cart" 
+                    class="p-button-sm p-button-rounded p-button-text"
+                    pTooltip="Take Order" 
+                    tooltipPosition="top"
+                    (click)="takeOrder(customer)"
+                    ></button>
+                    <button 
+                    pButton 
+                    icon="pi pi-trash" 
+                    class="p-button-sm p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Delete" 
+                    tooltipPosition="top"
+                    (click)="confirmDelete(customer)"
+                    ></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+    
+    <ng-template pTemplate="emptymessage">
+        <tr>
+            <td colspan="8" class="text-center py-5">
+                <div class="flex flex-column align-items-center">
+                    <i class="pi pi-users text-4xl text-400 mb-3"></i>
+                    <h4 class="mb-1">No Customers Found</h4>
+                    <p class="text-600">Add your first customer to get started</p>
+                    <button  pButton label="Add Customer" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="showNewCustomerDialog()"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-confirmDialog [style]="{width: '450px'}" header="Confirm Deletion" icon="pi pi-exclamation-triangle"></p-confirmDialog>

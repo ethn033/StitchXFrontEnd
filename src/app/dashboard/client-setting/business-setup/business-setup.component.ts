@@ -9,7 +9,7 @@ import { ApiResponse } from '../../../models/base-response';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { APP_USER } from '../../../utils/global-contstants';
-import { UserRespnse } from '../../../Dtos/responses/loginResponseDto';
+import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { BusinessService } from '../../../services/business/business.service';
 import { MessageService } from 'primeng/api';
 
@@ -27,15 +27,16 @@ export class BusinessSetupComponent {
   private router = inject(Router);
   private ls = inject(LocalStorageService);
   businessForm!: FormGroup;
-  userResponse? : UserRespnse;
+  userResponse? : UserResponse;
   
   constructor(private fb: FormBuilder) {
-    this.initForm();
-    this.userResponse = this.ls.getItem(APP_USER, true) as UserRespnse;
+    debugger
+    this.userResponse = this.ls.getItem(APP_USER, true) as UserResponse;
     if(!this.userResponse) {
       this.router.navigate(['auth'], { replaceUrl: true });
       return;
     }
+    this.initForm();
     
   }
   
