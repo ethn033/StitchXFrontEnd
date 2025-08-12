@@ -12,7 +12,10 @@ import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { AvatarModule } from 'primeng/avatar';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ToolbarModule } from 'primeng/toolbar';
-import { InputIcon } from "primeng/inputicon";
+import { ShareDataService } from '../../../services/shared/share-data.service';
+import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
+import { ERole, ERoleToString } from '../../../enums/enums';
+import { Badge } from "primeng/badge";
 
 @Component({
   selector: 'app-topbar',
@@ -22,44 +25,75 @@ import { InputIcon } from "primeng/inputicon";
     AutoCompleteModule,
     MenuModule,
     ButtonModule,
-    RippleModule, AvatarModule, ToolbarModule],
-  templateUrl: './topbar.component.html',
-  styleUrl: './topbar.component.css'
-})
-export class TopbarComponent {
-  private authService = inject(AuthService);
-  searchText = '';
-  filteredItems: string[] = [];
-  dummyItems = ['Order #1234', 'Customer: John Doe', 'Fabric Stock', 'Measurement Template'];
-
-  notificationItems = [
-    { label: 'New order received', icon: 'pi pi-shopping-bag' },
-    { label: 'Payment completed', icon: 'pi pi-check' },
-    { separator: true },
-    { label: 'View all notifications', icon: 'pi pi-bell' }
-  ];
-
-  userMenuItems: MenuItem[] = [
-    { label: 'Profile', icon: 'pi pi-user' },
-    { label: 'Settings', icon: 'pi pi-cog' },
-    { separator: true },
-    { label: 'Sign Out', icon: 'pi pi-sign-out', command: () => this.authService.signOut() }
-  ];
-
-  filterItems(event: any) {
-    this.filteredItems = this.dummyItems.filter(item => 
-      item.toLowerCase().includes(event.query.toLowerCase())
-    );
+    RippleModule, AvatarModule, ToolbarModule, Badge],
+    templateUrl: './topbar.component.html',
+    styleUrl: './topbar.component.css'
+  })
+  export class TopbarComponent {
+    private authService = inject(AuthService);
+    private sds = inject(ShareDataService);
+    userResponse?: UserResponse | null;
+    
+    roles = ERole;
+    currentRole?: ERole | null;
+    
+    constructor() {
+      this.sds.userData.subscribe(userData => {
+        this.userResponse = userData;
+        if(this.userResponse && this.userResponse.roles.length > 0) {
+          let roles = this.userResponse.roles;
+          if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
+            this.currentRole = ERole.SOFT_OWNER;
+          }
+          if(roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
+            this.currentRole = ERole.SHOP_OWNER;
+          }
+          if(roles.includes(ERoleToString[ERole.TAILOR])) {
+            this.currentRole = ERole.TAILOR;
+          }
+          if(roles.includes(ERoleToString[ERole.CUTTER])) {
+            this.currentRole = ERole.CUTTER;
+          }
+          if(roles.includes(ERoleToString[ERole.CUSTOMER])) {
+            this.currentRole = ERole.CUSTOMER;
+          }
+        }
+      });
+    }
+    
+    searchText = '';
+    filteredItems: string[] = [];
+    dummyItems = ['Order #1234', 'Customer: John Doe', 'Fabric Stock', 'Measurement Template'];
+    
+    userMenuItems: MenuItem[] = [
+     
+      {
+        label: 'Profile',
+        items: [
+          {
+            label: 'Settings',
+            icon: 'pi pi-cog',
+            shortcut: '⌘+O'
+          },
+          {
+            label: 'Messages',
+            icon: 'pi pi-inbox',
+            badge: '2'
+          },
+          {
+            label: 'Logout',
+            icon: 'pi pi-sign-out',
+            shortcut: '⌘+Q',
+            command: () => this.authService.signOut()
+          }
+        ]
+      }
+    ];
+    
+    filterItems(event: any) {
+      this.filteredItems = this.dummyItems.filter(item => 
+        item.toLowerCase().includes(event.query.toLowerCase())
+      );
+    }
   }
-
-  showMobileSearch = false;
-  toggleMobileSearch() {
-    this.showMobileSearch = !this.showMobileSearch;
-  }
-  hasNotifications = true;
-
-  toggleMobileMenu() {
-    // Implement mobile menu toggle logic
-    // You might want to emit an event to a parent component
-  }
-}
+  

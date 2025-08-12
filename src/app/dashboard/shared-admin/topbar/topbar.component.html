@@ -12,25 +12,26 @@
         <div class="search-container">
             <div class="search-wrapper">
                 <i class="pi pi-search search-icon"></i>
-                <p-autoComplete [(ngModel)]="searchText" 
-                                appendTo="p-toolbar"
-                              [suggestions]="filteredItems" 
-                              (completeMethod)="filterItems($event)"
-                              placeholder="Search..." 
-                              [inputStyle]="{'padding-left': '2rem'}"
-                              styleClass="full-width-autocomplete">
+                <p-autoComplete [(ngModel)]="searchText" appendTo="body" [suggestions]="filteredItems" (completeMethod)="filterItems($event)" placeholder="Search..." [inputStyle]="{'padding-left': '2rem'}" styleClass="full-width-autocomplete">
                 </p-autoComplete>
             </div>
         </div>
     </ng-template>
-
+    
     <ng-template #end>
         <div class="actions-container">
             <p-button icon="pi pi-bell" [rounded]="true" text="true" severity="contrast" styleClass="action-btn"/>
-            <p-avatar (click)="userMenu.toggle($event)" 
-                     image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" 
-                     styleClass="cursor-pointer small-avatar"/>
-            <p-menu #userMenu [model]="userMenuItems" [popup]="true"></p-menu>
+            <p-avatar (click)="userMenu.toggle($event)" image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" styleClass="cursor-pointer small-avatar"/>
+            <p-menu class="flex justify-center" styleClass="w-full md:w-60" #userMenu [model]="userMenuItems" [popup]="true">
+                <ng-template #item let-item>
+                    <a pRipple class="flex items-center p-menu-item-link">
+                        <span [class]="item.icon"></span>
+                        <span class="ml-2">{{ item.label }}</span>
+                        <p-badge *ngIf="item.badge" class="ml-auto" [value]="item.badge" />
+                        <span *ngIf="item.shortcut" class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
+                    </a>
+                </ng-template>
+            </p-menu>
         </div>
     </ng-template>
 </p-toolbar>

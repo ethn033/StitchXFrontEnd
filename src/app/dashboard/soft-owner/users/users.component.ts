@@ -14,15 +14,16 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { customerStatusValues, dateFilterValues } from '../../../utils/utils';
+import { dateFilterValues, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
-import { LoginResponse, UserResponse } from '../../../Dtos/responses/loginResponseDto';
+import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
 import { ViewCustomerComponent } from '../../customers/dialogs/view-customer/view-customer.component';
-import { CustomerCreateComponent } from '../../customers/dialogs/customer-create/customer-create.component';
+import { UserCreateComponent } from '../../customers/dialogs/customer-create/user-create.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
 import { UsersResponse } from '../../../Dtos/responses/UsersResponse';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
+import { ERole } from '../../../enums/enums';
 @Component({
   selector: 'app-users',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe],
@@ -33,11 +34,13 @@ import { ApiResponse } from '../../../models/base-response';
 export class UsersComponent {
 
   users: UserDto[] = [];
-  customerStatuses: DropDownItem[] = customerStatusValues();
-  selectedCustomerStatus: DropDownItem = this.customerStatuses[0]; // Default to 'All Statuses'
-  dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
+  userStatuses: DropDownItem[] = userStatusesFilterValues();
+  selectedCustomerStatus: DropDownItem = this.userStatuses[0];
+  userRolesItems: DropDownItem[] = userRolesFilterValue();
+  selectedRole?: DropDownItem = this.userRolesItems[0];
+  dateRange: Date[] = [moment().subtract(1, 'month').toDate(), moment().toDate()]; // Default to last week
   dateRanges = dateFilterValues();
-  selectedDateFilter: DropDownItem = this.dateRanges[0]; // Default to 'This Week'
+  selectedDateFilter: DropDownItem = this.dateRanges[1]; // Default to 'This Week'
   
   // Removed invalid instantiation of Customer, as it is only a type
   filterItems: MenuItem[] = [
@@ -55,16 +58,24 @@ export class UsersComponent {
   loadingService: LoadingService = inject(LoadingService);
   
   ngOnInit(): void {
-    this.refresh();
-  }
-  
-  refresh() {
-    this.loadUsers();
+
   }
   
   loadUsers(event?: TableLazyLoadEvent): void {
     this.loadingService.show();
-    this.us.getUsers<ApiResponse<UsersResponse>>().subscribe({
+
+    let payload = {
+      page: 1,
+      pageSize: 20,
+      search: "",
+      status: this.selectedCustomerStatus.id == 1 ? true : false,
+      role: this.selectedRole?.id ?? ERole.ALL,
+      startDate: moment(this.dateRange[0]).format('YYYY-MM-DD'),
+      endDate: moment(this.dateRange[1]).format('YYYY-MM-DD'),
+    };
+
+    debugger
+    this.us.getUsers<ApiResponse<UsersResponse>>(payload).subscribe({
       next: (data: any) => {
         this.loadingService.hide();
         let usersResp = data as ApiResponse<UsersResponse>;
@@ -88,25 +99,25 @@ export class UsersComponent {
         case 1: // This Week
         this.dateRange = [moment().startOf('week').toDate(), todayDate];
         break;
-        case 3: // This Month
+        case 2: // This Month
         this.dateRange = [moment().startOf('month').toDate(), todayDate];
         break;
-        case 4: // Last Month
+        case 3: // Last Month
         this.dateRange = [moment().subtract(1, 'month').startOf('month').toDate(), moment().subtract(1, 'month').endOf('month').toDate()];
         break;
-        case 5: // This Year
+        case 4: // This Year
         this.dateRange = [moment().startOf('year').toDate(), todayDate];
         break;
-        case 6: // Last Year
+        case 5: // Last Year
         this.dateRange = [moment().subtract(1, 'year').startOf('year').toDate(), moment().subtract(1, 'year').endOf('year').toDate()];
         break;
-        case 8: // All Time
+        case 6: // All Time
         this.dateRange = [];
         break;
       }
-      
-      this.refresh();
     }
+
+    this.loadUsers();
   }
   
   deleteCustomer(id: number): void {
@@ -144,7 +155,7 @@ export class UsersComponent {
   
   
   editCustomer(customer: LoginResponse): void {
-    const ref = this.dialogService.open(CustomerCreateComponent, {
+    const ref = this.dialogService.open(UserCreateComponent, {
       header: `Edit Customer - ${customer.user.firstName} ${customer.user.lastName}`,
       width: '90%',
       styleClass: 'customer-dialog',
@@ -163,8 +174,8 @@ export class UsersComponent {
     });
   }
   
-  showNewCustomerDialog(): void {
-    const ref = this.dialogService.open(CustomerCreateComponent, {
+  addUserDialog(): void {
+    const ref = this.dialogService.open(UserCreateComponent, {
       header: 'Add New Customer',
       width: '90%',
       styleClass: 'customer-dialog',

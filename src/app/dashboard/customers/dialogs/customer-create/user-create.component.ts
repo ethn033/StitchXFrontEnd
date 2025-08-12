@@ -7,13 +7,13 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
 @Component({
-  selector: 'app-customer-create',
+  selector: 'app-user-create',
   imports: [ButtonModule, ReactiveFormsModule, CommonModule, InputNumberModule],
   providers: [MessageService],
-  templateUrl: './customer-create.component.html',
-  styleUrl: './customer-create.component.css'
+  templateUrl: './user-create.component.html',
+  styleUrl: './user-create.component.css'
 })
-export class CustomerCreateComponent {
+export class UserCreateComponent {
   customerForm: FormGroup;
   loading = false;
 

@@ -21,7 +21,6 @@ export class SidebarComponent {
   currentRole?: ERole | null;
 
   constructor() {
-    debugger
     this.sds.userData.subscribe(userData => {
       this.userResponse = userData;
       if(this.userResponse && this.userResponse.roles.length > 0) {

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
-import { CustomerCreateComponent } from './dialogs/customer-create/customer-create.component';
+import { CustomerCreateComponent } from './dialogs/customer-create/user-create.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -16,7 +16,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
 import { DropDownItem } from '../../contracts/dropdown-item';
 import moment from 'moment';
-import { customerStatusValues, dateFilterValues } from '../../utils/utils';
+import { dateFilterValues, userStatusesFilterValues } from '../../utils/utils';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
@@ -32,7 +32,7 @@ export class CustomersComponent {
   
   // customers: Customer[] = [];
   
-  customerStatuses: DropDownItem[] = customerStatusValues();
+  customerStatuses: DropDownItem[] = userStatusesFilterValues();
   
   selectedCustomerStatus: DropDownItem = this.customerStatuses[0]; // Default to 'All Statuses'
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
@@ -199,3 +199,4 @@ export class CustomersComponent {
   }
   
 }
+

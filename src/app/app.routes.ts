@@ -60,8 +60,8 @@ export const routes: Routes = [
         loadComponent: () => import('./dashboard/soft-owner/users/users.component').then(m => m.UsersComponent)
       },
       {
-        path: 'shop-owners',
-        loadComponent: () => import('./dashboard/customers/customers.component').then(m => m.CustomersComponent)
+        path: 'users',
+         loadComponent: () => import('./dashboard/soft-owner/users/users.component').then(m => m.UsersComponent)
       }
     ]
   },

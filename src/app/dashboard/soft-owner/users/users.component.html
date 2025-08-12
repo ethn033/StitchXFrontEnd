@@ -8,79 +8,78 @@
 <!-- Buttons - Right Aligned -->
 <div class="flex justify-end gap-2 mt-3 p-3">
     <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
-    <p-button label="Save" (click)="showCustomDateRangeDialog = false; refresh()" />  <!-- Recommend separate handler -->
+    <p-button label="Save" (click)="showCustomDateRangeDialog = false; loadUsers();" />  <!-- Recommend separate handler -->
 </div>
 </p-dialog>
 
 <div class="d-flex justify-content-between align-items-center mb-5">
     <!-- Left: Title with refresh button -->
     <h5 class="fw-bold m-0">
-        <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="refresh()" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Users
+        <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="loadUsers();" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Users
     </h5>
     
     <!-- Right: Dropdown + New Order button -->
     <div class="d-flex align-items-center gap-3">
         
-        <p-select size="small" [options]="customerStatuses" [(ngModel)]="selectedCustomerStatus" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+        <p-select (onChange)="loadUsers();" size="small" [options]="userStatuses" [(ngModel)]="selectedCustomerStatus" optionLabel="value" placeholder="Filter by Status" class="min-w-[200px]"></p-select>
+
+        <p-select (onChange)="loadUsers();" size="small" [options]="userRolesItems" [(ngModel)]="selectedRole" optionLabel="value" placeholder="FIlter by Role" class="min-w-[200px]"></p-select>
         
         <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)"
         optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
         
-        <button pButton size="small" label="Customer" (click)="showNewCustomerDialog()" icon="pi pi-plus" class="p-button-primary"></button>
+        <button pButton size="small" label="User" (click)="addUserDialog()" icon="pi pi-plus" class="p-button-primary"></button>
     </div>
 </div>
 <!-- (onLazyLoad)="loadCustomers($event)"  -->
 
-<p-table #dt [value]="users" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false"  [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
+<p-table #dt [value]="users" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" [showGridlines]="true">
     
     <ng-template pTemplate="header">
         <tr>
-            <th pSortableColumn="firstName">Customer <p-sortIcon field="firstName"></p-sortIcon></th>
-            <th>Contact</th>
+            <th pSortableColumn="id">ID <p-sortIcon field="firstName"></p-sortIcon></th>
+            <th>Name</th>
             <th>Email</th>
-            <th>Address</th>
-            <th>Orders</th>
+            <th>Phone</th>
+            <th>Business</th>
             <th>Status</th>
-            <th>Outstanding</th>
+            <th>Balance</th>
             <th style="width: 120px">Actions</th>
         </tr>
     </ng-template>
     
-    <ng-template pTemplate="body" let-customer>
+    <ng-template pTemplate="body" let-user>
         <tr>
+            <td>{{user.userId}}</td>
             <td>
-                {{ customer.firstName }} {{ customer.lastName }}
+                {{ user.firstName }} {{ user.lastName }}
             </td>
-            <td>
-                <div *ngIf="customer.phoneNumber" class="flex align-items-center mb-1">
-                    <i class="pi pi-phone me-1"></i>
-                    <span>{{ customer.phoneNumber }}</span>
-                </div>
-            </td>
-            <td>
-                <div *ngIf="customer.email" class="flex align-items-center">
+             <td>
+                <div *ngIf="user.email" class="flex align-items-center">
                     <i class="pi pi-envelope me-1"></i>
-                    <span>{{ customer.email | truncate:20 }}</span>
+                    <span>{{ user.email | truncate:20 }}</span>
                 </div>
             </td>
             <td>
-                {{ customer.address | truncate:30 }}
+                <div class="flex align-items-center mb-1">
+                    <i class="pi pi-phone me-1"></i>
+                    <span>{{ user.phoneNumber ?? "N/A" }}</span>
+                </div>
+            </td>
+           
+            <td>
+                @if(user.business != null) {
+                    user.business.name | truncate:30
+                }
+                @else { 'N/A' }
             </td>
             <td>
-                <span class="font-medium me-1">{{ customer.totalOrders || 0 }}</span>
-                <small>total</small>
+                <p-tag [severity]="user.isActive ? 'success' : 'danger'" [value]="user.isActive ? 'ACTIVE' : 'INACTIVE'"></p-tag>
             </td>
             <td>
-                <p-tag  [severity]="customer.isActive ? 'success' : 'danger'" [value]="customer.isActive ? 'ACTIVE' : 'INACTIVE'"
-                ></p-tag>
-            </td>
-            <td>
-                <span class="font-medium" [ngClass]="{'text-red-500': customer.outstandingAmount > 0}">
-                    {{ customer.outstandingAmount | currency:'INR' }}
+                <span class="font-medium" [ngClass]="{'text-red-500': user.outstanding > 0}">
+                    {{ user.outstanding | currency:'PKR' }}
                 </span>
-                <small *ngIf="customer.outstandingAmount > 0" class="block text-color-secondary">
-                    Due {{ customer.lastOrderDate | date:'shortDate' }}
-                </small>
             </td>
             <td>
                 <div class="flex flex-wrap gap-1">
@@ -90,7 +89,7 @@
                     class="p-button-sm p-button-rounded p-button-text"
                     pTooltip="View" 
                     tooltipPosition="top"
-                    (click)="viewCustomer(customer)"
+                    (click)="viewCustomer(user)"
                     ></button>
                     <button 
                     pButton 
@@ -98,7 +97,7 @@
                     class="p-button-sm p-button-rounded p-button-text"
                     pTooltip="Edit" 
                     tooltipPosition="top"
-                    (click)="editCustomer(customer)"
+                    (click)="editCustomer(user)"
                     ></button>
                     <button 
                     pButton 
@@ -106,7 +105,7 @@
                     class="p-button-sm p-button-rounded p-button-text"
                     pTooltip="Take Order" 
                     tooltipPosition="top"
-                    (click)="takeOrder(customer)"
+                    (click)="takeOrder(user)"
                     ></button>
                     <button 
                     pButton 
@@ -114,7 +113,7 @@
                     class="p-button-sm p-button-rounded p-button-text p-button-danger"
                     pTooltip="Delete" 
                     tooltipPosition="top"
-                    (click)="confirmDelete(customer)"
+                    (click)="confirmDelete(user)"
                     ></button>
                 </div>
             </td>
@@ -126,9 +125,9 @@
             <td colspan="8" class="text-center py-5">
                 <div class="flex flex-column align-items-center">
                     <i class="pi pi-users text-4xl text-400 mb-3"></i>
-                    <h4 class="mb-1">No Customers Found</h4>
-                    <p class="text-600">Add your first customer to get started</p>
-                    <button  pButton label="Add Customer" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="showNewCustomerDialog()"></button>
+                    <h4 class="mb-1">No users found</h4>
+                    <p class="text-600">Add your first user to get started</p>
+                    <button  pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUserDialog()"></button>
                 </div>
             </td>
         </tr>
