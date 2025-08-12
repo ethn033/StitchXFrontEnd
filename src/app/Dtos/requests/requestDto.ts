@@ -13,16 +13,14 @@ import { EOrderStatus, EParameterType, EPaymentStatus, ERole } from "../../enums
  * 7 - DEMO_USER
  */
 export interface RegisterDto {
-  /** User's first name */
+  id?: number
   firstName: string;
-  /** User's last name */
   lastName: string;
-  /** User's email address */
   email: string;
-  /** User's password (8-100 characters) */
+  phone: string;
   password: string;
-  /** The role assigned to the user (default: CUSTOMER) */
   role?: ERole;
+  address?: string;
 }
 
 /** Login DTO for user authentication */

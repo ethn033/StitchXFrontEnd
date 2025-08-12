@@ -47,7 +47,6 @@ export class BranchSetupComponent {
   }
   
   onSubmit() {
-    debugger
     this.businessForm?.markAllAsTouched();
     if (!this.businessForm?.valid)
       return;

@@ -38,8 +38,10 @@ html, body {
 }
 
 
-
-
+/* Better spacing for error messages */
+.p-error {
+  margin-top: 0.25rem;
+}
 
 
 /* 

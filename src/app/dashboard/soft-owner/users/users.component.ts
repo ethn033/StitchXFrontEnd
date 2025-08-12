@@ -176,20 +176,20 @@ export class UsersComponent {
   
   addUserDialog(): void {
     const ref = this.dialogService.open(UserCreateComponent, {
-      header: 'Add New Customer',
-      width: '90%',
+      header: 'Register User',
+      width: '80%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       modal: true,
       closable: true,
-      closeOnEscape: true,
+      closeOnEscape: false,
       data: {}
     });
     
     ref.onClose.subscribe((result) => {
       if (result) {
-        // Refresh customer list or show success message
+        this.loadUsers();
       }
     });
   }
