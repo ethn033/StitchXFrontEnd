@@ -7,7 +7,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="firstName" class="form-label">First Name*</label>
-        <input type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Enter first name"
+        <input pInputText size="small" type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Enter first name"
         [ngClass]="{ 'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }">
         <div *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched" class="invalid-feedback">
           First name is required (max 50 characters)
@@ -18,7 +18,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="lastName" class="form-label">Last Name*</label>
-        <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Enter last name"
+        <input pInputText size="small" type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Enter last name"
         [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }">
         <div *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="invalid-feedback">Last name is required (max 50 characters)</div>
       </div>
@@ -27,7 +27,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="phone" class="form-label">Phone</label>
-        <input type="text" class="form-control" id="phone" formControlName="phone" placeholder="Enter phone number"
+        <input pInputText size="small" type="text" class="form-control" id="phone" formControlName="phone" placeholder="Enter phone number"
         [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }">
         <div *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="invalid-feedback">
           Please enter a valid phone number (10-15 digits)
@@ -38,7 +38,7 @@
     <div class="col-md-6">
       <div class="form-group">
         <label for="email" class="form-label">Email</label>
-        <input type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email" [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }">
+        <input pInputText size="small" type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email" [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }">
         <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
       </div>
     </div>
@@ -55,6 +55,14 @@
       <div class="form-group">
         <label for="role" class="form-label">Role</label><br>
         <p-select [style]="{ 'width': '100%' }" size="small" formControlName="role" id="role" [options]="userRolesItems"  optionLabel="value" placeholder="FIlter by Role"></p-select>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="city" class="form-label">City</label>
+        <input pInputText size="small" class="form-control" id="city" formControlName="city" placeholder="Enter city" [ngClass]="{ 'is-invalid': customerForm.get('city')?.invalid && customerForm.get('city')?.touched }">
+        <div *ngIf="customerForm.get('city')?.invalid && customerForm.get('city')?.touched" class="invalid-feedback">Please enter city</div>
       </div>
     </div>
     

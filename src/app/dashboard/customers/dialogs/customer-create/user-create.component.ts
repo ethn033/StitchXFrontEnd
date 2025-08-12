@@ -43,6 +43,7 @@ export class UserCreateComponent {
         email: ['', [Validators.required, Validators.email, Validators.maxLength(256)]],
         phone: ['', [Validators.required]],
         address: [''],
+        city: [''],
         password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
         role: [undefined] // Default role
       });
