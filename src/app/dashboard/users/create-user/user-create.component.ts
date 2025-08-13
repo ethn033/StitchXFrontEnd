@@ -1,3 +1,4 @@
+import { ProblemDetails } from './../../../models/error-response';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
@@ -9,12 +10,12 @@ import { Router } from '@angular/router';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { HttpErrorResponse } from '@angular/common/http';
-import { userRolesFilterValue } from '../../../utils/utils';
+import { normalizeError, userRolesFilterValue } from '../../../utils/utils';
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { UsersService } from '../../../services/client/users.service';
 import { RegisterDto } from '../../../Dtos/requests/requestDto';
 import { ApiResponse } from '../../../models/base-response';
+import { HttpStatusCode } from '@angular/common/http';
 @Component({
   selector: 'app-user-create',
   imports: [ButtonModule, ReactiveFormsModule, FormsModule, InputTextModule, PasswordModule, CommonModule, InputNumberModule, SelectModule],
@@ -43,7 +44,7 @@ export class UserCreateComponent {
         address: [''],
         city: [''],
         password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
-        role: [undefined] // Default role
+        role: [null, Validators.required] // Default role
       });
       
       // If editing an existing customer
@@ -57,10 +58,9 @@ export class UserCreateComponent {
       
     }
     
-    
     onSubmit() {
       if (this.customerForm.invalid) {
-        this.markAllAsTouched();
+        this.customerForm.markAllAsTouched();
         return;
       }
       const formValue = this.customerForm.value;
@@ -77,42 +77,37 @@ export class UserCreateComponent {
       this.loading = true;  
       this.us.createUsers(request).subscribe({
         next: (data: any) => {
-          this.loading = false;
           let resp = data as ApiResponse<any>;
-          if(resp.statusCode == 200 && resp.isSuccess) {
-            this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: 'Customer added successfully'});
-            this.ref.close(true);   
+          if(resp.statusCode == HttpStatusCode.Created && resp.isSuccess) {
+            let data = resp.data;
+            this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
+            this.ref.close(true);
           }
+          this.loading = false;
         },
         error: (err: any) => {
-          let errorMessage = 'Failed to register';
-          if (err instanceof Error) {
-            errorMessage = err.message;
-          } else if (err?.data) {
-            // Handle the specific API error structure
-            const duplicateErrors = err.data.filter((error: any) => 
-              error.code === 'DuplicateUserName' || error.code === 'DuplicateEmail'
-          );
-          
-          if (duplicateErrors.length > 0) {
-            errorMessage = duplicateErrors.map((e: any) => e.description).join(' ');
-          } else if (err.message) {
-            errorMessage = err.message;
+          const normalized = normalizeError(err);
+          switch(normalized.errorType) {
+            case 'VALIDATION_ERROR':
+            const errorMessages = normalized.errors?.map((e: any) => e.description).join('\n');
+            this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: normalized?.details});
+            break;
+            
+            case 'API_ERROR':
+            this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: normalized.details});
+            break;
+            
+            default:
+            this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: normalized.details});
           }
+          console.error('Error details:', normalized);
+          this.loading = false;
         }
-        this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: errorMessage});
-        this.loading = false;
-      }
-    });
+      });
+    }
+    
+    onCancel(): void {
+      this.ref.close(false);
+    }
   }
   
-  markAllAsTouched(): void {
-    Object.values(this.customerForm.controls).forEach(control => {
-      control.markAsTouched();
-    });
-  }
-  
-  onCancel(): void {
-    this.ref.close(false);
-  }
-}

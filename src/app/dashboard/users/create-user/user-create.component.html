@@ -1,89 +1,86 @@
-<form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="container-fluid p-3">
-  <div class="row g-3">
-    <div class="col-12">
-      <h5 class="mb-3">Personal Information</h5>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="firstName" class="form-label">First Name*</label>
-        <input pInputText size="small" type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Enter first name"
-        [ngClass]="{ 'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }">
-        <div *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched" class="invalid-feedback">
-          First name is required (max 50 characters)
+<div class="container-fluid d-flex align-items-center justify-content-center bg-light">
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" class="container-fluid p-3">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="firstName" class="form-label">First Name*</label>
+          <input pInputText size="small" type="text" class="form-control" id="firstName" formControlName="firstName" placeholder="Enter first name"
+          [ngClass]="{ 'is-invalid': customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched }">
+          <div *ngIf="customerForm.get('firstName')?.invalid && customerForm.get('firstName')?.touched" class="invalid-feedback">
+            First name is required (max 50 characters)
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="lastName" class="form-label">Last Name*</label>
-        <input pInputText size="small" type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Enter last name"
-        [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }">
-        <div *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="invalid-feedback">Last name is required (max 50 characters)</div>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="phone" class="form-label">Phone</label>
-        <input pInputText size="small" type="text" class="form-control" id="phone" formControlName="phone" placeholder="Enter phone number"
-        [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }">
-        <div *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="invalid-feedback">
-          Please enter a valid phone number (10-15 digits)
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="lastName" class="form-label">Last Name*</label>
+          <input pInputText size="small" type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Enter last name"
+          [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }">
+          <div *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="invalid-feedback">Last name is required (max 50 characters)</div>
         </div>
       </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="email" class="form-label">Email</label>
-        <input pInputText size="small" type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email" [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }">
-        <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="password" class="form-label">Password</label>
-        <p-password [size]="'small'" [style]="{ 'width': '100%' }" id="password" formControlName="password" placeholder="Enter your password" [toggleMask]="true"
-        [feedback]="true" [inputStyle]="{'width': '100%'}" [ngClass]="{ 'p-invalid': customerForm.get('password')?.touched && customerForm.get('password')?.invalid }"></p-password>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="role" class="form-label">Role</label><br>
-        <p-select [style]="{ 'width': '100%' }" size="small" formControlName="role" id="role" [options]="userRolesItems"  optionLabel="value" placeholder="FIlter by Role"></p-select>
-      </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="form-group">
-        <label for="city" class="form-label">City</label>
-        <input pInputText size="small" class="form-control" id="city" formControlName="city" placeholder="Enter city" [ngClass]="{ 'is-invalid': customerForm.get('city')?.invalid && customerForm.get('city')?.touched }">
-        <div *ngIf="customerForm.get('city')?.invalid && customerForm.get('city')?.touched" class="invalid-feedback">Please enter city</div>
-      </div>
-    </div>
-    
-    
-    
-    <div class="col-12">
-      <div class="form-group">
-        <label for="address" class="form-label">Address</label>
-        <textarea class="form-control" id="address" formControlName="address" placeholder="Enter address" rows="3" [ngClass]="{ 'is-invalid': customerForm.get('address')?.invalid && customerForm.get('address')?.touched }"></textarea>
-        <div *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched" class="invalid-feedback">
-          Maximum 200 characters
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="phone" class="form-label">Phone</label>
+          <input pInputText size="small" type="text" class="form-control" id="phone" formControlName="phone" placeholder="Enter phone number"
+          [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }">
+          <div *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="invalid-feedback">
+            Please enter a valid phone number (10-15 digits)
+          </div>
         </div>
       </div>
-    </div>
+      
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <input pInputText size="small" type="email" class="form-control" id="email" formControlName="email" placeholder="Enter email" [ngClass]="{ 'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched }">
+          <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <p-password [size]="'small'" [style]="{ 'width': '100%' }" id="password" formControlName="password" placeholder="Enter your password" [toggleMask]="true"
+          [feedback]="true" [inputStyle]="{'width': '100%'}" [ngClass]="{ 'p-invalid': customerForm.get('password')?.touched && customerForm.get('password')?.invalid }"></p-password>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="role" class="form-label">Role*</label>
+          <p-select [showClear]="true" [ngClass]="{
+            'ng-invalid ng-dirty': customerForm.get('role')?.invalid && customerForm.get('role')?.touched, 'ng-valid': customerForm.get('role')?.valid}" [style]="{ 'width': '100%' }" size="small" formControlName="role" itemid="role" [options]="userRolesItems" optionLabel="value" placeholder="Select a Role"/>
+            <div style="display: block;" *ngIf="customerForm.get('role')?.invalid && customerForm.get('role')?.touched" class="invalid-feedback">
+              Please select role
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="city" class="form-label">City</label>
+            <input pInputText size="small" class="form-control" id="city" formControlName="city" placeholder="Enter city" [ngClass]="{ 'is-invalid': customerForm.get('city')?.invalid && customerForm.get('city')?.touched }">
+          </div>
+        </div>
+        
+        <div class="col-12">
+          <div class="form-group">
+            <label for="address" class="form-label">Address</label>
+            <textarea class="form-control" id="address" formControlName="address" placeholder="Enter address" rows="3" [ngClass]="{ 'is-invalid': customerForm.get('address')?.invalid && customerForm.get('address')?.touched }"></textarea>
+            <div *ngIf="customerForm.get('address')?.invalid && customerForm.get('address')?.touched" class="invalid-feedback">
+              Maximum 200 characters
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="loading">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span> Save
+        </button>
+      </div>
+    </form>
   </div>
-  
-  <!-- Form Actions -->
-  <div class="d-flex justify-content-end gap-2 mt-4">
-    <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="loading">Cancel</button>
-    <button type="submit" class="btn btn-primary" [disabled]="customerForm.invalid || loading">
-      <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span> Save
-    </button>
-  </div>
-</form>

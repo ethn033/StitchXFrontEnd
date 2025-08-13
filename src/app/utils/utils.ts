@@ -43,41 +43,85 @@ export function generateDummyOrders() : OrderHistoryItemResponseDto[] {
 }
 
 
-export function normalizeError(error: unknown): {
+export interface NormalizedError {
   message: string;
   status?: number;
-  details?: ProblemDetails;
-} {
-  debugger
-  // Handle ProblemDetails
-  if (typeof error === 'object' && error !== null && 'title' in error) {
-    const pd = error as ProblemDetails;
+  details: string;
+  errorType: 'API_ERROR' | 'VALIDATION_ERROR' | 'HTTP_ERROR' | 'CLIENT_ERROR' | 'UNKNOWN_ERROR';
+  errors?: Array<{ code: string; description: string }>; // For validation errors
+}
+
+export function normalizeError(error: unknown): NormalizedError {
+  // Handle API response format (your specific case)
+  if (isApiErrorResponse(error)) {
     return {
-      message: pd.detail || pd.title || 'An error occurred',
-      status: pd.status,
-      details: pd
+      message: error.message || 'API Error',
+      status: error.statusCode,
+      details: error.data?.map(e => e.description).join(' ') || error.message,
+      errorType: 'VALIDATION_ERROR',
+      errors: error.data
+    };
+  }
+
+  // Handle ProblemDetails
+  if (isProblemDetails(error)) {
+    return {
+      message: error.title || 'Error',
+      status: error.status,
+      details: error.detail || "Error occurred.",
+      errorType: 'API_ERROR'
     };
   }
   
   // Handle HttpErrorResponse
   if (error instanceof HttpErrorResponse) {
+    // Check if it's your API error format
+    if (isApiErrorResponse(error.error)) {
+      return normalizeError(error.error);
+    }
+    
     return {
-      message: error.error?.message || error.message || 'HTTP request failed',
+      message: error.message || 'HTTP Error',
       status: error.status,
-      details: error.error
+      details: error.error,
+      errorType: 'HTTP_ERROR'
     };
   }
   
   // Handle string errors
   if (typeof error === 'string') {
-    return { message: error };
+    return {
+      message: error,
+      errorType: 'CLIENT_ERROR',
+      details: 'CLIENT_ERROR'
+    };
   }
   
   // Handle Error objects
   if (error instanceof Error) {
-    return { message: error.message };
+    return {
+      message: error.message,
+      errorType: 'CLIENT_ERROR',
+      details: 'CLIENT_ERROR'
+    };
   }
   
   // Fallback for unknown error types
-  return { message: 'An unknown error occurred' };
+  return {
+    message: 'An unknown error occurred',
+    errorType: 'UNKNOWN_ERROR',
+      details: 'CLIENT_ERROR'
+  };
+}
+
+// Type guards
+function isApiErrorResponse(obj: any): obj is { data: Array<{ code: string; description: string }>, message: string, statusCode: number } {
+  return obj && 
+         Array.isArray(obj.data) && 
+         obj.data.every((item: any) => 'code' in item && 'description' in item) &&
+         'statusCode' in obj;
+}
+
+function isProblemDetails(obj: any): obj is { title: string; status?: number; detail?: string } {
+  return obj && typeof obj === 'object' && 'title' in obj;
 }

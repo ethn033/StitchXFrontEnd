@@ -1,5 +1,5 @@
 // For error responses from ExceptionHandler
-export interface ProblemDetails {
+export class ProblemDetails {
   type?: string;
   title?: string;
   status?: number;

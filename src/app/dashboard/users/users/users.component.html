@@ -31,9 +31,8 @@
         <button pButton size="small" label="User" (click)="addUserDialog()" icon="pi pi-plus" class="p-button-primary"></button>
     </div>
 </div>
-<!-- (onLazyLoad)="loadCustomers($event)"  -->
 
-<p-table size="small" #dt [value]="users" [paginator]="true" [rows]="20" [rowsPerPageOptions]="[20,50,100]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalUsersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
+<p-table size="small" #dt [value]="users" [first]="first" [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalUsersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
     
     <ng-template pTemplate="header">
         <tr>

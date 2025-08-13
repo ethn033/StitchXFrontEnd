@@ -38,7 +38,7 @@ export class SignupComponent implements OnInit {
       ? null : { 'mismatch': true };
   }
 
-  onSignup() {
+  onSubmit() {
     if (this.signupForm.valid) {
       this.isLoading = true;
       // this.authService.signUp(this.signupForm.value).then(() => { 

@@ -92,22 +92,22 @@ export class UsersComponent {
   ngOnInit(): void {
   }
   
+  first: number= 0;
+  rows: number= 10;
+  pageNumber: number = 0;
+  pageSize: number = 10;
   loadUsers(event?: TableLazyLoadEvent): void {
-    
     debugger
     this.loadingService.show();
+    this.first = event?.first ?? this.first;
+    this.rows = event?.rows ?? this.rows;
     
-    // Provide default values if event is not provided
-    const first = event?.first ?? 0;
-    const rows = event?.rows ?? 20; // You can set your default page size here
-    
-    let ev = { first, rows };
-    let pageNumber = Math.floor(first / rows); // Added Math.floor for integer division
-    let pageSize = rows ?? 20;
+    this.pageNumber = Math.floor(this.first / this.rows);
+    this.pageSize = this.rows;
     
     let payload = {
-      page: pageNumber,
-      pageSize: pageSize,
+      page: this.pageNumber,
+      pageSize: this.pageSize,
       search: "",
       status: this.selectedCustomerStatus.id == 1 ? true : false,
       role: this.selectedRole?.id ?? ERole.ALL,
@@ -115,13 +115,14 @@ export class UsersComponent {
       endDate: moment(this.dateRange[1]).format('YYYY-MM-DD'),
     };
     
-    debugger
+    
     this.us.getUsers<ApiResponse<UsersResponse>>(payload).subscribe({
       next: (data: any) => {
+        debugger
         this.loadingService.hide();
         let usersResp = data as ApiResponse<UsersResponse>;
         this.users = usersResp.data.users;
-        this.totalUsersCount = this.users.length;
+        this.totalUsersCount = usersResp.data.totalCount;
       },
       error: (error: any) => {
         this.loadingService.hide();
