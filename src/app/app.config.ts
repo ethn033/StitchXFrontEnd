@@ -7,6 +7,7 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { apiInterceptorInterceptor } from './interceptors/api-interceptor.interceptor';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,7 +18,10 @@ export const appConfig: ApplicationConfig = {
         theme: {
             preset: Aura,
             options: {
-              darkModeSelector: false || 'none'
+              // darkModeSelector: false || 'none'
+              prefix: 'p',
+                    darkModeSelector: false,
+                    cssLayer: false
             }
         }
     }),
@@ -29,7 +33,8 @@ export const appConfig: ApplicationConfig = {
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
-    })
+    }),
+    MessageService
     // Add any other global providers here
   ],
 };

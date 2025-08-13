@@ -22,7 +22,7 @@
     <div class="d-flex align-items-center gap-3">
         
         <p-select (onChange)="loadUsers();" size="small" [options]="userStatuses" [(ngModel)]="selectedCustomerStatus" optionLabel="value" placeholder="Filter by Status" class="min-w-[200px]"></p-select>
-
+        
         <p-select (onChange)="loadUsers();" size="small" [options]="userRolesItems" [(ngModel)]="selectedRole" optionLabel="value" placeholder="FIlter by Role" class="min-w-[200px]"></p-select>
         
         <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)"
@@ -33,11 +33,11 @@
 </div>
 <!-- (onLazyLoad)="loadCustomers($event)"  -->
 
-<p-table #dt [value]="users" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalCustomersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" [showGridlines]="true">
+<p-table size="small" #dt [value]="users" [paginator]="true" [rows]="20" [rowsPerPageOptions]="[20,50,100]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalUsersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
     
     <ng-template pTemplate="header">
         <tr>
-            <th pSortableColumn="id">ID <p-sortIcon field="firstName"></p-sortIcon></th>
+            <th pSortableColumn="userId">ID <p-sortIcon field="userId"></p-sortIcon></th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
@@ -54,7 +54,7 @@
             <td>
                 {{ user.firstName }} {{ user.lastName }}
             </td>
-             <td>
+            <td>
                 <div *ngIf="user.email" class="flex align-items-center">
                     <i class="pi pi-envelope me-1"></i>
                     <span>{{ user.email | truncate:20 }}</span>
@@ -66,7 +66,7 @@
                     <span>{{ user.phoneNumber ?? "N/A" }}</span>
                 </div>
             </td>
-           
+            
             <td>
                 @if(user.business != null) {
                     user.business.name | truncate:30
@@ -83,38 +83,12 @@
             </td>
             <td>
                 <div class="flex flex-wrap gap-1">
-                    <button 
-                    pButton 
-                    icon="pi pi-eye" 
-                    class="p-button-sm p-button-rounded p-button-text"
-                    pTooltip="View" 
-                    tooltipPosition="top"
-                    (click)="viewCustomer(user)"
-                    ></button>
-                    <button 
-                    pButton 
-                    icon="pi pi-pencil" 
-                    class="p-button-sm p-button-rounded p-button-text"
-                    pTooltip="Edit" 
-                    tooltipPosition="top"
-                    (click)="editCustomer(user)"
-                    ></button>
-                    <button 
-                    pButton 
-                    icon="pi pi-shopping-cart" 
-                    class="p-button-sm p-button-rounded p-button-text"
-                    pTooltip="Take Order" 
-                    tooltipPosition="top"
-                    (click)="takeOrder(user)"
-                    ></button>
-                    <button 
-                    pButton 
-                    icon="pi pi-trash" 
-                    class="p-button-sm p-button-rounded p-button-text p-button-danger"
-                    pTooltip="Delete" 
-                    tooltipPosition="top"
-                    (click)="confirmDelete(user)"
-                    ></button>
+                    <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View"  tooltipPosition="top" (click)="viewCustomer(user)"></button>
+                    <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
+                    tooltipPosition="top" (click)="editCustomer(user)"></button>
+                    <button pButton icon="pi pi-shopping-cart" class="p-button-sm p-button-rounded p-button-text" pTooltip="Take Order" tooltipPosition="top" (click)="takeOrder(user)"></button>
+                    <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Delete" [disabled]="user.isDeleted" tooltipPosition="top" (click)="confirmDelete(user)"></button>
                 </div>
             </td>
         </tr>
@@ -134,4 +108,4 @@
     </ng-template>
 </p-table>
 
-<p-confirmDialog [style]="{width: '450px'}" header="Confirm Deletion" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-confirmDialog/>

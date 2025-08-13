@@ -70,7 +70,7 @@ export class ApiService {
   * @returns Observable of type T
   */
   protected patch<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<ApiResponse<T>> {
-    return this.http.patch<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`, body, { headers });
+    return this.http.patch<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, { headers });
   }
   
   /**
@@ -80,7 +80,7 @@ export class ApiService {
   * @returns Observable of any (can be customized to return specific type)
   */
   protected delete<T>(endpoint: string, headers?: HttpHeaders): Observable<ApiResponse<T>> {
-    return this.http.delete<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`, { headers });
+    return this.http.delete<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, { headers });
   }
   
   /**

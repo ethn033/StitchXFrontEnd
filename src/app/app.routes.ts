@@ -57,11 +57,11 @@ export const routes: Routes = [
       },
       {
         path: 'customers',
-        loadComponent: () => import('./dashboard/soft-owner/users/users.component').then(m => m.UsersComponent)
+        loadComponent: () => import('./dashboard/users/users/users.component').then(m => m.UsersComponent)
       },
       {
         path: 'users',
-         loadComponent: () => import('./dashboard/soft-owner/users/users.component').then(m => m.UsersComponent)
+         loadComponent: () => import('./dashboard/users/users/users.component').then(m => m.UsersComponent)
       }
     ]
   },

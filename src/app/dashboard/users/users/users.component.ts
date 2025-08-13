@@ -1,4 +1,4 @@
-import { UserDto } from './../../../Dtos/responses/UsersResponse';
+import { UserDto } from '../../../Dtos/responses/UsersResponse';
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -14,16 +14,17 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { dateFilterValues, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
+import { dateFilterValues, normalizeError, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
-import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
-import { ViewCustomerComponent } from '../../customers/dialogs/view-customer/view-customer.component';
-import { UserCreateComponent } from '../../customers/dialogs/customer-create/user-create.component';
+import { LoginResponse, UserResponse } from '../../../Dtos/responses/loginResponseDto';
+import { ViewCustomerComponent } from '../view-user/view-user.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
 import { UsersResponse } from '../../../Dtos/responses/UsersResponse';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
-import { ERole } from '../../../enums/enums';
+import { ERole, ERoleToString } from '../../../enums/enums';
+import { ShareDataService } from '../../../services/shared/share-data.service';
+import { UserCreateComponent } from '../create-user/user-create.component';
 @Component({
   selector: 'app-users',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe],
@@ -32,7 +33,13 @@ import { ERole } from '../../../enums/enums';
   styleUrl: './users.component.css'
 })
 export class UsersComponent {
-
+  
+  
+  private sds = inject(ShareDataService);
+  userResponse?: UserResponse | null;
+  roles = ERole;
+  currentRole?: ERole | null;
+  
   users: UserDto[] = [];
   userStatuses: DropDownItem[] = userStatusesFilterValues();
   selectedCustomerStatus: DropDownItem = this.userStatuses[0];
@@ -54,33 +61,67 @@ export class UsersComponent {
   us: UsersService = inject(UsersService);
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
-  totalCustomersCount: number = 0;
+  totalUsersCount: number = 0;
   loadingService: LoadingService = inject(LoadingService);
   
+  
+  constructor() {
+    this.sds.userData.subscribe(userData => {
+      this.userResponse = userData;
+      if(this.userResponse && this.userResponse.roles.length > 0) {
+        let roles = this.userResponse.roles;
+        if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
+          this.currentRole = ERole.SOFT_OWNER;
+        }
+        if(roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
+          this.currentRole = ERole.SHOP_OWNER;
+        }
+        if(roles.includes(ERoleToString[ERole.TAILOR])) {
+          this.currentRole = ERole.TAILOR;
+        }
+        if(roles.includes(ERoleToString[ERole.CUTTER])) {
+          this.currentRole = ERole.CUTTER;
+        }
+        if(roles.includes(ERoleToString[ERole.CUSTOMER])) {
+          this.currentRole = ERole.CUSTOMER;
+        }
+      }
+    });
+  }
+  
   ngOnInit(): void {
-
   }
   
   loadUsers(event?: TableLazyLoadEvent): void {
+    
+    debugger
     this.loadingService.show();
-
+    
+    // Provide default values if event is not provided
+    const first = event?.first ?? 0;
+    const rows = event?.rows ?? 20; // You can set your default page size here
+    
+    let ev = { first, rows };
+    let pageNumber = Math.floor(first / rows); // Added Math.floor for integer division
+    let pageSize = rows ?? 20;
+    
     let payload = {
-      page: 1,
-      pageSize: 20,
+      page: pageNumber,
+      pageSize: pageSize,
       search: "",
       status: this.selectedCustomerStatus.id == 1 ? true : false,
       role: this.selectedRole?.id ?? ERole.ALL,
       startDate: moment(this.dateRange[0]).format('YYYY-MM-DD'),
       endDate: moment(this.dateRange[1]).format('YYYY-MM-DD'),
     };
-
+    
     debugger
     this.us.getUsers<ApiResponse<UsersResponse>>(payload).subscribe({
       next: (data: any) => {
         this.loadingService.hide();
         let usersResp = data as ApiResponse<UsersResponse>;
         this.users = usersResp.data.users;
-        this.totalCustomersCount = this.users.length;
+        this.totalUsersCount = this.users.length;
       },
       error: (error: any) => {
         this.loadingService.hide();
@@ -116,22 +157,8 @@ export class UsersComponent {
         break;
       }
     }
-
+    
     this.loadUsers();
-  }
-  
-  deleteCustomer(id: number): void {
-    this.us.deleteUser<ApiResponse<any>>(id).subscribe({
-      next: (response: any) => {
-        let resp = response as ApiResponse<any>;
-        if(resp.isSuccess && resp.statusCode == 200){
-          this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: 'User has been deleted suc.' });
-        }
-      },
-      error: (err: any) => {
-        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to delete user.'});
-      }
-    });
   }
   
   
@@ -142,14 +169,14 @@ export class UsersComponent {
   }
   
   
-  viewCustomer(customer: LoginResponse): void {
+  viewCustomer(user: UserResponse): void {
     this.dialogService.open(ViewCustomerComponent, {
-      header: `Customer Details - ${customer.user.firstName} ${customer.user.lastName}`,
+      header: `Customer Details - ${user.firstName} ${user.lastName}`,
       width: '90%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
-      data: { customer, viewMode: true }
+      data: { user, viewMode: true }
     });
   }
   
@@ -206,13 +233,33 @@ export class UsersComponent {
   }
   
   
-  confirmDelete(customer: LoginResponse): void {
+  confirmDelete(user: UserResponse): void {
+    debugger
     this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${customer.user.firstName} ${customer.user.lastName}?`,
+      message: `Are you sure you want to delete ${user.firstName} ${user?.lastName}?`,
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
+      closable: true,
+      closeOnEscape: true,
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
       accept: () => {
-        // this.deleteCustomer(customer);
+        this.us.deleteUser<ApiResponse<any>>(user.id).subscribe({
+          next: (response: any) => {
+            let resp = response as ApiResponse<any>;
+            if(resp.isSuccess && resp.statusCode == 200){
+              this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: 'User has been deleted.' });
+              this.loadUsers();
+            }
+          },
+          error: (err: any) => {
+            let er = normalizeError(err);
+            this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
+          }
+        });
       }
     });
   }

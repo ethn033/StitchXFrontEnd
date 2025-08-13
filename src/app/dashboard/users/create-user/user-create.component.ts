@@ -5,17 +5,16 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { ERole } from '../../../../enums/enums';
-import { RegisterDto } from '../../../../Dtos/requests/requestDto';
-import { UsersService } from '../../../../services/client/users.service';
-import { ApiResponse } from '../../../../models/base-response';
 import { Router } from '@angular/router';
-import { userRolesFilterValue } from '../../../../utils/utils';
-import { DropDownItem } from '../../../../contracts/dropdown-item';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { HttpErrorResponse } from '@angular/common/http';
+import { userRolesFilterValue } from '../../../utils/utils';
+import { DropDownItem } from '../../../contracts/dropdown-item';
+import { UsersService } from '../../../services/client/users.service';
+import { RegisterDto } from '../../../Dtos/requests/requestDto';
+import { ApiResponse } from '../../../models/base-response';
 @Component({
   selector: 'app-user-create',
   imports: [ButtonModule, ReactiveFormsModule, FormsModule, InputTextModule, PasswordModule, CommonModule, InputNumberModule, SelectModule],
@@ -23,7 +22,6 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './user-create.component.css'
 })
 export class UserCreateComponent {
-  
   userRolesItems: DropDownItem[] = userRolesFilterValue();
   selectedRole?: DropDownItem = this.userRolesItems[0];
   customerForm: FormGroup;
@@ -61,14 +59,10 @@ export class UserCreateComponent {
     
     
     onSubmit() {
-      
-      debugger
       if (this.customerForm.invalid) {
         this.markAllAsTouched();
         return;
       }
-      
-      
       const formValue = this.customerForm.value;
       const request: RegisterDto = {
         firstName: formValue.firstName,
@@ -83,7 +77,6 @@ export class UserCreateComponent {
       this.loading = true;  
       this.us.createUsers(request).subscribe({
         next: (data: any) => {
-          debugger
           this.loading = false;
           let resp = data as ApiResponse<any>;
           if(resp.statusCode == 200 && resp.isSuccess) {
