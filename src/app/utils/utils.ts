@@ -2,7 +2,6 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { DropDownItem } from "../contracts/dropdown-item";
 import { OrderHistoryItemResponseDto } from "../Dtos/responses/orderResponseDto";
 import { ERole } from "../enums/enums";
-import { ProblemDetails } from "../models/error-response";
 
 export function dateFilterValues() : DropDownItem[] {
     return [
@@ -19,7 +18,8 @@ export function dateFilterValues() : DropDownItem[] {
 export function userStatusesFilterValues(): DropDownItem[] {
     return [
         { id: 1, value: 'Active' },
-        { id: 0, value: 'Inactive' }
+        { id: 0, value: 'Inactive' },
+        { id: 2, value: 'Deleted' },
     ];
 }
 

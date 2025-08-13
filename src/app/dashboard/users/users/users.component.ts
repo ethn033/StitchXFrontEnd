@@ -92,6 +92,7 @@ export class UsersComponent {
   ngOnInit(): void {
   }
   
+  searchStr: string = '';
   first: number= 0;
   rows: number= 10;
   pageNumber: number = 0;
@@ -108,8 +109,8 @@ export class UsersComponent {
     let payload = {
       page: this.pageNumber,
       pageSize: this.pageSize,
-      search: "",
-      status: this.selectedCustomerStatus.id == 1 ? true : false,
+      search: this.searchStr,
+      status: this.selectedCustomerStatus.id,
       role: this.selectedRole?.id ?? ERole.ALL,
       startDate: moment(this.dateRange[0]).format('YYYY-MM-DD'),
       endDate: moment(this.dateRange[1]).format('YYYY-MM-DD'),
