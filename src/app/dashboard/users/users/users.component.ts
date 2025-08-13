@@ -98,7 +98,7 @@ export class UsersComponent {
   pageNumber: number = 0;
   pageSize: number = 10;
   loadUsers(event?: TableLazyLoadEvent): void {
-    debugger
+    
     this.loadingService.show();
     this.first = event?.first ?? this.first;
     this.rows = event?.rows ?? this.rows;
@@ -112,14 +112,13 @@ export class UsersComponent {
       search: this.searchStr,
       status: this.selectedCustomerStatus.id,
       role: this.selectedRole?.id ?? ERole.ALL,
-      startDate: moment(this.dateRange[0]).format('YYYY-MM-DD'),
-      endDate: moment(this.dateRange[1]).format('YYYY-MM-DD'),
+      startDate: this.dateRange.length > 0 ? moment(this.dateRange[0]).toISOString() : '',
+      endDate: this.dateRange.length > 0 ? moment(this.dateRange[1]).toISOString() : '',
     };
-    
     
     this.us.getUsers<ApiResponse<UsersResponse>>(payload).subscribe({
       next: (data: any) => {
-        debugger
+        
         this.loadingService.hide();
         let usersResp = data as ApiResponse<UsersResponse>;
         this.users = usersResp.data.users;
@@ -134,7 +133,7 @@ export class UsersComponent {
   
   showCustomDateRangeDialog: boolean = false;
   onDateFilterChanged($event: any) {
-    if (this.selectedDateFilter.id === 7) {
+    if (this.selectedDateFilter.id === 6) {
       this.showCustomDateRangeDialog = true;
     } else {
       const todayDate = moment().toDate();
@@ -154,7 +153,7 @@ export class UsersComponent {
         case 5: // Last Year
         this.dateRange = [moment().subtract(1, 'year').startOf('year').toDate(), moment().subtract(1, 'year').endOf('year').toDate()];
         break;
-        case 6: // All Time
+        case 7: // All Time
         this.dateRange = [];
         break;
       }
@@ -182,38 +181,17 @@ export class UsersComponent {
     });
   }
   
-  
-  editCustomer(customer: LoginResponse): void {
-    const ref = this.dialogService.open(UserCreateComponent, {
-      header: `Edit Customer - ${customer.user.firstName} ${customer.user.lastName}`,
-      width: '90%',
-      styleClass: 'customer-dialog',
-      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-      baseZIndex: 10000,
-      modal: true,
-      closable: true,
-      closeOnEscape: true,
-      data: { customer }
-    });
-    
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        // this.loadCustomers();
-      }
-    });
-  }
-  
-  addUserDialog(): void {
+  addUpdateUserDialog(user?: UserResponse): void {
     const ref = this.dialogService.open(UserCreateComponent, {
       header: 'Register User',
-      width: '80%',
+      width: '70%',
       styleClass: 'customer-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
       modal: true,
       closable: true,
       closeOnEscape: false,
-      data: {}
+      data: {user: user }
     });
     
     ref.onClose.subscribe((result) => {

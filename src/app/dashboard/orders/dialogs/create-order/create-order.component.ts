@@ -5,7 +5,6 @@ import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { CreateOrderRequestDto } from '../../../../Dtos/requests/requestDto';
 
 @Component({
   selector: 'app-create-order',

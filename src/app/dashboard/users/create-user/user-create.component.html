@@ -21,10 +21,10 @@
       </div>
       <div class="col-md-6">
         <div class="form-group">
-          <label for="phone" class="form-label">Phone</label>
-          <input pInputText size="small" type="text" class="form-control" id="phone" formControlName="phone" placeholder="Enter phone number"
-          [ngClass]="{ 'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched }">
-          <div *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched" class="invalid-feedback">
+          <label for="phoneNumber" class="form-label">Phone</label>
+          <input pInputText size="small" type="text" class="form-control" id="phoneNumber" formControlName="phoneNumber" placeholder="Enter phone number"
+          [ngClass]="{ 'is-invalid': customerForm.get('phoneNumber')?.invalid && customerForm.get('phoneNumber')?.touched }">
+          <div *ngIf="customerForm.get('phoneNumber')?.invalid && customerForm.get('phoneNumber')?.touched" class="invalid-feedback">
             Please enter a valid phone number (10-15 digits)
           </div>
         </div>
@@ -37,12 +37,20 @@
           <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
         </div>
       </div>
-      
+
       <div class="col-md-6">
         <div class="form-group">
-          <label for="password" class="form-label">Password</label>
-          <p-password [size]="'small'" [style]="{ 'width': '100%' }" id="password" formControlName="password" placeholder="Enter your password" [toggleMask]="true"
-          [feedback]="true" [inputStyle]="{'width': '100%'}" [ngClass]="{ 'p-invalid': customerForm.get('password')?.touched && customerForm.get('password')?.invalid }"></p-password>
+          <label for="dateOfBirth" class="form-label">Date of birth</label><br>
+          <p-datepicker size="small" [inputStyle]="{'width': '100%'}" [style]="{ 'width': '100%' }" id="dateOfBirth" [showIcon]="true" inputId="dateOfBirth" [showOnFocus]="true" formControlName="dateOfBirth" />
+          <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
+        </div>
+      </div>
+
+      <div *ngIf="!isUpdateScreen" class="col-md-6">
+        <div class="form-group">
+          <label for="passwordHash" class="form-label">Password</label>
+          <p-password [minlength]="8" autocomplete="true" [size]="'small'" [style]="{ 'width': '100%' }" id="passwordHash" formControlName="passwordHash" placeholder="Enter your password" [toggleMask]="true"
+          [feedback]="true" [inputStyle]="{'width': '100%'}" [ngClass]="{ 'p-invalid': customerForm.get('passwordHash')?.touched && customerForm.get('passwordHash')?.invalid }"></p-password>
         </div>
       </div>
       

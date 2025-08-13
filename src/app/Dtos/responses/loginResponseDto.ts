@@ -13,9 +13,12 @@ export interface UserResponse {
   phoneNumber?: string;
   email?: string;
   createdAt?: Date;
+  city?: string;
+  address?: string;
   updatedAt?: Date;
   createdByUserId?: number;
   defaultRole: ERole;
+  dateOfBirth?: Date;
   defaultRoleStr?: string;
   outstanding: number;
   business: BusinessesResponse;

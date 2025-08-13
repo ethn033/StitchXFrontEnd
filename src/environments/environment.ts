@@ -8,7 +8,8 @@ export const environment = {
                 Login: 'Login',
                 Register: 'Register',
                 GetAllUsers: 'GetAllUsers',
-                DeleteUser: 'DeleteUser'
+                DeleteUser: 'DeleteUser',
+                UpdateUser: 'UpdateUser'
                 
             },
         },

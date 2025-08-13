@@ -1,4 +1,3 @@
-import { BranchCreateUpdateDto, BusinessCreateUpdateDto } from './../../../Dtos/requests/requestDto';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,10 +11,11 @@ import { APP_USER } from '../../../utils/global-contstants';
 import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { BusinessService } from '../../../services/business/business.service';
 import { MessageService } from 'primeng/api';
+import { Business } from '../../../Dtos/requests/requestDto';
 
 @Component({
   selector: 'app-business-setup',
-  imports: [CommonModule, ReactiveFormsModule, Button, Card, InputNumber],
+  imports: [CommonModule, ReactiveFormsModule, Button, Card],
   templateUrl: './business-setup.component.html',
   styleUrl: './business-setup.component.css'
 })
@@ -58,7 +58,7 @@ export class BusinessSetupComponent {
       return;
     
     // Create the request object using the form value
-    let request: BusinessCreateUpdateDto = {
+    let request: Business = {
       ...this.businessForm.value // Default value if not set
     };
     

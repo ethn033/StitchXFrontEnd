@@ -1,281 +1,267 @@
-import { EOrderStatus, EParameterType, EPaymentStatus, ERole } from "../../enums/enums";
+import { EOrderStatus, EParameterType, EPaymentMethod, EPaymentStatus, ERole } from "../../enums/enums";
 
-/********************************** Authentication ****************************************/
-/** 
- * Register DTO for user registration
- * Possible role values:
- * 1 - SOFT_OWNER
- * 2 - SHOP_OWNER
- * 3 - TAILOR
- * 4 - CUTTER
- * 5 - SWEEPER
- * 6 - CUSTOMER (default)
- * 7 - DEMO_USER
- */
-export interface RegisterDto {
-  id?: number
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
-  role?: ERole;
-  address?: string;
+export interface User {
+    id?: number | null;
+    userName?: string | null;
+    normalizedUserName?: string | null;
+    email?: string | null;
+    normalizedEmail?: string | null;
+    emailConfirmed?: boolean | null;
+    passwordHash?: string | null;
+    securityStamp?: string | null;
+    concurrencyStamp?: string | null;
+    phoneNumber?: string | null;
+    phoneNumberConfirmed?: boolean | null;
+    twoFactorEnabled?: boolean | null;
+    lockoutEnd?: Date | string | null;
+    lockoutEnabled?: boolean | null;
+    accessFailedCount?: number | null;
+
+    userId?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    dateOfBirth?: Date | string | null;
+    address?: string | null;
+    city?: string | null;
+    outstanding?: number | null;
+    refreshToken?: string | null;
+    refreshTokenExpiry?: Date | string | null;
+    primaryRole?: ERole | null;
+    primaryRoleStr?: string | null;
+    notes?: string | null;
+    totalOrders?: number | null;
+    
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
+    
+    measurements?: Measurement[] | null;
+    orders?: Order[] | null;
+    business?: Business | null;
+    payments?: Payment[] | null;
 }
 
-/** Login DTO for user authentication */
-export interface LoginDto {
-  /** User's email address */
+
+
+export interface Business {
+    id?: number | null;
+    name?: string | null;
+    phone?: string | null;
+    address?: string | null;
+    website?: string | null;
+    description?: string | null;
+    
+    // BaseEntity fields
+    updatedAt?: Date | string | null;
+    applicationUserId?: number | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    createdAt?: Date | string | null;
+    deletedAt?: Date | string | null;
+    
+    // Navigation properties
+    applicationUser?: User | null;
+    branches?: Branch[] | null;
+    suitTypes?: SuitType[] | null;
+    measurements?: Measurement[] | null;
+    orders?: Order[] | null;
+    orderItems?: OrderItem[] | null;
+    payments?: Payment[] | null;
+}
+
+export interface Branch {
+    id?: number | null;
+    businessId?: number | null;
+    applicationUserId?: number | null;
+    name?: string | null;
+    address?: string | null;
+    phone?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+
+    // BaseEntity fields
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
+
+    // Navigation properties
+    business?: Business | null;
+    applicationUser?: User | null;
+    orders?: Order[] | null;
+    payments?: Payment[] | null;
+}
+
+
+export interface Order {
+    id?: number | null;
+    businessId?: number | null;
+    branchId?: number | null;
+    orderOId?: string | null;
+    totalItems?: number | null;
+    orderDate?: Date | string | null;
+    deliveryDate?: Date | string | null;
+    orderStatus?: EOrderStatus | null;
+    paymentStatus?: EPaymentStatus | null;
+    totalAmount?: number | null;
+    paidAmount?: number | null;
+    discountAmount?: number | null;
+    discountPercentage?: number | null;
+    notes?: string | null;
+    applicationUserId?: number | null;
+
+    // BaseEntity fields
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
+
+    // Navigation properties
+    applicationUser?: User | null;
+    business?: Business | null;
+    branch?: Branch | null;
+    orderItems?: OrderItem[] | null;
+    payments?: Payment[] | null;
+}
+
+export interface Measurement {
+    id?: number | null;
+    businessId?: number | null;
+    name?: string | null;
+    applicationUserId?: number | null;
+    suitTypeId?: number | null;
+
+    // BaseEntity fields
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    createdByUserId?: number | null;
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    deletedAt?: Date | string | null;
+
+    // Navigation properties
+    applicationUser?: User | null;
+    suitType?: SuitType | null;
+    business?: Business | null;
+    measurementDetails?: Measurement[] | null;
+    orderItems?: OrderItem[] | null;
+}
+
+export interface Payment {
+    id?: number | null;
+    applicationUserId?: number | null;
+    orderId?: number | null;
+    businessId?: number | null;
+    branchId?: number | null;
+    amount?: number | null;
+    paymentDate?: Date | string | null;
+    paymentMethod?: EPaymentMethod | null;
+    notes?: string | null;
+    
+    // BaseEntity fields
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
+    
+    // Navigation properties
+    order?: Order | null;
+    business?: Business | null;
+    branch?: Branch | null;
+    applicationUser?: User | null;
+}
+
+export interface Login {
   email: string;
-  /** User's password */
   password: string;
-  /** Whether to remember the user (default: false) */
+  confirmPassword: string;
   rememberMe?: boolean;
 }
-/********************************** Auth ends ****************************************/
 
 
-/********************************** Suit types ****************************************/
-/** DTO for creating/updating suit types */
-export interface SuitTypeCreateDto {
-  /** Optional ID for updates */
-  id?: number;
-  /** Suit type name (required, max 100 chars) */
-  name: string;
-  /** Suit type description (max 500 chars) */
-  description?: string;
-  /** Price (required) */
-  price: number;
-  /** Creation timestamp */
-  createdAt?: Date;
-  /** Last update timestamp */
-  updatedAt?: Date;
-  /** Creator user ID */
-  createdByUserId?: number;
-  /** Soft delete flag */
-  isDeleted: boolean;
-  /** Active status flag */
-  isActive: boolean;
-}
-/********************************** Suit types ends ****************************************/
+export interface SuitType {
+    id?: number | null;
+    businessId?: number | null;
+    applicationUserId?: number | null;
+    name?: string | null;
+    description?: string | null;
+    price?: number | null;  // decimal in C# becomes number in TypeScript
 
+    // BaseEntity fields
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
 
-
-/********************************** Suit types ****************************************/
-/** DTO for creating/updating suit type parameters */
-export interface SuitTypeParameterCreateDTO {
-  id?: number;
-  /** Required suit type ID */
-  suitTypeId: number;
-  /** Required parameter name */
-  name: string;
-  /** Input placeholder text */
-  placeholder?: string;
-  /** Parameter type (default: TEXT) */
-  parameterType: EParameterType;
-  /** Options for select/radio parameters */
-  parameterOptions?: string;
-  /** Whether parameter is required (default: false) */
-  isRequired: boolean;
-  createdAt: Date;
-  updatedAt?: Date;
-  createdByUserId: number;
-  isDeleted: boolean;
-  isActive: boolean;
-}
-/********************************** Suit types ends ****************************************/
-
-/********************************** Customers ****************************************/
-/** DTO for creating a customer */
-export interface CreateCustomerRequest {
-  /** Required first name */
-  firstName: string;
-  /** Required last name */
-  lastName: string;
-  /** Valid email address */
-  email?: string;
-  /** Valid phone number (at least 10 digits) */
-  phoneNumber?: string;
-  address?: string;
-  city?: string;
-  dateOfBirth?: Date;
-  notes?: string;
+    // Navigation properties
+    applicationUser?: User | null;
+    business?: Business | null;
+    suitTypeParameters?: SuitTypeParameter[] | null;
+    measurements?: Measurement[] | null;
+    orderItems?: OrderItem[] | null;
 }
 
-/** DTO for updating a customer */
-export interface UpdateCustomerRequest {
-  /** First name (max 50 chars) */
-  firstName?: string;
-  /** Last name (max 50 chars) */
-  lastName?: string;
-  /** Valid email format */
-  email?: string;
-  /** Valid phone number format */
-  phoneNumber?: string;
-  /** Address (max 200 chars) */
-  address?: string;
-  /** City (max 50 chars) */
-  city?: string;
-  dateOfBirth?: Date;
-  /** Notes (max 500 chars) */
-  notes?: string;
-  /** Non-negative outstanding balance */
-  outstanding?: number;
-  /** Non-negative total orders */
-  totalOrders?: number;
-}
-/********************************** Customer ends ****************************************/
 
+export interface SuitTypeParameter {
+    id?: number | null;
+    name?: string | null;
+    placeHolder?: string | null;
+    parameterType?: EParameterType | null;
+    parameterOptions?: string | null;
+    isRequired?: boolean | null;
+    suitTypeId?: number | null;
 
-/********************************** Orders ****************************************/
-/** DTO for filtering order history */
-export interface OrderHistoryFilterDto {
-  orderId: number;
-  customerId: number;
-  orderStatus: EOrderStatus;
-  startDate: Date;
-  endDate: Date;
+    // BaseEntity fields
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
+
+    // Navigation property
+    suitType?: SuitType | null;
 }
 
-/** DTO for order history pagination */
-export interface OrderHistoryPaginationParamsDto {
-  /** Page number (min 1) */
-  page: number;
-  /** Page size (1-100) */
-  pageSize: number;
+
+export interface OrderItem {
+    id?: number | null;
+    businessId?: number | null;
+    suitTypeId?: number | null;
+    orderId?: number | null;
+    measurementId?: number | null;
+    quantity?: number | null;
+    price?: number | null;
+    totalAmount?: number | null;
+    discountAmount?: number | null;
+    discountPercentage?: number | null;
+    notes?: string | null;
+
+    // BaseEntity fields
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    createdByUserId?: number | null;
+    isDeleted?: boolean | null;
+    isActive?: boolean | null;
+    deletedAt?: Date | string | null;
+
+    // Navigation properties
+    business?: Business | null;
+    suitType?: SuitType | null;
+    order?: Order | null;
+    measurement?: Measurement | null;
 }
 
-/** DTO for creating an order */
-export interface CreateOrderRequestDto {
-  /** Required customer ID */
-  customerId: number;
-  /** Required order date */
-  orderDate: Date;
-  /** Required delivery date */
-  deliveryDate?: Date;
-  /** Order status (default: RECEIVED) */
-  orderStatus: EOrderStatus;
-  /** Payment status (default: PENDING) */
-  paymentStatus: EPaymentStatus;
-  /** Required total amount */
-  totalAmount: number;
-  paidAmount: number;
-  totalItems: number;
-  notes?: string;
-  /** List of order items */
-  orderItems: OrderItemRequestDto[];
-}
 
-/** DTO for order items */
-export interface OrderItemRequestDto {
-  /** Required suit type ID */
-  suitTypeId: number;
-  /** Required order ID */
-  orderId: number;
-  /** Required measurement ID */
-  measurementId: number;
-  price: number;
-  discountAmount: number;
-  discountPercentage: number;
-  notes?: string;
-  /** Required quantity */
-  quantity: number;
-  createdAt: Date;
-  updatedAt?: Date;
-  createdByUserId: number;
-  isDeleted: boolean;
-  isActive: boolean;
-}
-
-/** DTO for updating order status */
-export interface UpdateOrderStatusRequestDto {
-  /** New status to transition to */
-  newStatus: EOrderStatus;
-  /** Notes about the status change */
-  notes?: string;
-}
-/********************************** Order ends ****************************************/
-
-
-/********************************** Measurements ****************************************/
-/** DTO for measurements */
-export interface MeasurementDto {
-  id?: number;
-  /** Required customer ID */
-  applicationUserId: number;
-  /** Required suit type ID */
-  suitTypeId: number;
-  isActive: boolean;
-  /** List of measurement details */
-  measurementDetailsDto: MeasurementDetailsDto[];
-}
-
-/** DTO for measurement details */
-export interface MeasurementDetailsDto {
-  id?: number;
-  /** Required parameter ID */
-  parameterId: number;
-  /** Required measurement value */
-  value: string;
-  createdAt: Date;
-  updatedAt?: Date;
-  /** Required measurement ID */
-  measurementId: number;
-}
-
-/** DTO for measurements pagination */
-export interface MeasurementsPaginationParamsDto {
-  /** Page number (min 1) */
-  page: number;
-  /** Page size (1-100) */
-  pageSize: number;
-}
-
-/** DTO for filtering measurements */
-export interface MeasurementFilterDto {
-  customerId: number;
-  isActive: boolean;
-  suitTypeId: number;
-  startDate: Date;
-  endDate: Date;
-}
-
-/** DTO for creating/updating roles */
-export interface RoleCreateUpdateDto {
-  id?: number;
-  /** Required role name (30 chars max, no spaces) */
-  name: string;
-  /** Description (100 chars max) */
-  description?: string;
-  businessId?: number;
-}
-
-/** DTO for creating/updating businesses */
-export interface BusinessCreateUpdateDto {
-  id?: number;
-  /** Required business name (100 chars max) */
-  name: string;
-  /** Required owner ID */
-  ownerId: number;
-  phone?: string;
-  address?: string;
-  website?: string;
-  /** Description (500 chars max) */
-  description?: string;
-  isActive: boolean;
-}
-
-/** DTO for creating/updating branches */
-export interface BranchCreateUpdateDto {
-  id?: number;
-  /** Required business ID */
-  businessId: number;
-  /** Required owner ID */
-  ownerId: number;
-  /** Required name (100 chars max) */
-  name: string;
-  /** Required address (200 chars max) */
-  address: string;
-  phone?: string;
-  isActive: boolean;
-}

@@ -10,13 +10,13 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { AuthService } from '../../../services/auth/auth.service';
 import { MessageService } from 'primeng/api';
-import { LoginDto } from '../../../Dtos/requests/requestDto';
 import { ApiResponse } from '../../../models/base-response';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { ERole, ERoleToString } from '../../../enums/enums';
 import { APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
 import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
 import { LoadingService } from '../../../services/generics/loading.service';
+import { Login } from '../../../Dtos/requests/requestDto';
 
 @Component({
   selector: 'app-login',
@@ -63,7 +63,7 @@ export class LoginComponent {
     }
     
     this.isLoading = true;
-    const formData = this.loginForm.value as LoginDto;
+    const formData = this.loginForm.value as Login;
     
     this.authService.signIn(formData).subscribe({
       next: (data: any) => {

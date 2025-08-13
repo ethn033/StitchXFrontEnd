@@ -18,6 +18,7 @@ export interface UserDto {
     email?: string | null;
     createdAt?: Date | null;
     updatedAt?: Date | null;
+    dateOfBirth?: Date | null;
     createdByUserId?: number | null;
     defaultRole: ERole;
     defaultRoleStr?: string | null;
