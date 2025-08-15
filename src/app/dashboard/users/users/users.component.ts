@@ -113,7 +113,7 @@ export class UsersComponent {
       status: this.selectedCustomerStatus.id,
       role: this.selectedRole?.id ?? ERole.ALL,
       startDate: this.dateRange.length > 0 ? moment(this.dateRange[0]).toISOString() : '',
-      endDate: this.dateRange.length > 0 ? moment(this.dateRange[1]).toISOString() : '',
+      endDate: (this.dateRange.length > 0 && this.dateRange[1] != null) ? moment(this.dateRange[1]).toISOString() : '',
     };
     
     this.us.getUsers<ApiResponse<UsersResponse>>(payload).subscribe({

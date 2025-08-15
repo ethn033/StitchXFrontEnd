@@ -16,8 +16,8 @@ export class UsersService extends ApiService{
     return this.post(this.endpoint + environment.api.auth.enpoints.Register, payload);
   }
 
-  updateUsers<T>(payload: UserResponse): Observable<ApiResponse<T>> {
-    return this.put(this.endpoint + environment.api.auth.enpoints.UpdateUser+'/'+payload.id, payload);
+  updateUsers<T>(id: number, payload: User): Observable<ApiResponse<T>> {
+    return this.put(this.endpoint + environment.api.auth.enpoints.UpdateUser+'/'+ id, payload);
   }
 
   getUsers<T>(payload: any): Observable<ApiResponse<T>> {

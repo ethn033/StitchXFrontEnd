@@ -15,6 +15,7 @@ import { ApiResponse } from '../../../models/base-response';
 import { HttpStatusCode } from '@angular/common/http';
 import { User } from '../../../Dtos/requests/requestDto';
 import { DatePickerModule } from 'primeng/datepicker';
+import moment from 'moment';
 
 @Component({
   selector: 'app-user-create',
@@ -40,15 +41,18 @@ export class UserCreateComponent {
       phoneNumber: ['', [Validators.required]],
       address: [''],
       city: [''],
-      passwordHash: ['', this.isUpdateScreen ? [Validators.required, Validators.minLength(8), Validators.maxLength(25)] : []],
+      passwordHash: ['', !this.isUpdateScreen ? [Validators.required, Validators.minLength(8), Validators.maxLength(25)] : []],
       role: [null, Validators.required],
       dateOfBirth: []
     });
     
     if (this.isUpdateScreen) {
+
+      this.config.data.user.dateOfBirth =  moment(this.config.data.user.dateOfBirth).format('DD-MM-YYYY');;
       this.customerForm.patchValue({
         ...this.config.data.user,
-        role: this.userRolesItems.find(role => role.id === this.config.data.user.defaultRole)
+        role: this.userRolesItems.find(role => role.id === this.config.data.user.defaultRole),
+        dateOfBirth: this.config.data.user.dateOfBirth.toString()
       });
     }
   }
@@ -59,14 +63,13 @@ export class UserCreateComponent {
   }
   
   onSubmit() {
-
-    debugger
     if (this.customerForm.invalid) {
       this.customerForm.markAllAsTouched();
       return;
     }
     const formValue = this.customerForm.value;
-    const request = {
+    const request: User = {
+      id: this.isUpdateScreen ? this.config.data.user.id : 0,
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       phoneNumber: formValue.phoneNumber,
@@ -74,22 +77,24 @@ export class UserCreateComponent {
       passwordHash: formValue.passwordHash,
       primaryRole: formValue.role.id,
       address: formValue.address,
-      dateOfBirth: formValue.dateOfBirth
+      dateOfBirth: moment(formValue.dateOfBirth).toDate()
     };
     
     this.loading = true;  
-    this.us.createUsers(request).subscribe({
+
+    // if update screen, call updateUser method instead
+    // if (this.isUpdateScreen) {
+    const call = this.isUpdateScreen ? this.us.updateUsers(this.config.data.user.id, request) : this.us.createUsers(request);
+    call.subscribe({
       next: (data: any) => {
         let resp = data as ApiResponse<any>;
-        if(resp.statusCode == HttpStatusCode.Created && resp.isSuccess) {
-          let data = resp.data;
+        if(resp.statusCode == HttpStatusCode.Ok && resp.isSuccess) {
           this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
           this.ref.close(true);
         }
         this.loading = false;
       },
       error: (err: any) => {
-        console.log(err);
         this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: err.message});
         this.loading = false;
       }

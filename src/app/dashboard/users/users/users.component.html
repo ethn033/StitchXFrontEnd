@@ -1,7 +1,7 @@
 <p-dialog  header="Custom Date Range Filter" [modal]="true" 
 [(visible)]="showCustomDateRangeDialog" [style]="{ width: '35rem' }">
 <div class="w-full px-3">
-    <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" showButtonBar="true" inline="true" selectionMode="range"  [style]="{ width: '100%' }" [readonlyInput]="true">
+    <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" inline="true" selectionMode="range"  [style]="{ width: '100%' }" [readonlyInput]="true">
     </p-datepicker>
 </div>
 
@@ -25,8 +25,7 @@
         
         <p-select (onChange)="loadUsers();" size="small" [options]="userRolesItems" [(ngModel)]="selectedRole" optionLabel="value" placeholder="FIlter by Role" class="min-w-[200px]"></p-select>
         
-        <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)"
-        optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+        <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
         
         <button pButton size="small" label="User" (click)="addUpdateUserDialog()" icon="pi pi-plus" class="p-button-primary"></button>
     </div>

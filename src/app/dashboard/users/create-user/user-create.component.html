@@ -41,7 +41,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="dateOfBirth" class="form-label">Date of birth</label><br>
-          <p-datepicker size="small" [inputStyle]="{'width': '100%'}" [style]="{ 'width': '100%' }" id="dateOfBirth" [showIcon]="true" inputId="dateOfBirth" [showOnFocus]="true" formControlName="dateOfBirth" />
+          <p-datepicker size="small" [inputStyle]="{'width': '100%'}" [style]="{ 'width': '100%' }" id="dateOfBirth" [showIcon]="true" dateFormat="dd-mm-yy" inputId="dateOfBirth" [showOnFocus]="true" formControlName="dateOfBirth" />
           <div *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched" class="invalid-feedback">Please enter a valid email</div>
         </div>
       </div>
