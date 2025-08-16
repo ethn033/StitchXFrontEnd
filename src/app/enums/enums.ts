@@ -9,16 +9,6 @@ export enum ERole {
   DEMO_USER = 7
 }
 
-export const ERoleToString = {
-  [ERole.SOFT_OWNER]: 'SOFT_OWNER',
-  [ERole.SHOP_OWNER]: 'SHOP_OWNER',
-  [ERole.TAILOR]: 'TAILOR',
-  [ERole.CUTTER]: 'CUTTER',
-  [ERole.SWEEPER]: 'SWEEPER',
-  [ERole.CUSTOMER]: 'CUSTOMER',
-  [ERole.DEMO_USER]: 'DEMO_USER'
-} as const;
-
 export enum EParameterType {
   ALL = 0,
   TEXT = 1,

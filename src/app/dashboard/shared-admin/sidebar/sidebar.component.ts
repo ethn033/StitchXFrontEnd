@@ -5,7 +5,8 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
-import { ERole, ERoleToString } from '../../../enums/enums';
+import { ERole } from '../../../enums/enums';
+import { ERoleToString } from '../../../utils/utils';
 
 @Component({
   selector: 'app-sidebar',

@@ -12,11 +12,12 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { MessageService } from 'primeng/api';
 import { ApiResponse } from '../../../models/base-response';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
-import { ERole, ERoleToString } from '../../../enums/enums';
+import { ERole } from '../../../enums/enums';
 import { APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
 import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { Login } from '../../../Dtos/requests/requestDto';
+import { ERoleToString } from '../../../utils/utils';
 
 @Component({
   selector: 'app-login',

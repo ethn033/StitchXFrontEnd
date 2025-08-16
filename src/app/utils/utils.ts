@@ -35,6 +35,17 @@ export function userRolesFilterValue(): DropDownItem[] {
 }
 
 
+export const ERoleToString = {
+  [ERole.SOFT_OWNER]: 'SOFT_OWNER',
+  [ERole.SHOP_OWNER]: 'SHOP_OWNER',
+  [ERole.TAILOR]: 'TAILOR',
+  [ERole.CUTTER]: 'CUTTER',
+  [ERole.SWEEPER]: 'SWEEPER',
+  [ERole.CUSTOMER]: 'CUSTOMER',
+  [ERole.DEMO_USER]: 'DEMO_USER'
+} as const;
+
+
 // *********************Dummy Data Generation*********************
 export function generateDummyOrders() : OrderHistoryItemResponseDto[] {
     const dummyOrders: OrderHistoryItemResponseDto[] = [

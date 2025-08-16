@@ -57,8 +57,8 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="role" class="form-label">Role*</label>
-          <p-select [showClear]="true" [ngClass]="{
-            'ng-invalid ng-dirty': customerForm.get('role')?.invalid && customerForm.get('role')?.touched, 'ng-valid': customerForm.get('role')?.valid}" [style]="{ 'width': '100%' }" size="small" formControlName="role" itemid="role" [options]="userRolesItems" optionLabel="value" placeholder="Select a Role"/>
+          <p-select [readonly]="isUpdateScreen" [disabled]="isUpdateScreen" [ngClass]="{
+            'ng-invalid ng-dirty': customerForm.get('role')?.invalid && customerForm.get('role')?.touched, 'ng-valid': customerForm.get('role')?.valid}" [style]="{ 'width': '100%' }" size="small" formControlName="role" [options]="userRolesItems" optionLabel="value" placeholder="Select a Role"/>
             <div style="display: block;" *ngIf="customerForm.get('role')?.invalid && customerForm.get('role')?.touched" class="invalid-feedback">
               Please select role
             </div>

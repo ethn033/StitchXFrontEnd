@@ -24,13 +24,14 @@ import moment from 'moment';
   styleUrl: './user-create.component.css'
 })
 export class UserCreateComponent {
-  isUpdateScreen=false;
+  isUpdateScreen = false;
   userRolesItems: DropDownItem[] = userRolesFilterValue();
   customerForm: FormGroup;
   loading = false;
   us = inject(UsersService);
   ms = inject(MessageService);
   constructor(private fb: FormBuilder, public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService) {
+    
     
     this.isUpdateScreen = !!this.config.data?.user;
     
@@ -42,16 +43,17 @@ export class UserCreateComponent {
       address: [''],
       city: [''],
       passwordHash: ['', !this.isUpdateScreen ? [Validators.required, Validators.minLength(8), Validators.maxLength(25)] : []],
-      role: [null, Validators.required],
+      role: [null, !this.isUpdateScreen ? Validators.required : []],
       dateOfBirth: []
     });
     
     if (this.isUpdateScreen) {
-
+      
+      let role = this.userRolesItems.find(role => role.id === this.config.data.user.primaryRole)
       this.config.data.user.dateOfBirth =  moment(this.config.data.user.dateOfBirth).format('DD-MM-YYYY');;
       this.customerForm.patchValue({
         ...this.config.data.user,
-        role: this.userRolesItems.find(role => role.id === this.config.data.user.defaultRole),
+        role: this.userRolesItems.find(role => role.id === this.config.data.user.primaryRole),
         dateOfBirth: this.config.data.user.dateOfBirth.toString()
       });
     }
@@ -75,6 +77,7 @@ export class UserCreateComponent {
       phoneNumber: formValue.phoneNumber,
       email: formValue.email,
       passwordHash: formValue.passwordHash,
+      city: formValue.city,
       primaryRole: formValue.role.id,
       address: formValue.address,
       dateOfBirth: moment(formValue.dateOfBirth).toDate()
@@ -87,7 +90,12 @@ export class UserCreateComponent {
     const call = this.isUpdateScreen ? this.us.updateUsers(this.config.data.user.id, request) : this.us.createUsers(request);
     call.subscribe({
       next: (data: any) => {
+        debugger
         let resp = data as ApiResponse<any>;
+        if(resp.statusCode == HttpStatusCode.Created && resp.isSuccess) {
+          this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
+          this.ref.close(true);
+        }
         if(resp.statusCode == HttpStatusCode.Ok && resp.isSuccess) {
           this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
           this.ref.close(true);

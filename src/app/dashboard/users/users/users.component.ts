@@ -14,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { dateFilterValues, normalizeError, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
+import { dateFilterValues, ERoleToString, normalizeError, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { LoginResponse, UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { ViewCustomerComponent } from '../view-user/view-user.component';
@@ -22,7 +22,7 @@ import { TruncatePipe } from '../../../pipe/truncate.pipe';
 import { UsersResponse } from '../../../Dtos/responses/UsersResponse';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
-import { ERole, ERoleToString } from '../../../enums/enums';
+import { ERole } from '../../../enums/enums';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { UserCreateComponent } from '../create-user/user-create.component';
 @Component({

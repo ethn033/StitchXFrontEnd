@@ -14,8 +14,9 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
-import { ERole, ERoleToString } from '../../../enums/enums';
+import { ERole } from '../../../enums/enums';
 import { Badge } from "primeng/badge";
+import { ERoleToString } from '../../../utils/utils';
 
 @Component({
   selector: 'app-topbar',
