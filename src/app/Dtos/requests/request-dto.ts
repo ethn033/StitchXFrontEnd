@@ -42,6 +42,7 @@ export interface User {
     orders?: Order[] | null;
     business?: Business | null;
     payments?: Payment[] | null;
+    roles?: string[] | null;
 }
 
 

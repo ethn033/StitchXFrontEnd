@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../generics/api.service';
-import { BranchCreateUpdateDto } from '../../Dtos/requests/requestDto';
+import { BranchCreateUpdateDto } from '../../Dtos/requests/request-dto';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/base-response';
 import { environment } from '../../../environments/environment';

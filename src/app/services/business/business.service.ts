@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../../models/base-response';
 import { Observable } from 'rxjs';
 import { ApiService } from '../generics/api.service';
-import { Business } from '../../Dtos/requests/requestDto';
+import { Business } from '../../Dtos/requests/request-dto';
 
 @Injectable({
   providedIn: 'root'

@@ -13,10 +13,10 @@ import { AvatarModule } from 'primeng/avatar';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ShareDataService } from '../../../services/shared/share-data.service';
-import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { ERole } from '../../../enums/enums';
 import { Badge } from "primeng/badge";
 import { ERoleToString } from '../../../utils/utils';
+import { User } from '../../../Dtos/requests/request-dto';
 
 @Component({
   selector: 'app-topbar',
@@ -33,15 +33,15 @@ import { ERoleToString } from '../../../utils/utils';
   export class TopbarComponent {
     private authService = inject(AuthService);
     private sds = inject(ShareDataService);
-    userResponse?: UserResponse | null;
+    userResponse?: User | null;
     
     roles = ERole;
     currentRole?: ERole | null;
     
     constructor() {
       this.sds.userData.subscribe(userData => {
-        this.userResponse = userData;
-        if(this.userResponse && this.userResponse.roles.length > 0) {
+        this.userResponse = userData as User;
+        if(this.userResponse && this.userResponse.roles && this.userResponse.roles.length > 0) {
           let roles = this.userResponse.roles;
           if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
             this.currentRole = ERole.SOFT_OWNER;

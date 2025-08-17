@@ -5,10 +5,10 @@ import { Component, inject } from '@angular/core';
 import { TopbarComponent } from '../../dashboard/shared-admin/topbar/topbar.component';
 import { SidebarComponent } from '../../dashboard/shared-admin/sidebar/sidebar.component';
 import { LoadingComponent } from '../../components/shared/loading/loading.component';
-import { UserResponse } from '../../Dtos/responses/loginResponseDto';
 import { APP_USER } from '../../utils/global-contstants';
 import { LocalStorageService } from '../../services/generics/local-storage.service';
 import { ShareDataService } from '../../services/shared/share-data.service';
+import { UserResponse } from '../../Dtos/requests/response-dto';
 
 @Component({
   selector: 'app-admin-layout',

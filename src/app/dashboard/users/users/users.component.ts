@@ -16,7 +16,6 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { dateFilterValues, ERoleToString, normalizeError, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
-import { LoginResponse, UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { ViewCustomerComponent } from '../view-user/view-user.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
 import { UsersResponse } from '../../../Dtos/responses/UsersResponse';
@@ -25,6 +24,7 @@ import { ApiResponse } from '../../../models/base-response';
 import { ERole } from '../../../enums/enums';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { UserCreateComponent } from '../create-user/user-create.component';
+import { User } from '../../../Dtos/requests/request-dto';
 @Component({
   selector: 'app-users',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe],
@@ -34,7 +34,7 @@ import { UserCreateComponent } from '../create-user/user-create.component';
 })
 export class UsersComponent {
   private sds = inject(ShareDataService);
-  userResponse?: UserResponse | null;
+  userResponse?: User | null;
   roles = ERole;
   currentRole?: ERole | null;
   users: UserDto[] = [];
@@ -64,8 +64,8 @@ export class UsersComponent {
   
   constructor() {
     this.sds.userData.subscribe(userData => {
-      this.userResponse = userData;
-      if(this.userResponse && this.userResponse.roles.length > 0) {
+      this.userResponse = userData as User;
+      if(this.userResponse && this.userResponse.roles && this.userResponse.roles.length > 0) {
         let roles = this.userResponse.roles;
         if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
           this.currentRole = ERole.SOFT_OWNER;
@@ -173,7 +173,7 @@ export class UsersComponent {
   }
   
   
-  viewCustomer(user: UserResponse): void {
+  viewCustomer(user: User): void {
     this.dialogService.open(ViewCustomerComponent, {
       header: `Customer Details - ${user.firstName} ${user.lastName}`,
       width: '90%',
@@ -184,7 +184,7 @@ export class UsersComponent {
     });
   }
   
-  addUpdateUserDialog(user?: UserResponse): void {
+  addUpdateUserDialog(user?: User): void {
     const ref = this.dialogService.open(UserCreateComponent, {
       header: 'Register User',
       width: '70%',
@@ -204,19 +204,19 @@ export class UsersComponent {
     });
   }
   
-  takeOrder(customer: LoginResponse): void {
+  takeOrder(user: User): void {
     this.dialogService.open(ViewCustomerComponent, {
-      header: `New Order - ${customer.user.firstName} ${customer.user.lastName}`,
+      header: `New Order - ${user?.firstName} ${user.lastName}`,
       width: '90%',
       styleClass: 'order-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
-      data: { customer }
+      data: { user }
     });
   }
   
   
-  confirmDelete(user: UserResponse): void {
+  confirmDelete(user: User): void {
     debugger
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${user.firstName} ${user?.lastName}?`,
@@ -230,7 +230,7 @@ export class UsersComponent {
         outlined: true,
       },
       accept: () => {
-        this.us.deleteUser<ApiResponse<any>>(user.id).subscribe({
+        this.us.deleteUser<ApiResponse<any>>(user.id!).subscribe({
           next: (response: any) => {
             let resp = response as ApiResponse<any>;
             if(resp.isSuccess && resp.statusCode == 200){

@@ -1,5 +1,5 @@
 import { ERole } from "../../enums/enums";
-import { BusinessesResponse } from "./loginResponseDto";
+import { Business } from "../requests/request-dto";
 
 export interface UsersResponse {
     users: UserDto[];
@@ -24,5 +24,5 @@ export interface UserDto {
     defaultRoleStr?: string | null;
     outstanding: number;
     roles: string[];
-    business?: BusinessesResponse | null;
+    business?: Business | null;
 }

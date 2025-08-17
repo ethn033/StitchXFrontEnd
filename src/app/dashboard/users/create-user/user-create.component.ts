@@ -13,7 +13,7 @@ import { DropDownItem } from '../../../contracts/dropdown-item';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
 import { HttpStatusCode } from '@angular/common/http';
-import { User } from '../../../Dtos/requests/requestDto';
+import { User } from '../../../Dtos/requests/request-dto';
 import { DatePickerModule } from 'primeng/datepicker';
 import moment from 'moment';
 
@@ -92,13 +92,9 @@ export class UserCreateComponent {
     };
     
     this.loading = true;  
-    
-    // if update screen, call updateUser method instead
-    // if (this.isUpdateScreen) {
     const call = this.isUpdateScreen ? this.us.updateUsers(this.config.data.user.id, request) : this.us.createUsers(request);
     call.subscribe({
       next: (data: any) => {
-        debugger
         let resp = data as ApiResponse<any>;
         if(resp.statusCode == HttpStatusCode.Created && resp.isSuccess) {
           this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});

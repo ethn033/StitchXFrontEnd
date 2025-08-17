@@ -13,11 +13,11 @@ import { MessageService } from 'primeng/api';
 import { ApiResponse } from '../../../models/base-response';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { ERole } from '../../../enums/enums';
-import { APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
-import { LoginResponse } from '../../../Dtos/responses/loginResponseDto';
+import { APP_REMEMBER_ME, APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
 import { LoadingService } from '../../../services/generics/loading.service';
-import { Login } from '../../../Dtos/requests/requestDto';
+import { Login } from '../../../Dtos/requests/request-dto';
 import { ERoleToString } from '../../../utils/utils';
+import { UserResponse } from '../../../Dtos/requests/response-dto';
 
 @Component({
   selector: 'app-login',
@@ -57,6 +57,7 @@ export class LoginComponent {
 
   }
 
+  rememberMe: boolean = false;
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -65,13 +66,13 @@ export class LoginComponent {
     
     this.isLoading = true;
     const formData = this.loginForm.value as Login;
-    
+    this.rememberMe = formData.rememberMe ?? false;
     this.authService.signIn(formData).subscribe({
       next: (data: any) => {
-        let response = data as ApiResponse<LoginResponse>;
+        let response = data as ApiResponse<UserResponse> ;
         if(response.statusCode == 200 && data.isSuccess) {
           if(response.data && response.data.user && response.data.tokenResponse) {
-            if(response.data.user.roles.includes(ERoleToString[ERole.SOFT_OWNER]) || response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
+            if(response.data.user.roles && response.data.user.roles.includes(ERoleToString[ERole.SOFT_OWNER]) || response.data.user.roles?.includes(ERoleToString[ERole.SHOP_OWNER])) {
               // if(response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
               //   if(response.data.user.business == null) {
               //     this.router.navigate(['clint-setup/create-business'], { replaceUrl: true });
@@ -84,12 +85,13 @@ export class LoginComponent {
               // }
               this.router.navigate(['admin'], { replaceUrl: true  });
             }
-            else if(response.data.user.roles.includes(ERoleToString[ERole.TAILOR]) || response.data.user.roles.includes(ERoleToString[ERole.CUTTER])) {
+            else if(response.data.user.roles?.includes(ERoleToString[ERole.TAILOR]) || response.data.user.roles?.includes(ERoleToString[ERole.CUTTER])) {
               this.router.navigate(['tailor'], { replaceUrl: true });
             }
-            else if(response.data.user.roles.includes(ERoleToString[ERole.CUSTOMER])) {
+            else if(response.data.user.roles?.includes(ERoleToString[ERole.CUSTOMER])) {
               this.router.navigate(['shop'], { replaceUrl: true });
             }
+            this.ls.setItem(APP_REMEMBER_ME, this.rememberMe, true);
             this.ls.setItem(APP_USER, response.data.user, true);
             this.ls.setItem(AUTH_TOKEN, response.data.tokenResponse, true);
           }

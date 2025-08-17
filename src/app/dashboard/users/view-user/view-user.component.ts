@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { ERole } from '../../../enums/enums';
-import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { Tag } from "primeng/tag";
 import { Card } from "primeng/card";
 import { Avatar } from "primeng/avatar";
@@ -8,6 +7,7 @@ import {  ChipModule } from "primeng/chip";
 import { CommonModule } from '@angular/common';
 import { Button } from "primeng/button";
 import { TabsModule } from 'primeng/tabs';
+import { User } from '../../../Dtos/requests/request-dto';
 
 @Component({
   selector: 'app-view-user',
@@ -17,7 +17,7 @@ import { TabsModule } from 'primeng/tabs';
 })
 export class ViewCustomerComponent {
   
-  @Input() user!: UserResponse;
+  @Input() user!: User;
 
   getInitials(firstName?: string, lastName?: string): string {
     return `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();

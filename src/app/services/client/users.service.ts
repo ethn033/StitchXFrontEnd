@@ -3,8 +3,7 @@ import { ApiService } from '../generics/api.service';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../models/base-response';
 import { environment } from '../../../environments/environment';
-import { UserResponse } from '../../Dtos/responses/loginResponseDto';
-import { User } from '../../Dtos/requests/requestDto';
+import { User } from '../../Dtos/requests/request-dto';
 
 @Injectable({
   providedIn: 'root',

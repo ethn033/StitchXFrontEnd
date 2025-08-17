@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { ShareDataService } from '../../../services/shared/share-data.service';
-import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
 import { ERole } from '../../../enums/enums';
 import { ERoleToString } from '../../../utils/utils';
+import { User } from '../../../Dtos/requests/request-dto';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,15 +16,15 @@ import { ERoleToString } from '../../../utils/utils';
 })
 export class SidebarComponent {
   private sds = inject(ShareDataService);
-  userResponse?: UserResponse | null;
+  userResponse?: User | null;
 
   roles = ERole;
   currentRole?: ERole | null;
 
   constructor() {
     this.sds.userData.subscribe(userData => {
-      this.userResponse = userData;
-      if(this.userResponse && this.userResponse.roles.length > 0) {
+      this.userResponse = userData as User;
+      if(this.userResponse && this.userResponse.roles && this.userResponse.roles.length > 0) {
         let roles = this.userResponse.roles;
         if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
           this.currentRole = ERole.SOFT_OWNER;

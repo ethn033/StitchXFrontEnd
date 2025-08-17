@@ -2,7 +2,7 @@
   <!-- Header Section -->
   <div class="flex justify-content-between align-items-center mb-5">
     <h1 class="text-3xl font-bold m-0">User Profile</h1>
-    <p-tag [severity]="'success'" [value]="user.defaultRoleStr"></p-tag>
+    <p-tag [severity]="'success'" [value]="user.primaryRoleStr!"></p-tag>
   </div>
 
   <!-- Main Card -->
@@ -11,15 +11,15 @@
     <div class="grid">
       <div class="col-12 md:col-4 text-center mb-4">
         <p-avatar 
-          [label]="getInitials(user.firstName, user.lastName)" 
+          [label]="getInitials(user.firstName!, user.lastName!)" 
           size="xlarge" 
           [style]="{'background-color': getRandomColor(), 'color': '#ffffff'}"
           shape="circle">
         </p-avatar>
         <div class="mt-3">
-          <p-chip *ngIf="user.outstanding > 0" label="Outstanding Balance" icon="pi pi-exclamation-triangle" class="bg-red-100 text-red-800"></p-chip>
+          <p-chip *ngIf="user?.outstanding! > 0" label="Outstanding Balance" icon="pi pi-exclamation-triangle" class="bg-red-100 text-red-800"></p-chip>
           <p class="text-xl font-semibold mt-2">{{ user.firstName }} {{ user.lastName }}</p>
-          <p class="text-500">{{ user.business.name }}</p>
+          <p class="text-500">{{ user.business?.name }}</p>
         </div>
       </div>
 
@@ -43,13 +43,13 @@
           </div>
           <div class="col-12 md:col-6">
             <p class="field-label">Outstanding Balance</p>
-            <p class="field-value font-bold" [ngClass]="{'text-green-600': user.outstanding === 0, 'text-red-600': user.outstanding > 0}">
+            <p class="field-value font-bold" [ngClass]="{'text-green-600': user.outstanding === 0, 'text-red-600': user.outstanding! > 0}">
               {{ user.outstanding | currency }}
             </p>
           </div>
           <div class="col-12 md:col-6">
             <p class="field-label">Business</p>
-            <p class="field-value">{{ user.business.name || 'None' }}</p>
+            <p class="field-value">{{ user.business?.name || 'None' }}</p>
           </div>
         </div>
       </div>
@@ -99,6 +99,6 @@
   <div class="flex justify-content-end gap-3 mt-4">
     <p-button label="Edit Profile" icon="pi pi-pencil"></p-button>
     <p-button label="Send Message" icon="pi pi-envelope" severity="secondary"></p-button>
-    <p-button *ngIf="user.outstanding > 0" label="Collect Payment" icon="pi pi-dollar" severity="success"></p-button>
+    <p-button *ngIf="user?.outstanding! > 0" label="Collect Payment" icon="pi pi-dollar" severity="success"></p-button>
   </div>
 </div>

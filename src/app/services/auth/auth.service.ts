@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { ApiService } from '../generics/api.service';
 import { ApiResponse } from '../../models/base-response';
-import { Login, User } from '../../Dtos/requests/requestDto';
+import { Login, User } from '../../Dtos/requests/request-dto';
 
 @Injectable({
   providedIn: 'root'

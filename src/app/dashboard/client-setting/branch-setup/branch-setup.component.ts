@@ -1,4 +1,4 @@
-import { BranchCreateUpdateDto } from './../../../Dtos/requests/requestDto';
+import { BranchCreateUpdateDto } from '../../../Dtos/requests/request-dto';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
