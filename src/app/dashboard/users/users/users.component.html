@@ -17,35 +17,28 @@
     <h5 class="fw-bold m-0">
         <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="loadUsers();" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Users
     </h5>
-    
     <!-- Right: Dropdown + New Order button -->
     <div class="d-flex align-items-center gap-3">
-        
         <p-select (onChange)="loadUsers();" size="small" [options]="userStatuses" [(ngModel)]="selectedCustomerStatus" optionLabel="value" placeholder="Filter by Status" class="min-w-[200px]"></p-select>
-        
         <p-select (onChange)="loadUsers();" size="small" [options]="userRolesItems" [(ngModel)]="selectedRole" optionLabel="value" placeholder="FIlter by Role" class="min-w-[200px]"></p-select>
-        
         <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
-        
         <button pButton size="small" label="User" (click)="addUpdateUserDialog()" icon="pi pi-plus" class="p-button-primary"></button>
     </div>
 </div>
-
 <p-table size="small" #dt [value]="users" [first]="first" [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalUsersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
-    
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="userId">ID <p-sortIcon field="userId"></p-sortIcon></th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Roles</th>
             <th>Business</th>
             <th>Status</th>
-            <th>Balance</th>
+            <th>Outstanding</th>
             <th style="width: 120px">Actions</th>
         </tr>
     </ng-template>
-    
     <ng-template pTemplate="body" let-user>
         <tr>
             <td>{{user.userId}}</td>
@@ -54,22 +47,24 @@
             </td>
             <td>
                 <div *ngIf="user.email" class="flex align-items-center">
-                    <i class="pi pi-envelope me-1"></i>
                     <span>{{ user.email | truncate:20 }}</span>
                 </div>
             </td>
             <td>
                 <div class="flex align-items-center mb-1">
-                    <i class="pi pi-phone me-1"></i>
                     <span>{{ user.phoneNumber ?? "N/A" }}</span>
                 </div>
             </td>
-            
+            <td>
+                <div class="flex align-items-center mb-1">
+                    <p-tag severity="info" [value]="user.roles"></p-tag>
+                </div>
+            </td>
             <td>
                 @if(user.business != null) {
                     user.business.name | truncate:30
                 }
-                @else { 'N/A' }
+                @else { N/A }
             </td>
             <td>
                 <p-tag [severity]="user.isActive ? 'success' : 'danger'" [value]="user.isActive ? 'ACTIVE' : 'INACTIVE'"></p-tag>
@@ -91,7 +86,6 @@
             </td>
         </tr>
     </ng-template>
-    
     <ng-template pTemplate="emptymessage">
         @if(!loadingService.getLoading) {
         <tr>
@@ -105,8 +99,6 @@
             </td>
         </tr>
         }
-        
     </ng-template>
 </p-table>
-
 <p-confirmDialog/>

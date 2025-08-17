@@ -5,13 +5,15 @@ import { ERole } from "../enums/enums";
 
 export function dateFilterValues() : DropDownItem[] {
     return [
-        { id: 1, value: 'This Week' },
-        { id: 2, value: 'This Month' },
-        { id: 3, value: 'Last Month' },
-        { id: 4, value: 'This Year' },
-        { id: 5, value: 'Last Year' },
-        { id: 6, value: 'Custom Range' },
-        { id: 7, value: 'All Time' }
+        { id: 1, value: 'Today' },
+        { id: 2, value: 'This Week' },
+        { id: 3, value: 'Last Week' },
+        { id: 4, value: 'This Month' },
+        { id: 5, value: 'Last Month' },
+        { id: 6, value: 'This Year' },
+        { id: 7, value: 'Last Year' },
+        { id: 8, value: 'Custom Range' },
+        { id: 9, value: 'All Time' }
     ];
 }
 

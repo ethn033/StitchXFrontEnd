@@ -33,13 +33,10 @@ import { UserCreateComponent } from '../create-user/user-create.component';
   styleUrl: './users.component.css'
 })
 export class UsersComponent {
-  
-  
   private sds = inject(ShareDataService);
   userResponse?: UserResponse | null;
   roles = ERole;
   currentRole?: ERole | null;
-  
   users: UserDto[] = [];
   userStatuses: DropDownItem[] = userStatusesFilterValues();
   selectedCustomerStatus: DropDownItem = this.userStatuses[0];
@@ -133,27 +130,33 @@ export class UsersComponent {
   
   showCustomDateRangeDialog: boolean = false;
   onDateFilterChanged($event: any) {
-    if (this.selectedDateFilter.id === 6) {
+    if (this.selectedDateFilter.id === 8) {
       this.showCustomDateRangeDialog = true;
     } else {
       const todayDate = moment().toDate();
       switch (this.selectedDateFilter.id) {
-        case 1: // This Week
+        case 1: // Today
+        this.dateRange = [moment().startOf('day').toDate(), todayDate];
+        break;
+        case 2: // This Week
         this.dateRange = [moment().startOf('week').toDate(), todayDate];
         break;
-        case 2: // This Month
+        case 3: // Last Week
+        this.dateRange = [moment().subtract(1, 'week').startOf('week').toDate(), moment().subtract(1, 'week').endOf('week').toDate()];
+        break;
+        case 4: // This Month
         this.dateRange = [moment().startOf('month').toDate(), todayDate];
         break;
-        case 3: // Last Month
+        case 5: // Last Month
         this.dateRange = [moment().subtract(1, 'month').startOf('month').toDate(), moment().subtract(1, 'month').endOf('month').toDate()];
         break;
-        case 4: // This Year
+        case 6: // This Year
         this.dateRange = [moment().startOf('year').toDate(), todayDate];
         break;
-        case 5: // Last Year
+        case 7: // Last Year
         this.dateRange = [moment().subtract(1, 'year').startOf('year').toDate(), moment().subtract(1, 'year').endOf('year').toDate()];
         break;
-        case 7: // All Time
+        case 9: // All Time
         this.dateRange = [];
         break;
       }

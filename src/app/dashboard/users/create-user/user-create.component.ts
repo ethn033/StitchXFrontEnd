@@ -48,20 +48,18 @@ export class UserCreateComponent {
     });
     
     if (this.isUpdateScreen) {
-      
-      let role = this.userRolesItems.find(role => role.id === this.config.data.user.primaryRole)
-      this.config.data.user.dateOfBirth =  moment(this.config.data.user.dateOfBirth).format('DD-MM-YYYY');;
+      if(this.config.data.user.dateOfBirth)
+        this.config.data.user.dateOfBirth =  new Date(this.config.data.user.dateOfBirth);
       this.customerForm.patchValue({
         ...this.config.data.user,
         role: this.userRolesItems.find(role => role.id === this.config.data.user.primaryRole),
-        dateOfBirth: this.config.data.user.dateOfBirth.toString()
+        dateOfBirth: this.config.data.user.dateOfBirth ? this.config.data.user.dateOfBirth : null
       });
     }
   }
   
   
   ngOnInit(): void {
-    
   }
   
   onSubmit() {
@@ -70,8 +68,8 @@ export class UserCreateComponent {
       return;
     }
     const formValue = this.customerForm.value;
-    const request: User = {
-      id: this.isUpdateScreen ? this.config.data.user.id : 0,
+    
+    const request: User = !this.isUpdateScreen ? {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       phoneNumber: formValue.phoneNumber,
@@ -80,11 +78,21 @@ export class UserCreateComponent {
       city: formValue.city,
       primaryRole: formValue.role.id,
       address: formValue.address,
-      dateOfBirth: moment(formValue.dateOfBirth).toDate()
+      dateOfBirth: formValue.dateOfBirth ? moment(formValue.dateOfBirth).format("YYYY-MM-DD") : null
+    } : 
+    {
+      id: this.config.data.user.id,
+      firstName: formValue.firstName,
+      lastName: formValue.lastName,
+      phoneNumber: formValue.phoneNumber,
+      email: formValue.email,
+      city: formValue.city,
+      address: formValue.address,
+      dateOfBirth: formValue.dateOfBirth ? moment(formValue.dateOfBirth).format("YYYY-MM-DD") : null
     };
     
     this.loading = true;  
-
+    
     // if update screen, call updateUser method instead
     // if (this.isUpdateScreen) {
     const call = this.isUpdateScreen ? this.us.updateUsers(this.config.data.user.id, request) : this.us.createUsers(request);
