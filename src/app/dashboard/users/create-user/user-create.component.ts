@@ -8,7 +8,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { userRolesFilterValue } from '../../../utils/utils';
+import { userRolesFilterValue, valdiateRoles, validateCurrentRole } from '../../../utils/utils';
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
@@ -16,22 +16,37 @@ import { HttpStatusCode } from '@angular/common/http';
 import { User } from '../../../Dtos/requests/request-dto';
 import { DatePickerModule } from 'primeng/datepicker';
 import moment from 'moment';
+import { ShareDataService } from '../../../services/shared/share-data.service';
+import { ERole } from '../../../enums/enums';
+import { FieldsetModule } from 'primeng/fieldset';
 
 @Component({
   selector: 'app-user-create',
-  imports: [ButtonModule, ReactiveFormsModule, FormsModule, InputTextModule, PasswordModule, CommonModule, InputNumberModule, SelectModule, DatePickerModule],
+  imports: [ButtonModule, ReactiveFormsModule, FormsModule, InputTextModule, PasswordModule, CommonModule, InputNumberModule, SelectModule, DatePickerModule, FieldsetModule],
   templateUrl: './user-create.component.html',
   styleUrl: './user-create.component.css'
 })
 export class UserCreateComponent {
   isUpdateScreen = false;
-  userRolesItems: DropDownItem[] = userRolesFilterValue();
   customerForm: FormGroup;
   loading = false;
   us = inject(UsersService);
   ms = inject(MessageService);
-  constructor(private fb: FormBuilder, public ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService) {
-    
+  
+  userRolesItems: DropDownItem[] = userRolesFilterValue();
+  selectedRole?: DropDownItem = this.userRolesItems[0];
+  private sds = inject(ShareDataService);
+  private fb = inject(FormBuilder);
+  userResponse?: User | null;
+  currentRole?: ERole | null;
+  roles = ERole;
+  
+  constructor(private ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService) {
+    this.sds.userData.subscribe(userData => {
+      this.userResponse = userData as User;
+      this.currentRole = validateCurrentRole(this.userResponse.roles!);
+      this.userRolesItems = valdiateRoles(this.userRolesItems, this.currentRole);
+    });
     
     this.isUpdateScreen = !!this.config.data?.user;
     
@@ -115,5 +130,50 @@ export class UserCreateComponent {
   
   onCancel(): void {
     this.ref.close(false);
+  }
+  
+  
+  measurementFormExpanded = false;
+  measurementForm: FormGroup = this.fb.group({
+    suitTypeId: [null, Validators.required],
+    chest: [null, [Validators.required, Validators.min(20), Validators.max(60)]],
+    waist: [null, [Validators.required, Validators.min(20), Validators.max(60)]],
+    hip: [null, [Validators.min(20), Validators.max(60)]],
+    sleeveLength: [null, [Validators.required, Validators.min(10), Validators.max(40)]],
+    shoulderWidth: [null, [Validators.min(10), Validators.max(30)]],
+    neckSize: [null, [Validators.required, Validators.min(10), Validators.max(20)]],
+    shirtLength: [null, [Validators.min(20), Validators.max(40)]],
+    pantLength: [null, [Validators.required, Validators.min(20), Validators.max(50)]],
+    notes: [null]
+  });
+
+  suitTypes = [
+    { id: 1, name: 'Business Suit' },
+    { id: 2, name: 'Tuxedo' },
+    { id: 3, name: 'Casual Blazer' },
+    { id: 4, name: 'Wedding Suit' }
+  ];
+  
+  onSuitTypeChange(event: any) {
+    
+  }
+  
+  initMeasurementForm() {
+    
+  }
+  
+  saveMeasurements() {
+    if (this.measurementForm.valid) {
+      console.log('Measurements to save:', this.measurementForm.value);
+      // Implement your save logic here
+    }
+  }
+  
+  clearMeasurements() {
+    this.measurementForm.reset();
+  }
+  
+  toggleMeasurementForm() {
+    this.measurementFormExpanded = !this.measurementFormExpanded;
   }
 }

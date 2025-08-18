@@ -50,15 +50,6 @@ export class OrderComponent implements OnInit {
   totalOrdersCount: number = 0;
   loadingService: LoadingService = inject(LoadingService);
   
-  // orderStatuses: DropDownItem[] = [
-  //   ...Object.keys(OrderStatus)
-  //   .filter(key => isNaN(Number(key)))
-  //   .map(key => ({
-  //     id: OrderStatus[key as keyof typeof OrderStatus],
-  //     value: key
-  //   }))
-  // ];
-  
   // selectedOrderStatus: DropDownItem = this.orderStatuses[0]; // Default to 'All Statuses'
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
   dateRanges = dateFilterValues();

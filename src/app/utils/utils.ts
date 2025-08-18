@@ -2,40 +2,73 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { DropDownItem } from "../contracts/dropdown-item";
 import { OrderHistoryItemResponseDto } from "../Dtos/responses/orderResponseDto";
 import { ERole } from "../enums/enums";
+import { User } from "../Dtos/requests/request-dto";
 
 export function dateFilterValues() : DropDownItem[] {
-    return [
-        { id: 1, value: 'Today' },
-        { id: 2, value: 'This Week' },
-        { id: 3, value: 'Last Week' },
-        { id: 4, value: 'This Month' },
-        { id: 5, value: 'Last Month' },
-        { id: 6, value: 'This Year' },
-        { id: 7, value: 'Last Year' },
-        { id: 8, value: 'Custom Range' },
-        { id: 9, value: 'All Time' }
-    ];
+  return [
+    { id: 1, value: 'Today' },
+    { id: 2, value: 'This Week' },
+    { id: 3, value: 'Last Week' },
+    { id: 4, value: 'This Month' },
+    { id: 5, value: 'Last Month' },
+    { id: 6, value: 'This Year' },
+    { id: 7, value: 'Last Year' },
+    { id: 8, value: 'Custom Range' },
+    { id: 9, value: 'All Time' }
+  ];
 }
 
 export function userStatusesFilterValues(): DropDownItem[] {
-    return [
-        { id: 1, value: 'Active' },
-        { id: 0, value: 'Inactive' },
-        { id: 2, value: 'Deleted' },
-    ];
+  return [
+    { id: 1, value: 'Active' },
+    { id: 0, value: 'Inactive' },
+    { id: 2, value: 'Deleted' },
+  ];
 }
 
 export function userRolesFilterValue(): DropDownItem[] {
-    const roleList = Object.keys(ERole)
-    .filter(key => isNaN(Number(key)))
-    .map(key => ({
-        id: ERole[key as keyof typeof ERole],
-        value: key
-    }));
-    
-    return roleList;
+  const roleList = Object.keys(ERole)
+  .filter(key => isNaN(Number(key)))
+  .map(key => ({
+    id: ERole[key as keyof typeof ERole],
+    value: key
+  }));
+  
+  return roleList;
 }
 
+
+export function validateCurrentRole(roles?: string[]): ERole {
+  let role: ERole = ERole.CUSTOMER;
+  if(roles && roles.length > 0) {
+    if(roles.includes(ERoleToString[ERole.CUSTOMER])) {
+      role = ERole.CUSTOMER;
+    }
+    if(roles.includes(ERoleToString[ERole.CUTTER])) {
+      role = ERole.CUTTER;
+    }
+    if(roles.includes(ERoleToString[ERole.TAILOR])) {
+      role = ERole.TAILOR;
+    }
+    if(roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
+      role = ERole.SHOP_OWNER;
+    }
+    if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
+      role = ERole.SOFT_OWNER;
+    }
+  }
+  return role;
+}
+
+export function valdiateRoles(userRolesItems: DropDownItem[], currentRole: ERole): DropDownItem[] {
+  debugger
+    userRolesItems = userRolesItems.filter(item => item.id !== currentRole);
+    const index = userRolesItems.findIndex(item => item.id === ERole.SOFT_OWNER);
+    if (index !== -1) {
+      userRolesItems.splice(index, 1);
+    }
+    return userRolesItems;
+}
 
 export const ERoleToString = {
   [ERole.SOFT_OWNER]: 'SOFT_OWNER',
@@ -50,9 +83,9 @@ export const ERoleToString = {
 
 // *********************Dummy Data Generation*********************
 export function generateDummyOrders() : OrderHistoryItemResponseDto[] {
-    const dummyOrders: OrderHistoryItemResponseDto[] = [
-    ];
-    return dummyOrders;
+  const dummyOrders: OrderHistoryItemResponseDto[] = [
+  ];
+  return dummyOrders;
 }
 
 
@@ -75,7 +108,7 @@ export function normalizeError(error: unknown): NormalizedError {
       errors: error.data
     };
   }
-
+  
   // Handle ProblemDetails
   if (isProblemDetails(error)) {
     return {
@@ -123,16 +156,16 @@ export function normalizeError(error: unknown): NormalizedError {
   return {
     message: 'An unknown error occurred',
     errorType: 'UNKNOWN_ERROR',
-      details: 'CLIENT_ERROR'
+    details: 'CLIENT_ERROR'
   };
 }
 
 // Type guards
 function isApiErrorResponse(obj: any): obj is { data: Array<{ code: string; description: string }>, message: string, statusCode: number } {
   return obj && 
-         Array.isArray(obj.data) && 
-         obj.data.every((item: any) => 'code' in item && 'description' in item) &&
-         'statusCode' in obj;
+  Array.isArray(obj.data) && 
+  obj.data.every((item: any) => 'code' in item && 'description' in item) &&
+  'statusCode' in obj;
 }
 
 function isProblemDetails(obj: any): obj is { title: string; status?: number; detail?: string } {

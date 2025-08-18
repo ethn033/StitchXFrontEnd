@@ -1,5 +1,4 @@
-<p-dialog  header="Custom Date Range Filter" [modal]="true" 
-[(visible)]="showCustomDateRangeDialog" [style]="{ width: '35rem' }">
+<p-dialog  header="Custom Date Range Filter" [modal]="true" [(visible)]="showCustomDateRangeDialog" [style]="{ width: '35rem' }">
 <div class="w-full px-3">
     <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" inline="true" selectionMode="range"  [style]="{ width: '100%' }" [readonlyInput]="true">
     </p-datepicker>
@@ -25,6 +24,7 @@
         <button pButton size="small" label="User" (click)="addUpdateUserDialog()" icon="pi pi-plus" class="p-button-primary"></button>
     </div>
 </div>
+
 <p-table size="small" #dt [value]="users" [first]="first" [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadUsers($event)" [totalRecords]="totalUsersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
     <ng-template pTemplate="header">
         <tr>
@@ -102,3 +102,6 @@
     </ng-template>
 </p-table>
 <p-confirmDialog/>
+
+
+

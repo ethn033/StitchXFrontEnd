@@ -9,3 +9,11 @@ export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface UsersResponse {
+    users: User[];
+    totalCount: number;
+    pageSize: number;
+    page: number;
+    totalPages: number;
+}

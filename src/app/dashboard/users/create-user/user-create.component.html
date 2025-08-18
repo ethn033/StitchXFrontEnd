@@ -41,7 +41,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="dateOfBirth" class="form-label">Date of birth</label><br>
-          <p-datepicker size="small" [inputStyle]="{'width': '100%'}" [style]="{ 'width': '100%' }" id="dateOfBirth" [showIcon]="true" dateFormat="dd-mm-yy" inputId="dateOfBirth" [showOnFocus]="true" formControlName="dateOfBirth" />
+          <p-datepicker appendTo="body" size="small" [inputStyle]="{'width': '100%'}" [style]="{ 'width': '100%' }" id="dateOfBirth" [showIcon]="true" dateFormat="dd-mm-yy" inputId="dateOfBirth" [showOnFocus]="true" formControlName="dateOfBirth" />
           <div *ngIf="customerForm.get('dateOfBirth')?.invalid && customerForm.get('dateOfBirth')?.touched" class="invalid-feedback">Please enter a valid date Of Birth</div>
         </div>
       </div>
@@ -92,3 +92,178 @@
       </div>
     </form>
   </div>
+  
+
+@if(currentRole == roles.SHOP_OWNER) {
+  <div class="measurement-section mb-4">
+    <p-fieldset legend="Customer Measurements" [toggleable]="true" [collapsed]="!measurementFormExpanded">
+      <form [formGroup]="measurementForm" class="container-fluid p-0">
+        <div class="row g-3">
+          <!-- Suit Type Selection -->
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="suitType" class="form-label">Suit Type*</label>
+              <p-select [options]="suitTypes" optionLabel="name" optionValue="id" 
+                formControlName="suitTypeId" placeholder="Select Suit Type"
+                (onChange)="onSuitTypeChange($event)" [showClear]="true"
+                [ngClass]="{ 'p-invalid': measurementForm.get('suitTypeId')?.invalid && measurementForm.get('suitTypeId')?.touched }"
+                [style]="{ 'width': '100%' }">
+              </p-select>
+              <small *ngIf="measurementForm.get('suitTypeId')?.invalid && measurementForm.get('suitTypeId')?.touched" 
+                class="p-error">Please select a suit type</small>
+            </div>
+          </div>
+
+          <!-- Measurement Parameters Section -->
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Body Measurements</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <!-- Chest -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="chest" class="form-label">Chest (inches)*</label>
+                      <p-inputNumber id="chest" formControlName="chest" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="20" [max]="60" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('chest')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('chest')?.invalid" class="p-error">
+                        Between 20-60 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Waist -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="waist" class="form-label">Waist (inches)*</label>
+                      <p-inputNumber id="waist" formControlName="waist" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="20" [max]="60" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('waist')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('waist')?.invalid" class="p-error">
+                        Between 20-60 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Hip -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="hip" class="form-label">Hip (inches)</label>
+                      <p-inputNumber id="hip" formControlName="hip" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="20" [max]="60" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('hip')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('hip')?.invalid" class="p-error">
+                        Between 20-60 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Sleeve Length -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="sleeveLength" class="form-label">Sleeve (inches)*</label>
+                      <p-inputNumber id="sleeveLength" formControlName="sleeveLength" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="10" [max]="40" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('sleeveLength')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('sleeveLength')?.invalid" class="p-error">
+                        Between 10-40 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <!-- Additional Measurements -->
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="shoulderWidth" class="form-label">Shoulder (inches)</label>
+                      <p-inputNumber id="shoulderWidth" formControlName="shoulderWidth" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="10" [max]="30" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('shoulderWidth')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('shoulderWidth')?.invalid" class="p-error">
+                        Between 10-30 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="neckSize" class="form-label">Neck (inches)*</label>
+                      <p-inputNumber id="neckSize" formControlName="neckSize" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="10" [max]="20" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('neckSize')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('neckSize')?.invalid" class="p-error">
+                        Between 10-20 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="shirtLength" class="form-label">Shirt Length (inches)</label>
+                      <p-inputNumber id="shirtLength" formControlName="shirtLength" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="20" [max]="40" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('shirtLength')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('shirtLength')?.invalid" class="p-error">
+                        Between 20-40 inches
+                      </small>
+                    </div>
+                  </div>
+
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="pantLength" class="form-label">Pant Length (inches)*</label>
+                      <p-inputNumber id="pantLength" formControlName="pantLength" 
+                        mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="1"
+                        [min]="20" [max]="50" [style]="{ 'width': '100%' }"
+                        [ngClass]="{ 'p-invalid': measurementForm.get('pantLength')?.invalid }">
+                      </p-inputNumber>
+                      <small *ngIf="measurementForm.get('pantLength')?.invalid" class="p-error">
+                        Between 20-50 inches
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes Section -->
+          <div class="col-12">
+            <div class="form-group">
+              <label for="measurementNotes" class="form-label">Special Instructions</label>
+              <textarea pInputTextarea id="measurementNotes" formControlName="notes" 
+                rows="3" [style]="{ 'width': '100%' }" placeholder="Any special instructions or notes...">
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="col-12">
+            <div class="d-flex justify-content-end gap-2">
+              <button pButton type="button" label="Clear" icon="pi pi-times" 
+                class="p-button-outlined p-button-secondary" (click)="clearMeasurements()"></button>
+              <button pButton type="button" label="Save Measurements" icon="pi pi-check" 
+                [disabled]="measurementForm.invalid" (click)="saveMeasurements()"></button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-fieldset>
+  </div>
+}

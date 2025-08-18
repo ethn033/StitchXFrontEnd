@@ -1,4 +1,3 @@
-import { UserDto } from '../../../Dtos/responses/UsersResponse';
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
@@ -14,20 +13,22 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { dateFilterValues, ERoleToString, normalizeError, userRolesFilterValue, userStatusesFilterValues } from '../../../utils/utils';
+import { dateFilterValues, normalizeError, userRolesFilterValue, userStatusesFilterValues, valdiateRoles, validateCurrentRole } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ViewCustomerComponent } from '../view-user/view-user.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
-import { UsersResponse } from '../../../Dtos/responses/UsersResponse';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
 import { ERole } from '../../../enums/enums';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { UserCreateComponent } from '../create-user/user-create.component';
 import { User } from '../../../Dtos/requests/request-dto';
+import { UsersResponse } from '../../../Dtos/requests/response-dto';
+import { TabsModule } from "primeng/tabs";
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe, TabsModule, RouterModule],
   providers: [DialogService, ConfirmationService],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
@@ -37,7 +38,7 @@ export class UsersComponent {
   userResponse?: User | null;
   roles = ERole;
   currentRole?: ERole | null;
-  users: UserDto[] = [];
+  users: User[] = [];
   userStatuses: DropDownItem[] = userStatusesFilterValues();
   selectedCustomerStatus: DropDownItem = this.userStatuses[0];
   userRolesItems: DropDownItem[] = userRolesFilterValue();
@@ -65,24 +66,8 @@ export class UsersComponent {
   constructor() {
     this.sds.userData.subscribe(userData => {
       this.userResponse = userData as User;
-      if(this.userResponse && this.userResponse.roles && this.userResponse.roles.length > 0) {
-        let roles = this.userResponse.roles;
-        if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
-          this.currentRole = ERole.SOFT_OWNER;
-        }
-        if(roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-          this.currentRole = ERole.SHOP_OWNER;
-        }
-        if(roles.includes(ERoleToString[ERole.TAILOR])) {
-          this.currentRole = ERole.TAILOR;
-        }
-        if(roles.includes(ERoleToString[ERole.CUTTER])) {
-          this.currentRole = ERole.CUTTER;
-        }
-        if(roles.includes(ERoleToString[ERole.CUSTOMER])) {
-          this.currentRole = ERole.CUSTOMER;
-        }
-      }
+      this.currentRole = validateCurrentRole(this.userResponse.roles!);
+      this.userRolesItems = valdiateRoles(this.userRolesItems, this.currentRole);
     });
   }
   
