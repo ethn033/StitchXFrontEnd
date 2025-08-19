@@ -11,7 +11,7 @@ import { ApiResponse } from '../../models/base-response';
 export class ApiService {
   
   protected http: HttpClient = inject(HttpClient);
-  baseUrl: string = environment.api.baseUrl;
+  protected baseUrl: string = environment.api.baseUrl;
   
   /**
   * Generic GET request

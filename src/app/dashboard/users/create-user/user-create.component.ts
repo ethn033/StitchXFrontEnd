@@ -1,3 +1,4 @@
+import { SuitType } from './../../../Dtos/requests/request-dto';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
@@ -73,7 +74,6 @@ export class UserCreateComponent {
     }
   }
   
-  
   ngOnInit(): void {
   }
   
@@ -134,32 +134,16 @@ export class UserCreateComponent {
   
   
   measurementFormExpanded = false;
-  measurementForm: FormGroup = this.fb.group({
-    suitTypeId: [null, Validators.required],
-    chest: [null, [Validators.required, Validators.min(20), Validators.max(60)]],
-    waist: [null, [Validators.required, Validators.min(20), Validators.max(60)]],
-    hip: [null, [Validators.min(20), Validators.max(60)]],
-    sleeveLength: [null, [Validators.required, Validators.min(10), Validators.max(40)]],
-    shoulderWidth: [null, [Validators.min(10), Validators.max(30)]],
-    neckSize: [null, [Validators.required, Validators.min(10), Validators.max(20)]],
-    shirtLength: [null, [Validators.min(20), Validators.max(40)]],
-    pantLength: [null, [Validators.required, Validators.min(20), Validators.max(50)]],
-    notes: [null]
-  });
+  measurementForm: FormGroup = this.fb.group({});
 
-  suitTypes = [
-    { id: 1, name: 'Business Suit' },
-    { id: 2, name: 'Tuxedo' },
-    { id: 3, name: 'Casual Blazer' },
-    { id: 4, name: 'Wedding Suit' }
-  ];
+  suitTypes: SuitType[] = [];
   
   onSuitTypeChange(event: any) {
-    
+    this.initMeasurementForm();
   }
   
   initMeasurementForm() {
-    
+    //loop through data to show fields for the suit type
   }
   
   saveMeasurements() {

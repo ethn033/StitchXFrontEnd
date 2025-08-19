@@ -1,8 +1,22 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, map, throwError } from 'rxjs';
 import { ProblemDetails } from '../models/error-response';
+import { inject } from '@angular/core';
+import { LocalStorageService } from '../services/generics/local-storage.service';
+import { AUTH_TOKEN } from '../utils/global-contstants';
 
 export const apiInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
+  const ls = inject(LocalStorageService);
+  const authToken = ls.getItem(AUTH_TOKEN, true);
+    // Clone the request to add the new header
+    if (authToken && authToken.accessToken) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${authToken.accessToken}`
+        }
+      });
+    }
+
   return next(req).pipe(
     catchError(error => {
       if (isProblemDetails(error.error)) {
