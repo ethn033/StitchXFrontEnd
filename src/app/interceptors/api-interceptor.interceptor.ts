@@ -4,15 +4,17 @@ import { ProblemDetails } from '../models/error-response';
 import { inject } from '@angular/core';
 import { LocalStorageService } from '../services/generics/local-storage.service';
 import { AUTH_TOKEN } from '../utils/global-contstants';
+import { TokenResponse } from '../Dtos/requests/response-dto';
 
 export const apiInterceptorInterceptor: HttpInterceptorFn = (req, next) => {
   const ls = inject(LocalStorageService);
-  const authToken = ls.getItem(AUTH_TOKEN, true);
-    // Clone the request to add the new header
-    if (authToken && authToken.accessToken) {
+  const authToken = ls.getItem(AUTH_TOKEN, true) as TokenResponse;
+
+    if (authToken && authToken.accessToken && authToken.refreshToken) {
       req = req.clone({
         setHeaders: {
-          Authorization: `Bearer ${authToken.accessToken}`
+          Authorization: `Bearer ${authToken.accessToken}`,
+          RefreshToken: `Bearer ${authToken.refreshToken}`
         }
       });
     }
