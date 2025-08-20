@@ -16,16 +16,18 @@ import { TabsModule } from "primeng/tabs";
 import { RouterModule } from '@angular/router';
 import { TruncatePipe } from '../../pipe/truncate.pipe';
 import { DropDownItem } from '../../contracts/dropdown-item';
-import { Order, User } from '../../Dtos/requests/request-dto';
-import { ERole } from '../../enums/enums';
+import { Branch, Order, User } from '../../Dtos/requests/request-dto';
+import { EOrderStatus, EPaymentStatus, ERole } from '../../enums/enums';
 import { ApiResponse } from '../../models/base-response';
 import { ShareDataService } from '../../services/shared/share-data.service';
-import { validateCurrentRole, valdiateRoles, dateFilterValues, normalizeError, orderStatusFilterValue } from '../../utils/utils';
+import { validateCurrentRole, valdiateRoles, dateFilterValues, normalizeError, orderStatusFilterValue, getBusinessId } from '../../utils/utils';
 import { LoadingService } from '../../services/generics/loading.service';
 import { OrdersResponse } from '../../Dtos/requests/response-dto';
 import { ViewCustomerComponent } from '../users/view-user/view-user.component';
 import { OrderService } from '../../services/orders/order.service';
 import { OrderCreateComponent } from './dialogs/orderCreate/orderCreate.component';
+import { LocalStorageService } from '../../services/generics/local-storage.service';
+import { APP_SELECTED_BRANCH } from '../../utils/global-contstants';
 
 @Component({
   selector: 'app-order',
@@ -36,11 +38,14 @@ import { OrderCreateComponent } from './dialogs/orderCreate/orderCreate.componen
 })
 export class OrderComponent implements OnInit {
   private sds = inject(ShareDataService);
+  private ls = inject(LocalStorageService);
   userResponse?: User | null;
   roles = ERole;
   currentRole?: ERole | null;
-  users: Order[] = [];
+  orders: Order[] = [];
   orderStatuses: DropDownItem[] = orderStatusFilterValue();
+  oStatuses = EOrderStatus;
+  paymentStatuses = EPaymentStatus;
   selectedCustomerStatus: DropDownItem = this.orderStatuses[0];
   dateRange: Date[] = [moment().subtract(1, 'month').toDate(), moment().toDate()]; // Default to last week
   dateRanges = dateFilterValues();
@@ -54,10 +59,26 @@ export class OrderComponent implements OnInit {
   loadingService: LoadingService = inject(LoadingService);
   
   
+  branches: Branch[] = [];
+  selectedBranch?: Branch | null;
+  businessId?: number | null;
   constructor() {
     this.sds.userData.subscribe(userData => {
       this.userResponse = userData as User;
-      this.currentRole = validateCurrentRole(this.userResponse.roles!);
+      
+      if(this.userResponse.roles)
+        this.currentRole = validateCurrentRole(this.userResponse.roles!);
+      
+      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
+        this.businessId = getBusinessId(this.userResponse);
+        this.branches = this.userResponse.business.branches;
+        // get selected branch if any 
+        let selected = this.ls.getItem(APP_SELECTED_BRANCH, true) as Branch;
+        if(selected)
+          this.selectedBranch = selected;
+        else
+          this.selectedBranch = this.branches[0];
+      }
     });
   }
   
@@ -93,7 +114,7 @@ export class OrderComponent implements OnInit {
         
         this.loadingService.hide();
         let usersResp = data as ApiResponse<OrdersResponse>;
-        this.users = usersResp.data.users;
+        this.orders = usersResp.data.users;
         this.totalOrdersCount = usersResp.data.totalCount;
       },
       error: (error: any) => {
@@ -169,57 +190,62 @@ export class OrderComponent implements OnInit {
       modal: true,
       draggable: true,
       closable: true,
+      autoZIndex: true,
       closeOnEscape: false,
-      data: {user: user },
-      
-    });
+      data: { 
+        data: {
+          customerId: null, 
+          branchId: this.selectedBranch?.id, 
+          businessId: this.businessId } 
+        },
+      });
+
+      ref.onClose.subscribe((result) => {
+        if (result) {
+          this.loadOrders();
+        }
+      });
+    }
     
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadOrders();
-      }
-    });
-  }
-  
-  takeOrder(order: Order): void {
-    this.dialogService.open(ViewCustomerComponent, {
-      header: `New Order - ${order} ${order}`,
-      width: '90%',
-      styleClass: 'order-dialog',
-      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-      baseZIndex: 10000,
-      data: { order }
-    });
-  }
-  
-  
-  confirmDelete(order: Order): void {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${order} ${order}?`,
-      header: 'Confirm Deletion',
-      icon: 'pi pi-exclamation-triangle',
-      closable: true,
-      closeOnEscape: true,
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
-      accept: () => {
-        this.os.deleteOrder<ApiResponse<any>>(order.id!).subscribe({
-          next: (response: any) => {
-            let resp = response as ApiResponse<any>;
-            if(resp.isSuccess && resp.statusCode == 200){
-              this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
-              this.loadOrders();
+    takeOrder(order: Order): void {
+      this.dialogService.open(ViewCustomerComponent, {
+        header: `New Order - ${order} ${order}`,
+        width: '90%',
+        styleClass: 'order-dialog',
+        contentStyle: { 'max-height': '80vh', overflow: 'auto' },
+        baseZIndex: 10000,
+        data: { order }
+      });
+    }
+    
+    
+    confirmDelete(order: Order): void {
+      this.confirmationService.confirm({
+        message: `Are you sure you want to delete ${order} ${order}?`,
+        header: 'Confirm Deletion',
+        icon: 'pi pi-exclamation-triangle',
+        closable: true,
+        closeOnEscape: true,
+        rejectButtonProps: {
+          label: 'Cancel',
+          severity: 'secondary',
+          outlined: true,
+        },
+        accept: () => {
+          this.os.deleteOrder<ApiResponse<any>>(order.id!).subscribe({
+            next: (response: any) => {
+              let resp = response as ApiResponse<any>;
+              if(resp.isSuccess && resp.statusCode == 200){
+                this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+                this.loadOrders();
+              }
+            },
+            error: (err: any) => {
+              let er = normalizeError(err);
+              this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er.message});
             }
-          },
-          error: (err: any) => {
-            let er = normalizeError(err);
-            this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er.message});
-          }
-        });
-      }
-    });
+          });
+        }
+      });
+    }
   }
-}

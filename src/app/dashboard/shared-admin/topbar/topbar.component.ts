@@ -15,86 +15,87 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { ERole } from '../../../enums/enums';
 import { Badge } from "primeng/badge";
-import { ERoleToString } from '../../../utils/utils';
-import { User } from '../../../Dtos/requests/request-dto';
+import { validateCurrentRole } from '../../../utils/utils';
+import { Branch, User } from '../../../Dtos/requests/request-dto';
+import { SelectChangeEvent, SelectModule } from "primeng/select";
+import { LocalStorageService } from '../../../services/generics/local-storage.service';
+import { APP_SELECTED_BRANCH } from '../../../utils/global-contstants';
 
 @Component({
   selector: 'app-topbar',
-  imports: [CommonModule, IconFieldModule, RouterModule, OverlayBadgeModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule,
-    CommonModule,
-    FormsModule,
-    AutoCompleteModule,
-    MenuModule,
-    ButtonModule,
-    RippleModule, AvatarModule, ToolbarModule, Badge],
-    templateUrl: './topbar.component.html',
-    styleUrl: './topbar.component.css'
-  })
-  export class TopbarComponent {
-    private authService = inject(AuthService);
-    private sds = inject(ShareDataService);
-    userResponse?: User | null;
-    
-    roles = ERole;
-    currentRole?: ERole | null;
-    
-    constructor() {
-      this.sds.userData.subscribe(userData => {
-        this.userResponse = userData as User;
-        if(this.userResponse && this.userResponse.roles && this.userResponse.roles.length > 0) {
-          let roles = this.userResponse.roles;
-          if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
-            this.currentRole = ERole.SOFT_OWNER;
-          }
-          if(roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-            this.currentRole = ERole.SHOP_OWNER;
-          }
-          if(roles.includes(ERoleToString[ERole.TAILOR])) {
-            this.currentRole = ERole.TAILOR;
-          }
-          if(roles.includes(ERoleToString[ERole.CUTTER])) {
-            this.currentRole = ERole.CUTTER;
-          }
-          if(roles.includes(ERoleToString[ERole.CUSTOMER])) {
-            this.currentRole = ERole.CUSTOMER;
-          }
-        }
-      });
-    }
-    
-    searchText = '';
-    filteredItems: string[] = [];
-    dummyItems = ['Order #1234', 'Customer: John Doe', 'Fabric Stock', 'Measurement Template'];
-    
-    userMenuItems: MenuItem[] = [
-     
-      {
-        label: 'Profile',
-        items: [
-          {
-            label: 'Settings',
-            icon: 'pi pi-cog',
-            shortcut: '⌘+O'
-          },
-          {
-            label: 'Messages',
-            icon: 'pi pi-inbox',
-            badge: '2'
-          },
-          {
-            label: 'Logout',
-            icon: 'pi pi-sign-out',
-            shortcut: '⌘+Q',
-            command: () => this.authService.signOut()
-          }
-        ]
+  imports: [CommonModule, IconFieldModule, RouterModule, OverlayBadgeModule, AutoCompleteModule, MenuModule, ButtonModule, FormsModule, CommonModule, FormsModule, AutoCompleteModule, MenuModule, ButtonModule, RippleModule, AvatarModule, ToolbarModule, Badge, SelectModule],
+  templateUrl: './topbar.component.html',
+  styleUrl: './topbar.component.css'
+})
+export class TopbarComponent {
+  private as = inject(AuthService);
+  private ls = inject(LocalStorageService);
+  private sds = inject(ShareDataService);
+  userResponse?: User | null;
+  
+  roles = ERole;
+  currentRole?: ERole | null;
+  branches: Branch[] = [];
+  
+  selectedBranch?: Branch | null;
+  
+  constructor() {
+    this.sds.userData.subscribe(userData => {
+      this.userResponse = userData as User;
+      
+      if(this.userResponse.roles)
+        this.currentRole = validateCurrentRole(this.userResponse.roles!);
+
+      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
+        this.branches = this.userResponse.business.branches;
+        // get selected branch if any 
+        let selected = this.ls.getItem(APP_SELECTED_BRANCH, true) as Branch;
+        if(selected)
+          this.selectedBranch = selected;
+        else
+          this.selectedBranch = this.branches[0];
       }
-    ];
-    
-    filterItems(event: any) {
-      this.filteredItems = this.dummyItems.filter(item => 
-        item.toLowerCase().includes(event.query.toLowerCase())
-      );
-    }
+    });
   }
   
+  userMenuItems: MenuItem[] = [
+    {
+      label: 'Profile',
+      items: [
+        {
+          label: 'Settings',
+          icon: 'pi pi-cog',
+          shortcut: '⌘+O'
+        },
+        {
+          label: 'Messages',
+          icon: 'pi pi-inbox',
+          badge: '2'
+        },
+        {
+          label: 'Logout',
+          icon: 'pi pi-sign-out',
+          shortcut: '⌘+Q',
+          command: () => this.as.signOut()
+        }
+      ]
+    }
+  ];
+  
+  searchText = '';
+  filteredItems: string[] = [];
+  dummyItems = ['Order #1234', 'Customer: John Doe', 'Fabric Stock', 'Measurement Template'];
+  filterItems(event: any) {
+    this.filteredItems = this.dummyItems.filter(item => 
+      item.toLowerCase().includes(event.query.toLowerCase())
+    );
+  }
+  
+  
+  onBranchChange(event: SelectChangeEvent) {
+    let selected = event.value as Branch;
+    if(selected)
+      this.ls.removeItem(APP_SELECTED_BRANCH);
+    this.ls.setItem(APP_SELECTED_BRANCH, selected, true);
+  }
+}

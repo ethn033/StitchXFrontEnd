@@ -48,6 +48,12 @@ export function orderStatusFilterValue(): DropDownItem[] {
   return statusList;
 }
 
+export function getBusinessId(user: User) : number | null {
+  if(user && user.business)
+    return user.business.id!;
+  else
+    return null;
+}
 
 export function validateCurrentRole(roles?: string[]): ERole {
   let role: ERole = ERole.CUSTOMER;

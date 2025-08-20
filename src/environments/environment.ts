@@ -19,6 +19,13 @@ export const environment = {
                 GetAllOrders: 'GetAllOrders',
             }
         },
+        customer: {
+            controller: 'Customer/',
+            enpoints: {
+                GetAllCustomers: 'GetAllCustomers',
+                GetCustomerById: 'GetCustomerById'
+            }
+        },
         business: {
             controller: 'Business/',
             enpoints: {

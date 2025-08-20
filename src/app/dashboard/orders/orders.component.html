@@ -25,63 +25,54 @@
     </div>
 </div>
 
-<p-table size="small" #dt [value]="users" [first]="first" [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadOrders($event)" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
+<p-table size="small" #dt [value]="orders" [first]="first" [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadOrders($event)" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
     <ng-template pTemplate="header">
         <tr>
-            <th pSortableColumn="userId">ID <p-sortIcon field="userId"></p-sortIcon></th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Roles</th>
-            <th>Business</th>
+            <th pSortableColumn="orderOId">ID <p-sortIcon field="orderOId"></p-sortIcon></th>
+            <th>Items</th>
+            <th>Date</th>
+            <th>Delivery Date</th>
+            <th>Total Amount</th>
+            <th>Paid</th>
+            <th>Discount</th>
             <th>Status</th>
-            <th>Outstanding</th>
+            <th>Payment</th>
             <th style="width: 120px">Actions</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-user>
+    <ng-template pTemplate="body" let-order>
         <tr>
-            <td>{{user.userId}}</td>
+            <td>{{order.orderOId}}</td>
+            <td>{{ order.totalItems }}</td>
             <td>
-                {{ user.firstName }} {{ user.lastName }}
+                {{order.orderDate}}
             </td>
             <td>
-                <div *ngIf="user.email" class="flex align-items-center">
-                    <span>{{ user.email | truncate:20 }}</span>
-                </div>
+                {{order.deliveryDate}}
             </td>
             <td>
-                <div class="flex align-items-center mb-1">
-                    <span>{{ user.phoneNumber ?? "N/A" }}</span>
-                </div>
+                {{order.totalAmount | currency: 'PKR'}}
             </td>
             <td>
-                <div class="flex align-items-center mb-1">
-                    <p-tag severity="info" [value]="user.roles"></p-tag>
-                </div>
+                {{order.paidAmount | currency: 'PKR'}}
             </td>
             <td>
-                @if(user.business != null) {
-                    user.business.name | truncate:30
-                }
-                @else { N/A }
+                {{order.discountAmount}}
             </td>
             <td>
-                <p-tag [severity]="user.isActive ? 'success' : 'danger'" [value]="user.isActive ? 'ACTIVE' : 'INACTIVE'"></p-tag>
+                <p-tag [severity]="order.status == oStatuses.RECEIVED ? 'secondary' : order.status == oStatuses.IN_PROGRESS ? 'info' : order.status == oStatuses.COMPLETED ? 'success' : 'warn' " [value]="order.status"></p-tag>
             </td>
             <td>
-                <span class="font-medium" [ngClass]="{'text-red-500': user.outstanding > 0}">
-                    {{ user.outstanding | currency:'PKR' }}
-                </span>
+                <p-tag [severity]="order.paymentStatus == paymentStatuses.PARTIALLY_PAID ? 'warn' : order.paymentStatus == paymentStatuses.PENDING ? 'info' : order.paymentStatus == paymentStatuses.PAID ? 'success' : 'danger' " [value]="order.status"></p-tag>
             </td>
             <td>
                 <div class="flex flex-wrap gap-1">
-                    <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View"  tooltipPosition="top" (click)="viewOrder(user)"></button>
+                    <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View"  tooltipPosition="top" (click)="viewOrder(order)"></button>
                     <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
-                    tooltipPosition="top" (click)="addUpdateOrderDialog(user)"></button>
-                    <button pButton icon="pi pi-shopping-cart" class="p-button-sm p-button-rounded p-button-text" pTooltip="Take Order" tooltipPosition="top" (click)="takeOrder(user)"></button>
+                    tooltipPosition="top" (click)="addUpdateOrderDialog(order)"></button>
+                    <button pButton icon="pi pi-shopping-cart" class="p-button-sm p-button-rounded p-button-text" pTooltip="Take Order" tooltipPosition="top" (click)="takeOrder(order)"></button>
                     <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
-                    pTooltip="Delete" [disabled]="user.isDeleted" tooltipPosition="top" (click)="confirmDelete(user)"></button>
+                    pTooltip="Delete" [disabled]="order.isDeleted" tooltipPosition="top" (click)="confirmDelete(order)"></button>
                 </div>
             </td>
         </tr>

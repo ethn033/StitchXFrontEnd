@@ -21,6 +21,11 @@
     <ng-template #end>
         <div class="actions-container">
             <p-button icon="pi pi-bell" [rounded]="true" text="true" severity="contrast" styleClass="action-btn"/>
+            
+            @if(currentRole == roles.SHOP_OWNER) {
+                <p-select size="small" [options]="branches" [(ngModel)]="selectedBranch" optionLabel="name" placeholder="Select Branch" (onChange)="onBranchChange($event)" styleClass="branch-dropdown" appendTo="body"></p-select>
+            }
+            
             <p-avatar (click)="userMenu.toggle($event)" image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" styleClass="cursor-pointer small-avatar"/>
             <p-menu class="flex justify-center" styleClass="w-full md:w-60" #userMenu [model]="userMenuItems" [popup]="true">
                 <ng-template #item let-item>

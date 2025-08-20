@@ -14,4 +14,5 @@ export class ShareDataService {
   setUserResponse(userResponse: UserResponse) {
     this.userResponseSubject.next(userResponse);
   }
+
 }
