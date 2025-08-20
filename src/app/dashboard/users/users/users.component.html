@@ -3,8 +3,6 @@
     <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" inline="true" selectionMode="range"  [style]="{ width: '100%' }" [readonlyInput]="true">
     </p-datepicker>
 </div>
-
-<!-- Buttons - Right Aligned -->
 <div class="flex justify-end gap-2 mt-3 p-3">
     <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
     <p-button label="Save" (click)="showCustomDateRangeDialog = false; loadUsers();" />  <!-- Recommend separate handler -->

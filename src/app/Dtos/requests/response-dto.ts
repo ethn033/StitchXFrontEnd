@@ -1,4 +1,4 @@
-import { User } from "./request-dto";
+import { Order, User } from "./request-dto";
 
 export interface UserResponse {
   user: User;
@@ -17,3 +17,14 @@ export interface UsersResponse {
     page: number;
     totalPages: number;
 }
+
+
+export interface OrdersResponse {
+    users: Order[];
+    totalCount: number;
+    pageSize: number;
+    page: number;
+    totalPages: number;
+}
+
+

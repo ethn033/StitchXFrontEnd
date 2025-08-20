@@ -13,6 +13,12 @@ export const environment = {
                 
             },
         },
+        order: {
+            controller: 'Orders/',
+            enpoints: {
+                GetAllOrders: 'GetAllOrders',
+            }
+        },
         business: {
             controller: 'Business/',
             enpoints: {

@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DropDownItem } from "../contracts/dropdown-item";
 import { OrderHistoryItemResponseDto } from "../Dtos/responses/orderResponseDto";
-import { ERole } from "../enums/enums";
+import { EOrderStatus, ERole } from "../enums/enums";
 import { User } from "../Dtos/requests/request-dto";
 
 export function dateFilterValues() : DropDownItem[] {
@@ -35,6 +35,17 @@ export function userRolesFilterValue(): DropDownItem[] {
   }));
   
   return roleList;
+}
+
+export function orderStatusFilterValue(): DropDownItem[] {
+  const statusList = Object.keys(EOrderStatus)
+  .filter(key => isNaN(Number(key)))
+  .map(key => ({
+    id: EOrderStatus[key as keyof typeof EOrderStatus],
+    value: key
+  }));
+  
+  return statusList;
 }
 
 
@@ -80,13 +91,6 @@ export const ERoleToString = {
   [ERole.DEMO_USER]: 'DEMO_USER'
 } as const;
 
-
-// *********************Dummy Data Generation*********************
-export function generateDummyOrders() : OrderHistoryItemResponseDto[] {
-  const dummyOrders: OrderHistoryItemResponseDto[] = [
-  ];
-  return dummyOrders;
-}
 
 
 export interface NormalizedError {

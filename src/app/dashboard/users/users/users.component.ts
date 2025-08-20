@@ -202,7 +202,6 @@ export class UsersComponent {
   
   
   confirmDelete(user: User): void {
-    debugger
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${user.firstName} ${user?.lastName}?`,
       header: 'Confirm Deletion',
