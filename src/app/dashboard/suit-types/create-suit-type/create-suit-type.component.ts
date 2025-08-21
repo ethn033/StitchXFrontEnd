@@ -1,3 +1,4 @@
+import { SuitType } from './../../../Dtos/requests/request-dto';
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,22 +8,32 @@ import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { MessageService } from 'primeng/api';
 import { ApiResponse } from '../../../models/base-response';
-import { SuitType } from '../../../Dtos/requests/request-dto';
-import { HttpStatusCode } from '@angular/common/http';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
+import { LoadingService } from '../../../services/generics/loading.service';
 
 @Component({
   selector: 'app-create-suit-type',
   templateUrl: './create-suit-type.component.html',
   imports: [ReactiveFormsModule, CommonModule, FormsModule, InputText, InputNumberModule],
+  providers: [],
   styleUrls: ['./create-suit-type.component.css']
 })
 export class CreateSuitTypeComponent implements OnInit {
-  private ref = inject(DynamicDialogRef); 
-  private config = inject(DynamicDialogConfig);
-  private sts = inject(SuitTypeService);
-  private ms = inject(MessageService);
+  ref = inject(DynamicDialogRef); 
+  config = inject(DynamicDialogConfig);
+  sts = inject(SuitTypeService);
+  ms = inject(MessageService);
+  ls = inject(LoadingService);
   fb: FormBuilder = inject(FormBuilder);
+  
+  businessId = this.config.data?.businessId || null;
+  createdByUserId = this.config.data?.user?.id || null;
+  suitType: SuitType = this.config.data.suitType || null;
+  isUpdateScreen = !!this.suitType;
+  loading = false;
   productForm!: FormGroup;
+  
+
   constructor() {
     this.productForm = this.fb.group({
       name: ['', Validators.required], // optional
@@ -30,48 +41,64 @@ export class CreateSuitTypeComponent implements OnInit {
       price: [null, [Validators.required, Validators.min(0.01)]]
     });
 
-
-    debugger 
-    this.config.data = this.config.data || {};
-   }
- 
+    if(this.isUpdateScreen) {
+      this.productForm.patchValue({
+        ...this.suitType
+      });
+    }
+      
+  }
+  
   ngOnInit() {
     
   }
   
-  businessId?: number | null = this.config.data?.businessId || null;
-  createdByUserId = this.config.data?.user?.id || null;
-  loading = false;
+  
+  
   onSubmit() {
-    debugger
+    
     this.productForm.markAllAsTouched();
     if (!this.productForm.valid) {
       return;
     }
-   
-    let request = {
+    
+    const request: SuitType =  !this.isUpdateScreen ? {
       businessId: this.businessId,
       name: this.productForm.value.name,
       description: this.productForm.value.description,
       price: this.productForm.value.price,
       createdByUserId: this.createdByUserId
+    } : {
+      id: this.suitType.id,
+      businessId: this.businessId,
+      name: this.productForm.value.name,
+      description: this.productForm.value.description,
+      price: this.productForm.value.price,
     }
-
+    
+    this.ls.setLoading(true);
     this.loading = true;
-    this.sts.createSuitType<ApiResponse<SuitType>>(request).subscribe({
+
+    const call = this.isUpdateScreen ? this.sts.updateSuitType<ApiResponse<SuitType>>(this.suitType.id!, request) : this.sts.createSuitType<ApiResponse<SuitType>>(request);
+    
+    call.subscribe({
       next: (response) => {
-        debugger
         this.loading = false;
-        if(response.statusCode == HttpStatusCode.Ok && response.isSuccess) {
-          
-          this.ms.add({ severity: 'success', summary: 'Success', detail: response.message });
+        if(response.statusCode == HttpStatusCode.Created || response.statusCode == HttpStatusCode.Ok && response.isSuccess) {
+          this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: response.message });
           this.ref.close(response);
-        }
+          return;
+        }        
+        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });
       },
       error: (error) => {
         this.loading = false;
-        this.ms.add({ severity: 'error', summary: 'Error', detail: 'Failed to create suit type.' });
-        console.error('Error creating suit type:', error);
+        if(error instanceof HttpErrorResponse) {
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: error.error.message });
+        }
+      },
+      complete: () => {
+        this.ls.setLoading(false);
       }
     });
   }

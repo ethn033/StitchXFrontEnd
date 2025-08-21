@@ -20,19 +20,17 @@ import { ShareDataService } from '../../../services/shared/share-data.service';
 import { SuitType, User } from '../../../Dtos/requests/request-dto';
 import { TabsModule } from "primeng/tabs";
 import { RouterModule } from '@angular/router';
-import { CreateSuitTypeComponent } from '../create-suit-type/create-suit-type.component';
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
 import { Menu } from "primeng/menu";
-
 @Component({
-  selector: 'app-suit-types',
-  templateUrl: './suit-types.component.html',
+  selector: 'app-suit-type-parameters',
+  templateUrl: './suit-type-parameters.component.html',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe, Menu],
   providers: [DialogService, ConfirmationService],
-  styleUrls: ['./suit-types.component.css']
+  styleUrls: ['./suit-type-parameters.component.css']
 })
-export class SuitTypesComponent implements OnInit {
+export class SuitTypeParametersComponent implements OnInit {
   private sds = inject(ShareDataService);
   dialogService: DialogService = inject(DialogService);
   sts: SuitTypeService = inject(SuitTypeService);
@@ -48,7 +46,7 @@ export class SuitTypesComponent implements OnInit {
           label: 'Add Parameters',
           icon: 'pi pi-plus',
           command: () => {
-            this.showSuitTypeParameters();
+            
           }
         }
       ]
@@ -78,36 +76,10 @@ export class SuitTypesComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    this.loadSuitTypes();
+    this.loadSuitTypeParameters();
   }
   
-
-  showSuitTypeParameters(st?: SuitType) {
-    const ref = this.dialogService.open(CreateSuitTypeComponent, {
-      header: 'Suit Type Parameters',
-      width: '80%',
-      styleClass: 'suit-type-dialog',
-      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-      baseZIndex: 10000,
-      modal: true,
-      closable: true,
-      closeOnEscape: false,
-      data: {
-        user: this.userResponse, 
-        businessId: this.businessId,
-        suitType: st
-      }
-    });
-    
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadSuitTypes();
-      }
-    });
-  }
-
-
-  loadSuitTypes(event?: TableLazyLoadEvent): void {
+  loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
     
     this.loadingService.show();
     
@@ -129,32 +101,6 @@ export class SuitTypesComponent implements OnInit {
       }
     });
   }
-  
-  
-  addUpdateSuitTypeDialog(st?: SuitType): void {
-    const ref = this.dialogService.open(CreateSuitTypeComponent, {
-      header: st ? 'Update Suite Type' : 'Add New Suit Type',
-      width: '60%',
-      styleClass: 'suit-type-dialog',
-      contentStyle: { 'max-height': '80vh', overflow: 'auto' },
-      baseZIndex: 10000,
-      modal: true,
-      closable: true,
-      closeOnEscape: false,
-      data: {
-        user: this.userResponse, 
-        businessId: this.businessId,
-        suitType: st
-      }
-    });
-    
-    ref.onClose.subscribe((result) => {
-      if (result) {
-        this.loadSuitTypes();
-      }
-    });
-  }
-  
 
   confirmDelete(st: SuitType): void {
     this.confirmationService.confirm({
@@ -174,7 +120,7 @@ export class SuitTypesComponent implements OnInit {
             let resp = response as ApiResponse<any>;
             if(resp.isSuccess && resp.statusCode == 200){
               this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
-              this.loadSuitTypes();
+              this.loadSuitTypeParameters();
             }
           },
           error: (err: any) => {

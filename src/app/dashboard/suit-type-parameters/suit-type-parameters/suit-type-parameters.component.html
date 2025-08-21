@@ -1,12 +1,12 @@
 <div class="d-flex justify-content-between align-items-center mb-5">
     <!-- Left: Title with refresh button -->
     <h5 class="fw-bold m-0">
-        <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="loadSuitTypes();" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Suit Types
+        <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="loadSuitTypeParameters();" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Suit Types
     </h5>
     <!-- Right: Dropdown + New Order button -->
     <div class="d-flex align-items-center gap-3">
-        <p-select (onChange)="loadSuitTypes();" size="small" [options]="filterStatusValues" [(ngModel)]="selectedStatus" optionLabel="value" placeholder="Filter by Status" class="min-w-[200px]"></p-select>
-        <button pButton size="small" label="Suit Type" (click)="addUpdateSuitTypeDialog()" class="p-button-primary"><i class="fas fa-shirt"></i> </button>
+        <p-select (onChange)="loadSuitTypeParameters();" size="small" [options]="filterStatusValues" [(ngModel)]="selectedStatus" optionLabel="value" placeholder="Filter by Status" class="min-w-[200px]"></p-select>
+        <button pButton size="small" label="Suit Type" (click)="null" class="p-button-primary"><i class="fas fa-shirt"></i> </button>
     </div>
 </div>
 
@@ -35,7 +35,7 @@
             <td>
                 <div class="flex flex-wrap gap-1">
                     <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
-                    tooltipPosition="top" (click)="addUpdateSuitTypeDialog(st)"></button>
+                    tooltipPosition="top" (click)="null"></button>
                     <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
                     pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
                     <button pButton icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button>
@@ -52,7 +52,7 @@
                     <i class="pi pi-users text-4xl text-400 mb-3"></i>
                     <h4 class="mb-1">No users found</h4>
                     <p class="text-600">Add your first user to get started</p>
-                    <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUpdateSuitTypeDialog()"></button>
+                    <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="null"></button>
                 </div>
             </td>
         </tr>

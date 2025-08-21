@@ -33,16 +33,18 @@ export class UserCreateComponent {
   loading = false;
   us = inject(UsersService);
   ms = inject(MessageService);
+  config = inject(DynamicDialogConfig)
+  ref = inject(DynamicDialogRef);
   
   userRolesItems: DropDownItem[] = userRolesFilterValue();
   selectedRole?: DropDownItem = this.userRolesItems[0];
-  private sds = inject(ShareDataService);
-  private fb = inject(FormBuilder);
+  sds = inject(ShareDataService);
+  fb = inject(FormBuilder);
   userResponse?: User | null;
   currentRole?: ERole | null;
   roles = ERole;
   
-  constructor(private ref: DynamicDialogRef, public config: DynamicDialogConfig, private messageService: MessageService) {
+  constructor() {
     this.sds.userData.subscribe(userData => {
       this.userResponse = userData as User;
       this.currentRole = validateCurrentRole(this.userResponse.roles!);
@@ -111,18 +113,14 @@ export class UserCreateComponent {
     call.subscribe({
       next: (data: any) => {
         let resp = data as ApiResponse<any>;
-        if(resp.statusCode == HttpStatusCode.Created && resp.isSuccess) {
-          this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
-          this.ref.close(true);
-        }
-        if(resp.statusCode == HttpStatusCode.Ok && resp.isSuccess) {
-          this.messageService.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
+        if(resp.statusCode == HttpStatusCode.Created || resp.statusCode == HttpStatusCode.Ok && resp.isSuccess) {
+          this.ms.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
           this.ref.close(true);
         }
         this.loading = false;
       },
       error: (err: any) => {
-        this.messageService.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: err.message});
+        this.ms.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: err.message});
         this.loading = false;
       }
     });

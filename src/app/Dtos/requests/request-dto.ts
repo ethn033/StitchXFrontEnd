@@ -193,7 +193,6 @@ export interface Login {
 export interface SuitType {
     id?: number | null;
     businessId?: number | null;
-    applicationUserId?: number | null;
     name?: string | null;
     description?: string | null;
     price?: number | null;  // decimal in C# becomes number in TypeScript
@@ -205,9 +204,6 @@ export interface SuitType {
     isDeleted?: boolean | null;
     isActive?: boolean | null;
     deletedAt?: Date | string | null;
-
-    // Navigation properties
-    applicationUser?: User | null;
     business?: Business | null;
     suitTypeParameters?: SuitTypeParameter[] | null;
     measurements?: Measurement[] | null;
