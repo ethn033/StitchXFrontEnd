@@ -14,8 +14,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="lastName" class="form-label">Last Name*</label>
-          <input pInputText size="small" type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Enter last name"
-          [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }">
+          <input pInputText size="small" type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Enter last name" [ngClass]="{ 'is-invalid': customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched }">
           <div *ngIf="customerForm.get('lastName')?.invalid && customerForm.get('lastName')?.touched" class="invalid-feedback">Last name is required (max 50 characters)</div>
         </div>
       </div>

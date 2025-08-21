@@ -1,0 +1,45 @@
+:host ::ng-deep label.form-label {
+  display: block;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Style the native input inside pInputText */
+:host ::ng-deep input.p-inputtext {
+  width: 100% !important;
+  min-height: 38px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Style the textarea inside pInputText + form-control */
+:host ::ng-deep textarea.p-inputtextarea.form-control {
+  width: 100% !important;
+  font-size: 1rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Style PrimeNG p-inputNumber wrapper */
+:host ::ng-deep .p-inputnumber {
+  width: 100% !important;
+  display: block;
+}
+
+/* Fix margin below each control */
+:host ::ng-deep input.p-inputtext,
+:host ::ng-deep .p-inputnumber,
+:host ::ng-deep textarea.p-inputtextarea {
+  margin-bottom: 0.25rem;
+}
+
+/* Responsive stacking for medium+ and small devices */
+/* Bootstrap grid already handles this, but just in case */
+@media (max-width: 575.98px) {
+  :host ::ng-deep .row > .col-md-6 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+}

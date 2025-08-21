@@ -26,6 +26,16 @@ export const environment = {
                 GetCustomerById: 'GetCustomerById'
             }
         },
+        suitype: {
+            controller: 'SuitType/',
+            enpoints: {
+                GetAllSuitTypes: 'GetAllSuitTypes',
+                GetSuitTypeById: 'GetSuitTypeById',
+                CreateSuitType: 'CreateSuitType',
+                UpdateSuitType: 'UpdateSuitType',
+                DeleteSuitType: 'DeleteSuitType'
+            }
+        },
         business: {
             controller: 'Business/',
             enpoints: {

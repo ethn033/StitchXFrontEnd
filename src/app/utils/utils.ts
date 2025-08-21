@@ -18,7 +18,7 @@ export function dateFilterValues() : DropDownItem[] {
   ];
 }
 
-export function userStatusesFilterValues(): DropDownItem[] {
+export function entityStatuses(): DropDownItem[] {
   return [
     { id: 1, value: 'Active' },
     { id: 0, value: 'Inactive' },

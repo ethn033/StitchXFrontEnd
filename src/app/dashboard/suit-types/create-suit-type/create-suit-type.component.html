@@ -1,0 +1,45 @@
+<div class="container-fluid d-flex align-items-center justify-content-center bg-light">
+  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="container-fluid p-3">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="name" class="form-label d-block mb-1">Name</label>
+          <input size="small" pInputText id="name" type="text" formControlName="name" class="form-control" [ngClass]="{ 'is-invalid': productForm.get('name')?.invalid && productForm.get('name')?.touched }" placeholder="Enter suit type name"/>
+          <div *ngIf="productForm.get('name')?.touched && productForm.get('name')?.errors" class="invalid-feedback d-block">
+            <span *ngIf="productForm.get('name')?.errors?.['maxlength']">Name cannot exceed 150 characters.</span>
+            <span *ngIf="productForm.get('name')?.errors?.['required']">Name is required.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="price" class="form-label d-block mb-1">Price <span class="text-danger">*</span></label>
+          <p-inputNumber size="small" id="price" inputId="priceInput" mode="decimal" minFractionDigits="2" maxFractionDigits="2" formControlName="price" [ngClass]="{ 'is-invalid': productForm.get('price')?.invalid && productForm.get('price')?.touched }"></p-inputNumber>
+          <div *ngIf="productForm.get('price')?.touched && productForm.get('price')?.errors" class="invalid-feedback d-block">
+            <span *ngIf="productForm.get('price')?.errors?.['required']">Price is required.</span>
+            <span *ngIf="productForm.get('price')?.errors?.['min']">Price must be positive.</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-12">
+        <div class="form-group">
+          <label for="description" class="form-label d-block mb-1">Description</label>
+          <textarea size="small" pInputText id="description" rows="4" formControlName="description" [ngClass]="{ 'is-invalid': productForm.get('description')?.invalid && productForm.get('description')?.touched }" class="form-control" placeholder="Enter description (max 500 characters)"></textarea>
+          <div *ngIf="productForm.get('description')?.touched && productForm.get('description')?.errors" class="invalid-feedback d-block">
+            <span *ngIf="productForm.get('description')?.errors?.['maxlength']">Description cannot exceed 500 characters.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Form Actions -->
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="loading">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span> Save
+      </button>
+    </div>
+  </form>
+</div>

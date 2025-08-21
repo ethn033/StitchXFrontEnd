@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { dateFilterValues, normalizeError, userRolesFilterValue, userStatusesFilterValues, valdiateRoles, validateCurrentRole } from '../../../utils/utils';
+import { dateFilterValues, entityStatuses, normalizeError, userRolesFilterValue, valdiateRoles, validateCurrentRole } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ViewCustomerComponent } from '../view-user/view-user.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
@@ -39,7 +39,7 @@ export class UsersComponent {
   roles = ERole;
   currentRole?: ERole | null;
   users: User[] = [];
-  userStatuses: DropDownItem[] = userStatusesFilterValues();
+  userStatuses: DropDownItem[] = entityStatuses();
   selectedCustomerStatus: DropDownItem = this.userStatuses[0];
   userRolesItems: DropDownItem[] = userRolesFilterValue();
   selectedRole?: DropDownItem = this.userRolesItems[0];
