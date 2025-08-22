@@ -9,7 +9,7 @@ import { ApiResponse } from '../../models/base-response';
   providedIn: 'root'
 })
 export class SuitTypeService extends ApiService {
-  private endpoint = environment.api.suitype.controller;
+  private controller = environment.api.suitype.controller;
   
   constructor() {
     super();
@@ -17,23 +17,27 @@ export class SuitTypeService extends ApiService {
   
   
   createSuitType<T>(payload: SuitType): Observable<ApiResponse<T>> {
-    return this.post(this.endpoint + environment.api.suitype.enpoints.CreateSuitType, payload);
+    return this.post(this.controller + environment.api.suitype.enpoints.CreateSuitType, payload);
   }
 
   getSuitTypeById<T>(id: number): Observable<ApiResponse<T>> {
-    return this.get(this.endpoint + environment.api.suitype.enpoints.GetSuitTypeById+'/'+id);
+    return this.get(this.controller + environment.api.suitype.enpoints.GetSuitTypeById+'/'+id);
   }
   
   updateSuitType<T>(id: number, payload: SuitType): Observable<ApiResponse<T>> {
-    return this.put(this.endpoint + environment.api.suitype.enpoints.UpdateSuitType+'/'+ id, payload);
+    return this.put(this.controller + environment.api.suitype.enpoints.UpdateSuitType+'/'+ id, payload);
   }
   
   getSuitTypes<T>(payload: any): Observable<ApiResponse<T>> {
-    return this.get(this.endpoint + environment.api.suitype.enpoints.GetAllSuitTypes, payload);
+    return this.get(this.controller + environment.api.suitype.enpoints.GetAllSuitTypes, payload);
   }
   
   deleteSuitType<T>(id: number) : Observable<ApiResponse<T>>{
-    return this.delete(this.endpoint + environment.api.suitype.enpoints.DeleteSuitType+'/'+id);
+    return this.delete(this.controller + environment.api.suitype.enpoints.DeleteSuitType+'/'+id);
+  }
+
+  updateSuitTypeStatus<T>(id: number, status: boolean): Observable<ApiResponse<T>> {
+    return this.put(this.controller + environment.api.suitype.enpoints.UpdateSuitTypeStatus+'/'+ id, status);
   }
   
 }

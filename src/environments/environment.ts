@@ -33,7 +33,8 @@ export const environment = {
                 GetSuitTypeById: 'GetSuitTypeById',
                 CreateSuitType: 'CreateSuitType',
                 UpdateSuitType: 'UpdateSuitType',
-                DeleteSuitType: 'DeleteSuitType'
+                DeleteSuitType: 'DeleteSuitType',
+                UpdateSuitTypeStatus: 'UpdateSuitTypeStatus'
             }
         },
         business: {

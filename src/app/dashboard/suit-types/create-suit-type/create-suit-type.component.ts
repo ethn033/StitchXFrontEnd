@@ -92,12 +92,14 @@ export class CreateSuitTypeComponent implements OnInit {
         this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });
       },
       error: (error) => {
+        this.ls.setLoading(false);
         this.loading = false;
         if(error instanceof HttpErrorResponse) {
           this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: error.error.message });
         }
       },
       complete: () => {
+        this.loading = false;
         this.ls.setLoading(false);
       }
     });

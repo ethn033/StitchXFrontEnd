@@ -24,15 +24,16 @@ import { CreateSuitTypeComponent } from '../create-suit-type/create-suit-type.co
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
 import { Menu } from "primeng/menu";
-
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 @Component({
   selector: 'app-suit-types',
   templateUrl: './suit-types.component.html',
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe, Menu],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe, Menu, ToggleSwitchModule],
   providers: [DialogService, ConfirmationService],
   styleUrls: ['./suit-types.component.css']
 })
 export class SuitTypesComponent implements OnInit {
+  
   private sds = inject(ShareDataService);
   dialogService: DialogService = inject(DialogService);
   sts: SuitTypeService = inject(SuitTypeService);
@@ -81,7 +82,37 @@ export class SuitTypesComponent implements OnInit {
     this.loadSuitTypes();
   }
   
-
+  toggleSuitTypeStatus(st: any) {
+    this.loadingService.show();
+    this.sts.updateSuitTypeStatus<ApiResponse<any>>(st.id, st.isActive).subscribe({
+      next: (response: any) => {
+        this.loadingService.hide();
+        if(response.isSuccess && response.statusCode == 200) {
+          this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: response.message });
+          let index = this.suitTypes.findIndex(s => s.id === st.id);
+          
+          if (index !== -1) {
+            this.suitTypes.splice(index, 1);
+            this.suitTypes = [...this.suitTypes]; // Refresh the array reference
+          }
+          return;
+        }
+        st.isActive = !st.isActive; // revert the change if failed
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: response.message });
+      },
+      error: (err: any) => {
+        st.isActive = !st.isActive; // revert the change if failed
+        this.loadingService.hide();
+        let er = normalizeError(err);
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
+      },
+      complete: () => {
+        this.loadingService.hide();
+      }
+    });
+    
+  }
+  
   showSuitTypeParameters(st?: SuitType) {
     const ref = this.dialogService.open(CreateSuitTypeComponent, {
       header: 'Suit Type Parameters',
@@ -105,8 +136,8 @@ export class SuitTypesComponent implements OnInit {
       }
     });
   }
-
-
+  
+  
   loadSuitTypes(event?: TableLazyLoadEvent): void {
     
     this.loadingService.show();
@@ -155,7 +186,7 @@ export class SuitTypesComponent implements OnInit {
     });
   }
   
-
+  
   confirmDelete(st: SuitType): void {
     this.confirmationService.confirm({
       message: `Are you sure you want to delete ${st.name}?`,
@@ -175,7 +206,9 @@ export class SuitTypesComponent implements OnInit {
             if(resp.isSuccess && resp.statusCode == 200){
               this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
               this.loadSuitTypes();
+              return;
             }
+            this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: resp.message });
           },
           error: (err: any) => {
             let er = normalizeError(err);
