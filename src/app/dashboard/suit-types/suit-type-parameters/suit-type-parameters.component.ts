@@ -1,6 +1,7 @@
+import { SuitTypeParameter } from './../../../Dtos/requests/request-dto';
 import { Component, inject, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService, MessageService, MenuItem } from 'primeng/api';
@@ -8,7 +9,7 @@ import { TagModule } from 'primeng/tag';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 import { SelectModule } from 'primeng/select';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
@@ -23,6 +24,7 @@ import { RouterModule } from '@angular/router';
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
 import { Menu } from "primeng/menu";
+import { SuitTypeParameterService } from '../../../services/suit-type-parameters/suit-type-parameter.service';
 @Component({
   selector: 'app-suit-type-parameters',
   templateUrl: './suit-type-parameters.component.html',
@@ -31,13 +33,31 @@ import { Menu } from "primeng/menu";
   styleUrls: ['./suit-type-parameters.component.css']
 })
 export class SuitTypeParametersComponent implements OnInit {
-  private sds = inject(ShareDataService);
-  dialogService: DialogService = inject(DialogService);
-  sts: SuitTypeService = inject(SuitTypeService);
-  confirmationService: ConfirmationService = inject(ConfirmationService);
-  messageService: MessageService = inject(MessageService);
-  loadingService: LoadingService = inject(LoadingService);
+  ref = inject(DynamicDialogRef); 
+  confService = inject(ConfirmationService); 
+  config = inject(DynamicDialogConfig);
+  sts = inject(SuitTypeParameterService);
+  ms = inject(MessageService);
+  ls = inject(LoadingService);
+  sds = inject(ShareDataService);
+  fb: FormBuilder = inject(FormBuilder);
   
+  loading = false;
+  userResponse: User = this.config.data?.user as User || null;
+  businessId = this.config.data?.businessId || null;
+  createdByUserId = this.userResponse.id || null;
+  suitType: SuitType = this.config.data?.suitType || null;
+  suitTypeParamForm!: FormGroup;
+
+  filterStatusValues = entityStatuses();
+  selectedStatus: DropDownItem = this.filterStatusValues[0];
+
+
+  constructor() { 
+
+  }
+  
+
   items: MenuItem[] = [
     {
       label: 'Options',
@@ -52,59 +72,46 @@ export class SuitTypeParametersComponent implements OnInit {
       ]
     }
   ];
-  
-  userResponse?: User | null;
-  roles = ERole;
-  currentRole?: ERole | null;
-  suitTypes: SuitType[] = [];
-  filterStatusValues: DropDownItem[] = entityStatuses();
-  selectedStatus: DropDownItem = this.filterStatusValues[0];
-  
-  totalSuitTypes: number = 0;
-  
-  businessId?: number | null;
-  constructor() {
-    this.sds.userData.subscribe(userData => {
-      this.userResponse = userData as User;
-      this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
-        this.businessId = getBusinessId(this.userResponse);
-      }
-    });
     
-    
-  }
   
   ngOnInit(): void {
     this.loadSuitTypeParameters();
   }
   
+  suitTypeParameters: SuitTypeParameter[] = [];
+  totalSuitTypeParameters: number = 0;
   loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
+
     
-    this.loadingService.show();
+    debugger
+    this.config.data
     
+    this.ls.show();
     let payload = {
       businessId: this.businessId ?? 0,
-      status: this.selectedStatus.id
+      suitTypeId: this.suitType.id,
     };
     
-    this.sts.getSuitTypes<ApiResponse<SuitType[]>>(payload).subscribe({
+    this.sts.getSuitTypeParameters<ApiResponse<SuitTypeParameter[]>>(payload).subscribe({
       next: (data: any) => {
-        this.loadingService.hide();
+        this.ls.hide();
         let resp  = data as ApiResponse<SuitType[]>;
-        this.suitTypes = resp.data;
-        this.totalSuitTypes = this.suitTypes.length;
+        this.suitTypeParameters = resp.data;
+        this.totalSuitTypeParameters = this.suitTypeParameters.length;
       },
       error: (error: any) => {
-        this.loadingService.hide();
-        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load suit types.' });
+        this.ls.hide();
+        this.ms.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: error?.message || 'Failed to load suit type parameters.' });
+      },
+      complete: () => {
+        this.ls.hide();
       }
     });
   }
-
-  confirmDelete(st: SuitType): void {
-    this.confirmationService.confirm({
-      message: `Are you sure you want to delete ${st.name}?`,
+  
+  confirmDelete(stp: SuitTypeParameter): void {
+    this.confService.confirm({
+      message: `Are you sure you want to delete ${stp.name}?`,
       header: 'Confirm Deletion',
       icon: 'pi pi-exclamation-triangle',
       closable: true,
@@ -115,17 +122,17 @@ export class SuitTypeParametersComponent implements OnInit {
         outlined: true,
       },
       accept: () => {
-        this.sts.deleteSuitType<ApiResponse<any>>(st.id!).subscribe({
+        this.sts.deleteSuitTypeParameter<ApiResponse<any>>(stp.id!).subscribe({
           next: (response: any) => {
-            let resp = response as ApiResponse<any>;
+            let resp = response as ApiResponse<SuitTypeParameter>;
             if(resp.isSuccess && resp.statusCode == 200){
-              this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+              this.ms.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
               this.loadSuitTypeParameters();
             }
           },
           error: (err: any) => {
             let er = normalizeError(err);
-            this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
+            this.ms.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
           }
         });
       }

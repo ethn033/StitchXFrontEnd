@@ -34,7 +34,20 @@ export const environment = {
                 CreateSuitType: 'CreateSuitType',
                 UpdateSuitType: 'UpdateSuitType',
                 DeleteSuitType: 'DeleteSuitType',
-                UpdateSuitTypeStatus: 'UpdateSuitTypeStatus'
+                UpdateSuitTypeStatus: 'UpdateSuitTypeStatus',
+                RestoreDeletedSuitType: 'RestoreDeletedSuitType'
+            }
+        },
+        suitypeparameter: {
+            controller: 'SuitTypeParameters/',
+            enpoints: {
+                createSuitTypeParameter: 'CreateSuitTypeParameter',
+                getSuitTypeParameterById: 'GetSuitTypeParameterById',
+                updateSuitTypeParameter: 'UpdateSuitTypeParameter',
+                getSuitTypeParameters: 'GetSuitTypeParameters',
+                deleteSuitTypeParameter: 'DeleteSuitTypeParameter',
+                updateSuitTypeParameterStatus: 'UpdateSuitTypeParameterStatus',
+                restoreDeletedSuitTypeParameter: 'RestoreDeletedSuitTypeParameter'
             }
         },
         business: {

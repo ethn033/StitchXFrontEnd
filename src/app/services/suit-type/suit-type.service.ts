@@ -40,4 +40,8 @@ export class SuitTypeService extends ApiService {
     return this.put(this.controller + environment.api.suitype.enpoints.UpdateSuitTypeStatus+'/'+ id, status);
   }
   
+  restoreDeletedSuitType<T>(id: number): Observable<ApiResponse<T>> {
+    return this.put(this.controller + environment.api.suitype.enpoints.RestoreDeletedSuitType+'/'+ id);
+  }
+  
 }

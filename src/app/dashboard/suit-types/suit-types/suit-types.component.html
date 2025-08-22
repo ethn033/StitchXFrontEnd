@@ -30,32 +30,31 @@
             <td>{{ st.price | currency: 'PKR'}}</td>
             <td>{{ st.createdAt | date: 'dd-mm-yyyy'}}</td>
             <td>
-                <p-toggleSwitch [(ngModel)]="st.isActive" [pTooltip]="st.isActive ? 'Active' : 'Inactive'" (onChange)="toggleSuitTypeStatus(st)" />
+                <p-toggleSwitch [(ngModel)]="st.isActive" [disabled]="st.isDeleted" [pTooltip]="st.isActive ? 'Active' : 'Inactive'" (onChange)="toggleSuitTypeStatus(st)" />
             </td>
             <td>
                 <div class="flex flex-wrap gap-1">
-                    <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
-                    tooltipPosition="top" (click)="addUpdateSuitTypeDialog(st)"></button>
-                    <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
-                    pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
-                    <button pButton icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button>
+                    <button [disabled]="st.isDeleted || !st.isActive" pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" tooltipPosition="top" (click)="addUpdateSuitTypeDialog(st)"></button>
+                    <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger" pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
+                    <button pButton icon="pi pi-ellipsis-v" (click)="stRestoreId = st.id; suitType = st; selectedStatus.id == 2 ? menuDelete.toggle($event) : selectedStatus.id == 1 ? menu.toggle($event): null" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button>
                 </div>
                 <p-menu #menu appendTo="body" [model]="items" [popup]="true" />
+                <p-menu #menuDelete appendTo="body" [popup]="true" [model]="itemsDelete" />
             </td>
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
         @if(!loadingService.getLoading) {
-        <tr>
-            <td colspan="8" class="text-center py-5">
-                <div class="flex flex-column align-items-center">
-                    <i class="pi pi-users text-4xl text-400 mb-3"></i>
-                    <h4 class="mb-1">No users found</h4>
-                    <p class="text-600">Add your first user to get started</p>
-                    <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUpdateSuitTypeDialog()"></button>
-                </div>
-            </td>
-        </tr>
+            <tr>
+                <td colspan="8" class="text-center py-5">
+                    <div class="flex flex-column align-items-center">
+                        <i class="pi pi-users text-4xl text-400 mb-3"></i>
+                        <h4 class="mb-1">No users found</h4>
+                        <p class="text-600">Add your first user to get started</p>
+                        <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUpdateSuitTypeDialog()"></button>
+                    </div>
+                </td>
+            </tr>
         }
     </ng-template>
 </p-table>

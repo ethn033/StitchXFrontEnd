@@ -32,7 +32,6 @@ export class CreateSuitTypeComponent implements OnInit {
   isUpdateScreen = !!this.suitType;
   loading = false;
   productForm!: FormGroup;
-  
 
   constructor() {
     this.productForm = this.fb.group({
@@ -76,7 +75,7 @@ export class CreateSuitTypeComponent implements OnInit {
       price: this.productForm.value.price,
     }
     
-    this.ls.setLoading(true);
+    this.ls.show();
     this.loading = true;
 
     const call = this.isUpdateScreen ? this.sts.updateSuitType<ApiResponse<SuitType>>(this.suitType.id!, request) : this.sts.createSuitType<ApiResponse<SuitType>>(request);
@@ -92,7 +91,7 @@ export class CreateSuitTypeComponent implements OnInit {
         this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });
       },
       error: (error) => {
-        this.ls.setLoading(false);
+        this.ls.hide();
         this.loading = false;
         if(error instanceof HttpErrorResponse) {
           this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: error.error.message });
@@ -100,7 +99,7 @@ export class CreateSuitTypeComponent implements OnInit {
       },
       complete: () => {
         this.loading = false;
-        this.ls.setLoading(false);
+        this.ls.hide();
       }
     });
   }

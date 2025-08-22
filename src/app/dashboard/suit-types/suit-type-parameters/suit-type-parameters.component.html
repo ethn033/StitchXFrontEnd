@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<p-table [value]="suitTypes" size="small" #dt [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypes" dataKey="userId" sortField="userId" [resizableColumns]="true" showGridlines="true">
+<p-table [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="userId" sortField="userId" [resizableColumns]="true" showGridlines="true">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
@@ -45,7 +45,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-        @if(!loadingService.getLoading) {
+        @if(!ls.getLoading) {
         <tr>
             <td colspan="8" class="text-center py-5">
                 <div class="flex flex-column align-items-center">

@@ -20,7 +20,7 @@ import { Branch, Order, User } from '../../Dtos/requests/request-dto';
 import { EOrderStatus, EPaymentStatus, ERole } from '../../enums/enums';
 import { ApiResponse } from '../../models/base-response';
 import { ShareDataService } from '../../services/shared/share-data.service';
-import { validateCurrentRole, valdiateRoles, dateFilterValues, normalizeError, orderStatusFilterValue, getBusinessId } from '../../utils/utils';
+import { validateCurrentRole, dateFilterValues, normalizeError, orderStatusFilterValue, getBusinessId } from '../../utils/utils';
 import { LoadingService } from '../../services/generics/loading.service';
 import { OrdersResponse } from '../../Dtos/requests/response-dto';
 import { ViewCustomerComponent } from '../users/view-user/view-user.component';
@@ -33,7 +33,7 @@ import { APP_SELECTED_BRANCH } from '../../utils/global-contstants';
   selector: 'app-order',
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe, TabsModule, RouterModule],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule],
   providers: [DialogService, ConfirmationService],
 })
 export class OrderComponent implements OnInit {

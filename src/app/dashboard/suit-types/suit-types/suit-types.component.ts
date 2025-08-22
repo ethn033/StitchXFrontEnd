@@ -25,6 +25,8 @@ import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
 import { Menu } from "primeng/menu";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { HttpStatusCode } from '@angular/common/http';
+import { SuitTypeParametersComponent } from '../suit-type-parameters/suit-type-parameters.component';
 @Component({
   selector: 'app-suit-types',
   templateUrl: './suit-types.component.html',
@@ -41,6 +43,8 @@ export class SuitTypesComponent implements OnInit {
   messageService: MessageService = inject(MessageService);
   loadingService: LoadingService = inject(LoadingService);
   
+
+  suitType!: SuitType; // for paramters, will be passed to the component
   items: MenuItem[] = [
     {
       label: 'Options',
@@ -49,7 +53,22 @@ export class SuitTypesComponent implements OnInit {
           label: 'Add Parameters',
           icon: 'pi pi-plus',
           command: () => {
-            this.showSuitTypeParameters();
+            this.showSuitTypeParameters(this.suitType);
+          }
+        }
+      ]
+    }
+  ];
+
+  stRestoreId: number | null = null;
+  itemsDelete: MenuItem[] = [
+    {
+      items: [
+        {
+          label: 'Restore Suit Type',
+          icon: 'pi pi-undo',
+          command: (event: any) => {
+            this.restoreDeletedSuitType(event);
           }
         }
       ]
@@ -110,11 +129,40 @@ export class SuitTypesComponent implements OnInit {
         this.loadingService.hide();
       }
     });
-    
+  }
+
+  restoreDeletedSuitType(st: any) {
+    if(!this.stRestoreId) {
+      this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'No suit type selected for restoration.' });
+      return;
+    }
+    this.loadingService.show();
+    this.sts.restoreDeletedSuitType<ApiResponse<any>>(this.stRestoreId).subscribe({
+      next: (response: any) => {
+        this.loadingService.hide();
+        if(response.isSuccess && response.statusCode == HttpStatusCode.Ok) {
+          this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: response.message });
+          let index = this.suitTypes.findIndex(s => s.id === this.stRestoreId);
+          
+          if (index !== -1) {
+            this.suitTypes.splice(index, 1);
+            this.suitTypes = [...this.suitTypes]; // Refresh the array reference
+          }
+          return;
+        }
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: response.message });
+      },
+      error: (err: any) => {
+        let er = normalizeError(err);
+        this.loadingService.hide();
+        this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
+      }
+    });
   }
   
   showSuitTypeParameters(st?: SuitType) {
-    const ref = this.dialogService.open(CreateSuitTypeComponent, {
+    debugger
+    const ref = this.dialogService.open(SuitTypeParametersComponent, {
       header: 'Suit Type Parameters',
       width: '80%',
       styleClass: 'suit-type-dialog',

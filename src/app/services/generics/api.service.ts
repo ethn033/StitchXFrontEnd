@@ -58,7 +58,7 @@ export class ApiService {
   * @param headers - Optional headers
   * @returns Observable of type T
   */
-  protected put<T>(endpoint: string, body: any, headers?: HttpHeaders): Observable<ApiResponse<T>> {
+  protected put<T>(endpoint: string, body?: any, headers?: HttpHeaders): Observable<ApiResponse<T>> {
     return this.http.put<ApiResponse<T>>(`${this.baseUrl}${endpoint}`, body, { headers });
   }
   
