@@ -35,6 +35,9 @@ import { SuitTypeParametersComponent } from '../suit-type-parameters/suit-type-p
   styleUrls: ['./suit-types.component.css']
 })
 export class SuitTypesComponent implements OnInit {
+  abc() {
+    console.log(this.selectedStatus.id);
+  }
   
   private sds = inject(ShareDataService);
   dialogService: DialogService = inject(DialogService);
@@ -43,35 +46,26 @@ export class SuitTypesComponent implements OnInit {
   messageService: MessageService = inject(MessageService);
   loadingService: LoadingService = inject(LoadingService);
   
-
+  
   suitType!: SuitType; // for paramters, will be passed to the component
   items: MenuItem[] = [
     {
-      label: 'Options',
-      items: [
-        {
-          label: 'Add Parameters',
-          icon: 'pi pi-plus',
-          command: () => {
-            this.showSuitTypeParameters(this.suitType);
-          }
-        }
-      ]
+      label: 'Add Parameters',
+      icon: 'pi pi-plus',
+      command: () => {
+        this.showSuitTypeParameters(this.suitType);
+      }
     }
   ];
-
+  
   stRestoreId: number | null = null;
   itemsDelete: MenuItem[] = [
     {
-      items: [
-        {
-          label: 'Restore Suit Type',
-          icon: 'pi pi-undo',
-          command: (event: any) => {
-            this.restoreDeletedSuitType(event);
-          }
-        }
-      ]
+      label: 'Restore Suit Type',
+      icon: 'pi pi-undo',
+      command: (event: any) => {
+        this.restoreDeletedSuitType(event);
+      }
     }
   ];
   
@@ -130,7 +124,7 @@ export class SuitTypesComponent implements OnInit {
       }
     });
   }
-
+  
   restoreDeletedSuitType(st: any) {
     if(!this.stRestoreId) {
       this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'No suit type selected for restoration.' });
@@ -161,7 +155,7 @@ export class SuitTypesComponent implements OnInit {
   }
   
   showSuitTypeParameters(st?: SuitType) {
-    debugger
+    
     const ref = this.dialogService.open(SuitTypeParametersComponent, {
       header: 'Suit Type Parameters',
       width: '80%',

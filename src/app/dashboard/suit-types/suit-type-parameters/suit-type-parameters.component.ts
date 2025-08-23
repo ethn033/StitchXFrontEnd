@@ -13,22 +13,19 @@ import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { entityStatuses, getBusinessId, normalizeError, validateCurrentRole } from '../../../utils/utils';
+import { entityStatuses, getBusinessId, normalizeError} from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ApiResponse } from '../../../models/base-response';
-import { ERole } from '../../../enums/enums';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { SuitType, User } from '../../../Dtos/requests/request-dto';
 import { TabsModule } from "primeng/tabs";
 import { RouterModule } from '@angular/router';
-import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
-import { Menu } from "primeng/menu";
 import { SuitTypeParameterService } from '../../../services/suit-type-parameters/suit-type-parameter.service';
 @Component({
   selector: 'app-suit-type-parameters',
   templateUrl: './suit-type-parameters.component.html',
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe, Menu],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe],
   providers: [DialogService, ConfirmationService],
   styleUrls: ['./suit-type-parameters.component.css']
 })
@@ -42,61 +39,39 @@ export class SuitTypeParametersComponent implements OnInit {
   sds = inject(ShareDataService);
   fb: FormBuilder = inject(FormBuilder);
   
-  loading = false;
-  userResponse: User = this.config.data?.user as User || null;
-  businessId = this.config.data?.businessId || null;
-  createdByUserId = this.userResponse.id || null;
-  suitType: SuitType = this.config.data?.suitType || null;
-  suitTypeParamForm!: FormGroup;
-
-  filterStatusValues = entityStatuses();
+  userResponse: User = this.config.data.user as User || null;
+  suitType: SuitType = this.config.data.suitType as SuitType || null;
+  businessId: number = getBusinessId(this.userResponse) || 0;
+  createdByUserId: number = this.userResponse.id || 0; 
+  filterStatusValues: DropDownItem[] = entityStatuses();
   selectedStatus: DropDownItem = this.filterStatusValues[0];
-
-
-  constructor() { 
-
+  
+  constructor() {
+   
   }
   
-
-  items: MenuItem[] = [
-    {
-      label: 'Options',
-      items: [
-        {
-          label: 'Add Parameters',
-          icon: 'pi pi-plus',
-          command: () => {
-            
-          }
-        }
-      ]
-    }
-  ];
-    
   
   ngOnInit(): void {
+    setTimeout(() => {
     this.loadSuitTypeParameters();
+  });
   }
+  
   
   suitTypeParameters: SuitTypeParameter[] = [];
   totalSuitTypeParameters: number = 0;
   loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
-
-    
-    debugger
-    this.config.data
-    
-    this.ls.show();
     let payload = {
       businessId: this.businessId ?? 0,
-      suitTypeId: this.suitType.id,
+      suitTypeId: this.suitType?.id,
     };
     
+    this.ls.show();
     this.sts.getSuitTypeParameters<ApiResponse<SuitTypeParameter[]>>(payload).subscribe({
       next: (data: any) => {
         this.ls.hide();
-        let resp  = data as ApiResponse<SuitType[]>;
-        this.suitTypeParameters = resp.data;
+        let resp  = data as ApiResponse<any>;
+        this.suitTypeParameters = resp.data.suitTypeParameters as SuitTypeParameter[] || [];
         this.totalSuitTypeParameters = this.suitTypeParameters.length;
       },
       error: (error: any) => {

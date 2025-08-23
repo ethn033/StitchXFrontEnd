@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<p-table [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="userId" sortField="userId" [resizableColumns]="true" showGridlines="true">
+<p-table [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="id" sortField="id" [resizableColumns]="true" showGridlines="true">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
@@ -38,21 +38,21 @@
                     tooltipPosition="top" (click)="null"></button>
                     <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
                     pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
-                    <button pButton icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button>
+                    <!-- <button pButton icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button> -->
                 </div>
-                <p-menu #menu appendTo="body" [model]="items" [popup]="true" />
+                <!-- <p-menu #menu appendTo="body" [model]="items" [popup]="true" /> -->
             </td>
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-        @if(!ls.getLoading) {
+        @if(!ls.getLoading ) {
         <tr>
             <td colspan="8" class="text-center py-5">
                 <div class="flex flex-column align-items-center">
-                    <i class="pi pi-users text-4xl text-400 mb-3"></i>
-                    <h4 class="mb-1">No users found</h4>
-                    <p class="text-600">Add your first user to get started</p>
-                    <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="null"></button>
+                    <i class="fas fa-shirt text-4xl text-400 mb-3"></i>
+                    <h4 class="mb-1">No suit type parameters found.</h4>
+                    <p class="text-600">Add your first parameter to get started.</p>
+                    <button pButton label="Add Parameter" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="null"></button>
                 </div>
             </td>
         </tr>
