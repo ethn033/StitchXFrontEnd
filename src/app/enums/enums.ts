@@ -11,14 +11,10 @@ export enum ERole {
 
 export enum EParameterType {
   ALL = 0,
-  TEXT = 1,
-  NUMBER = 2,
-  RADIO = 3,
-  CHECKBOX = 4,
-  SELECT = 5,
-  DATE = 6,
-  TEXTAREA = 7,
-  FILE = 8
+  INPUT_TEXT = 1,
+  INPUT_NUMBER = 2,
+  SINGLE_SELECT_OPTION = 3,
+  MULTI_SELECT_OPTIONS = 4
 }
 
 export enum EOrderStatus {

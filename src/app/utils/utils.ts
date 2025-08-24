@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DropDownItem } from "../contracts/dropdown-item";
 import { OrderHistoryItemResponseDto } from "../Dtos/responses/orderResponseDto";
-import { EOrderStatus, ERole } from "../enums/enums";
+import { EOrderStatus, EParameterType, ERole } from "../enums/enums";
 import { User } from "../Dtos/requests/request-dto";
 
 export function dateFilterValues() : DropDownItem[] {
@@ -35,6 +35,17 @@ export function userRolesFilterValue(): DropDownItem[] {
   }));
   
   return roleList;
+}
+
+export function parameterTypeFilterValue(): DropDownItem[] {
+  const paramTypes = Object.keys(EParameterType)
+  .filter(key => isNaN(Number(key)))
+  .map(key => ({
+    id: EParameterType[key as keyof typeof EParameterType],
+    value: key.replace(/_/g, ' ')
+  }));
+  
+  return paramTypes;
 }
 
 export function orderStatusFilterValue(): DropDownItem[] {

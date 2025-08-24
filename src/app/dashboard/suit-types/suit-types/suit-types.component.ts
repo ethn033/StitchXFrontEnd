@@ -158,7 +158,8 @@ export class SuitTypesComponent implements OnInit {
     
     const ref = this.dialogService.open(SuitTypeParametersComponent, {
       header: 'Suit Type Parameters',
-      width: '80%',
+      width: '90%',
+      height: '80%',
       styleClass: 'suit-type-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
