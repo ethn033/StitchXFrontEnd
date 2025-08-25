@@ -1,10 +1,10 @@
-<p-panel styleClass="mb-5" header="Add New Parameter" (onBeforeToggle)="toggleAddForm()" [toggleable]="true" [collapsed]="true">
+<p-panel styleClass="mb-5" header="Add New Parameter" (onBeforeToggle)="toggleAddForm()" [toggleable]="true" [collapsed]="isCollapsed">
     <form [formGroup]="parameterForm" (ngSubmit)="onSubmit()">
         <div class="row g-3">
             <!-- Name Field -->
             <div class="col-md-6">
                 <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                <input pInputText  size="small" id="name" type="text" formControlName="name" class="form-control"
+                <input pInputText class="form-control" size="small" id="name" formControlName="name"
                 [class.is-invalid]="parameterForm.get('name')?.invalid && parameterForm.get('name')?.touched"
                 placeholder="Enter parameter name">
                 <div *ngIf="parameterForm.get('name')?.invalid && parameterForm.get('name')?.touched" class="invalid-feedback">
@@ -15,7 +15,7 @@
             <!-- Parameter Type Field -->
             <div class="col-md-6">
                 <label for="parameterType" class="form-label">Parameter Type <span class="text-danger">*</span></label>
-                <p-select [size]="'small'" id="parameterType" [options]="parameterTypes" formControlName="parameterType" optionLabel="value" placeholder="Select Type" [style]="{'width': '100%'}"></p-select>
+                <p-select [size]="'small'" (onChange)="paramTypeChanged($event)" id="parameterType" [options]="parameterTypes" formControlName="parameterType" optionLabel="value" placeholder="Select Type" [style]="{'width': '100%'}"></p-select>
             </div>
             
             <!-- Placeholder Field -->
@@ -58,7 +58,6 @@
                 </button>
             </div>
             
-            <!-- Form Actions -->
             <div class="col-12 mt-4 pt-3 border-top">
                 <div class="d-flex justify-content-end gap-2">
                     <button type="button" class="btn btn-secondary" (click)="toggleAddForm()">Clear</button>
@@ -71,24 +70,18 @@
     </form>
 </p-panel>
 
-<!-- Add Parameter Form -->
-
-<!-- end form  -->
-
 <div class="d-flex justify-content-end align-items-center mb-2">
-    <!-- Left: Title with refresh button -->
-    
-    <!-- Right: Dropdown + New Order button -->
-    
+    <span class=" me-3"><i class="pi pi-filter-slash text-4xl text-400 me-1"></i>Filters: </span> 
     <div class="d-flex align-items-center gap-3">
-        <div class="flex flex-wrap gap-4" *ngFor="let item of filterStatusValues; let i = index" class="flex items-center">
-            <p-radiobutton styleClass="me-2" name="status" [value]="item" (ngModelChange)="onValueChange($event)" [(ngModel)]="selectedStatus" [inputId]="'ingredient' + i" ></p-radiobutton>
+         <div class="flex flex-wrap gap-4" *ngFor="let item of filterStatusValues; let i = index" class="flex items-center">
+           <p-radiobutton styleClass="me-2" name="status" [value]="item" (ngModelChange)="onValueChange($event)" [(ngModel)]="selectedStatus" [inputId]="'ingredient' + i" ></p-radiobutton>
             <label [for]="'ingredient' + i" class="ml-2">{{ item.value }}</label>
         </div>
     </div>
 </div>
 
-<p-table [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="id" sortField="id" showGridlines="true">
+<app-loading></app-loading>
+<p-table styleClass="mt-3" [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="id" sortField="id" showGridlines="true">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
@@ -109,7 +102,7 @@
             <td>
                 <p-toggleSwitch [readonly]="true" [(ngModel)]="st.isRequired" [pTooltip]="st.isRequired ? 'Required' : 'Optional'" (onChange)="null" />
             </td>
-            <td>{{ st.createdAt | date: 'dd-mm-yyyy'}}</td>
+            <td>{{getParameterTypeString(st.parameterType) | removeUnderscores}}</td>
             <td>{{st.parameterOptions}}</td>
             <td>
                 <p-tag [severity]="st.isActive ? 'success' : 'danger'" [value]="st.isActive ? 'ACTIVE' : 'INACTIVE'"></p-tag>
@@ -126,16 +119,28 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-        @if(suitTypeParameters.length == 0 && !loading) {
+        @if(suitTypeParameters.length == 0 && !ls.getLoading()) {
             <tr>
-                <td colspan="8" class="text-center py-5">
-                    <div class="flex flex-column align-items-center">
-                        <i class="fas fa-shirt text-4xl text-400 mb-3"></i>
-                        <h4 class="mb-1">No suit type parameters found.</h4>
-                        <p class="text-600">Add your first parameter to get started.</p>
-                        <button pButton label="Add New Parameter" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="toggleAddForm()"></button>
-                    </div>
-                </td>
+                @if(selectedStatus.id == 2 || selectedStatus.id == 0) {
+                    <td colspan="8" class="text-center py-5">
+                        <div class="flex flex-column align-items-center">
+                            <i class="pi pi-filter-slash text-4xl text-400 mb-3"></i>
+                            <h4 class="mb-1">No parameters match the selected filter.</h4>
+                            <p class="text-600">Try adjusting your filter criteria.</p>
+                        </div>
+                    </td>   
+                }
+                @else {
+                    <td colspan="8" class="text-center py-5">
+                        <div class="flex flex-column align-items-center">
+                            <i class="fas fa-shirt text-4xl text-400 mb-3"></i>
+                            <h4 class="mb-1">No suit type parameters found.</h4>
+                            <p class="text-600">Add your first parameter to get started.</p>
+                            <button pButton label="Add New Parameter" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="toggleAddForm()"></button>
+                        </div>
+                    </td>
+                }
+                
             </tr>
         }
     </ng-template>

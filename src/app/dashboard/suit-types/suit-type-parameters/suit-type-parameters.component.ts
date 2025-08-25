@@ -1,6 +1,7 @@
+import { RemoveUnderscoresPipe } from './../../../pipe/remove-underscores.pipe';
 import { EParameterType } from './../../../enums/enums';
 import { SuitTypeParameter } from './../../../Dtos/requests/request-dto';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, input, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService, DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -14,7 +15,7 @@ import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Va
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { entityStatuses, getBusinessId, normalizeError, parameterTypeFilterValue} from '../../../utils/utils';
+import { entityStatuses, EParameterTypeToString, getBusinessId, normalizeError, parameterTypeFilterValue} from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ApiResponse } from '../../../models/base-response';
 import { ShareDataService } from '../../../services/shared/share-data.service';
@@ -24,20 +25,26 @@ import { RouterModule } from '@angular/router';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
 import { SuitTypeParameterService } from '../../../services/suit-type-parameters/suit-type-parameter.service';
 import { CheckboxModule } from 'primeng/checkbox';
-import { HttpStatusCode } from '@angular/common/http';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { PanelModule } from 'primeng/panel';
 import { InputText } from "primeng/inputtext";
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { LoadingComponent } from "../../../components/shared/loading/loading.component";
 @Component({
   selector: 'app-suit-type-parameters',
   templateUrl: './suit-type-parameters.component.html',
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe, ReactiveFormsModule, CheckboxModule, ToggleSwitchModule, InputText, PanelModule, RadioButtonModule],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, TruncatePipe, ReactiveFormsModule, CheckboxModule, ToggleSwitchModule, RemoveUnderscoresPipe, InputText, PanelModule, RadioButtonModule, LoadingComponent],
   providers: [DialogService, ConfirmationService],
   styleUrls: ['./suit-type-parameters.component.css']
 })
 export class SuitTypeParametersComponent implements OnInit {
   
+  isCollapsed = true;
+  @Input() uIdInput?: number;
+  @Input() stIdInput?: number;
+  @Input() cByIdInput?: number;
+  @Input() bidInput?: number;
   ref = inject(DynamicDialogRef); 
   confService = inject(ConfirmationService); 
   config = inject(DynamicDialogConfig);
@@ -46,11 +53,10 @@ export class SuitTypeParametersComponent implements OnInit {
   ls = inject(LoadingService);
   sds = inject(ShareDataService);
   fb: FormBuilder = inject(FormBuilder);
-  
-  userResponse: User = this.config.data.user as User || null;
-  suitType: SuitType = this.config.data.suitType as SuitType || null;
-  businessId: number = getBusinessId(this.userResponse) || 0;
-  createdByUserId: number = this.userResponse.id || 0; 
+  userId: number = this.config.data.userId as number || this.uIdInput || 0;
+  suitTypeId?: number = this.config.data.suitTypeId as number || this.stIdInput || 0;
+  businessId: number = this.config.data.businessId as number || this.bidInput || 0;
+  createdByUserId: number = this.config.data.userId || this.cByIdInput || 0; 
   filterStatusValues: DropDownItem[] = entityStatuses();
   selectedStatus: DropDownItem = this.filterStatusValues[0];
   
@@ -69,25 +75,28 @@ export class SuitTypeParametersComponent implements OnInit {
       parameterType: [this.parameterTypes[1], Validators.required],
       parameterOptions: [''],
       isRequired: [false],
-      suitTypeId: [this.suitType?.id, Validators.required],
+      suitTypeId: [this.suitTypeId, Validators.required],
       options: this.fb.array([]) // For option values when type is RADIO, CHECKBOX, or SELECT
     });
   }
   
+  getParameterTypeString(parameterType: EParameterType): string {
+    return EParameterTypeToString[parameterType] || 'UNKNOWN';
+  }
   
   ngOnInit(): void {
     setTimeout(() => {
       this.loadSuitTypeParameters();
     });
-    
-    // Watch for changes to parameterType to show/hide options field
-    this.parameterForm.get('parameterType')?.valueChanges.subscribe(type => {
-      this.handleParameterTypeChange(type);
-    });
   }
   
   get options(): FormArray {
     return this.parameterForm.get('options') as FormArray;
+  }
+  
+  
+  paramTypeChanged(event: any): void {
+    this.handleParameterTypeChange(event.value);
   }
   
   handleParameterTypeChange(type: any): void {
@@ -117,10 +126,11 @@ export class SuitTypeParametersComponent implements OnInit {
   }
   
   toggleAddForm(): void {
+    this.isCollapsed = !this.isCollapsed;
     this.parameterForm.reset({
       parameterType: this.parameterTypes[1],
       isRequired: false,
-      suitTypeId: this.suitType?.id
+      suitTypeId: this.suitTypeId
     });
     
     while (this.options.length !== 0) {
@@ -158,16 +168,19 @@ export class SuitTypeParametersComponent implements OnInit {
     }
     this.sts.createSuitTypeParameter<ApiResponse<any>>(formValue).subscribe({
       next: (response: any) => {
-        let resp = response as ApiResponse<SuitTypeParameter>;
-        if (resp.isSuccess && resp.statusCode == HttpStatusCode.Created) {
-          this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+        this.isCollapsed = !this.isCollapsed;
+        if(response.statusCode == HttpStatusCode.Created || response.statusCode == HttpStatusCode.Ok && response.isSuccess) {
+          this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: response.message });
           this.toggleAddForm();
           this.loadSuitTypeParameters();
-        }
+          return;
+        }        
+        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });
       },
       error: (err: any) => {
-        let er = normalizeError(err);
-        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: er?.message });
+        if(err instanceof HttpErrorResponse) {
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+        }
       }
     });
     
@@ -178,29 +191,26 @@ export class SuitTypeParametersComponent implements OnInit {
     this.loadSuitTypeParameters();
   }
   
-  loading = false;
+  isLoading = false;
   suitTypeParameters: SuitTypeParameter[] = [];
   totalSuitTypeParameters: number = 0;
   loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
-    debugger
-    this.loading = true;
     let payload = {
       businessId: this.businessId ?? 0,
-      suitTypeId: this.suitType?.id,
+      suitTypeId: this.suitTypeId,
       status: this.selectedStatus.id ?? 1
     };
     
     this.ls.show();
     this.sts.getSuitTypeParameters<ApiResponse<any>>(payload).subscribe({
       next: (data: any) => {
-        this.loading = false;
         this.ls.hide();
         let resp  = data as ApiResponse<any>;
         this.suitTypeParameters = resp.data.suitTypeParameters as SuitTypeParameter[] || [];
         this.totalSuitTypeParameters = this.suitTypeParameters.length;
       },
       error: (error: any) => {
-        this.loading = false;
+        this.isLoading = false;
         this.ls.hide();
         this.ms.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: error?.message || 'Failed to load suit type parameters.' });
       },

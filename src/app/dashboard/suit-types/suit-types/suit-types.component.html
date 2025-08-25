@@ -44,16 +44,27 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-        @if(!loadingService.getLoading) {
+        @if(suitTypes.length == 0 && !ls.getLoading()) {
             <tr>
-                <td colspan="8" class="text-center py-5">
-                    <div class="flex flex-column align-items-center">
-                        <i class="pi pi-users text-4xl text-400 mb-3"></i>
-                        <h4 class="mb-1">No users found</h4>
-                        <p class="text-600">Add your first user to get started</p>
-                        <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUpdateSuitTypeDialog()"></button>
-                    </div>
-                </td>
+                @if(selectedStatus.id == 2 || selectedStatus.id == 0) {
+                    <td colspan="8" class="text-center py-5">
+                        <div class="flex flex-column align-items-center">
+                            <i class="pi pi-filter-slash text-4xl text-400 mb-3"></i>
+                            <h4 class="mb-1">No match the selected filter.</h4>
+                            <p class="text-600">Try adjusting your filter criteria.</p>
+                        </div>
+                    </td>   
+                }
+                @else {
+                    <td colspan="8" class="text-center py-5">
+                        <div class="flex flex-column align-items-center">
+                            <i class="fas fa-shirt text-4xl text-400 mb-3"></i>
+                            <h4 class="mb-1">No suit type found.</h4>
+                            <p class="text-600">Add your first parameter to get started.</p>
+                            <button pButton label="Add New Parameter" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUpdateSuitTypeDialog()"></button>
+                        </div>
+                    </td>
+                }
             </tr>
         }
     </ng-template>

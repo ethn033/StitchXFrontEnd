@@ -27,6 +27,7 @@ import { Menu } from "primeng/menu";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { HttpStatusCode } from '@angular/common/http';
 import { SuitTypeParametersComponent } from '../suit-type-parameters/suit-type-parameters.component';
+import { ViewCustomerComponent } from '../../users/view-user/view-user.component';
 @Component({
   selector: 'app-suit-types',
   templateUrl: './suit-types.component.html',
@@ -44,7 +45,7 @@ export class SuitTypesComponent implements OnInit {
   sts: SuitTypeService = inject(SuitTypeService);
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
-  loadingService: LoadingService = inject(LoadingService);
+  ls: LoadingService = inject(LoadingService);
   
   
   suitType!: SuitType; // for paramters, will be passed to the component
@@ -87,8 +88,6 @@ export class SuitTypesComponent implements OnInit {
         this.businessId = getBusinessId(this.userResponse);
       }
     });
-    
-    
   }
   
   ngOnInit(): void {
@@ -96,10 +95,10 @@ export class SuitTypesComponent implements OnInit {
   }
   
   toggleSuitTypeStatus(st: any) {
-    this.loadingService.show();
+    this.ls.show();
     this.sts.updateSuitTypeStatus<ApiResponse<any>>(st.id, st.isActive).subscribe({
       next: (response: any) => {
-        this.loadingService.hide();
+        this.ls.hide();
         if(response.isSuccess && response.statusCode == 200) {
           this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: response.message });
           let index = this.suitTypes.findIndex(s => s.id === st.id);
@@ -115,12 +114,12 @@ export class SuitTypesComponent implements OnInit {
       },
       error: (err: any) => {
         st.isActive = !st.isActive; // revert the change if failed
-        this.loadingService.hide();
+        this.ls.hide();
         let er = normalizeError(err);
         this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
       },
       complete: () => {
-        this.loadingService.hide();
+        this.ls.hide();
       }
     });
   }
@@ -130,10 +129,10 @@ export class SuitTypesComponent implements OnInit {
       this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'No suit type selected for restoration.' });
       return;
     }
-    this.loadingService.show();
+    this.ls.show();
     this.sts.restoreDeletedSuitType<ApiResponse<any>>(this.stRestoreId).subscribe({
       next: (response: any) => {
-        this.loadingService.hide();
+        this.ls.hide();
         if(response.isSuccess && response.statusCode == HttpStatusCode.Ok) {
           this.messageService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: response.message });
           let index = this.suitTypes.findIndex(s => s.id === this.stRestoreId);
@@ -148,7 +147,7 @@ export class SuitTypesComponent implements OnInit {
       },
       error: (err: any) => {
         let er = normalizeError(err);
-        this.loadingService.hide();
+        this.ls.hide();
         this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
       }
     });
@@ -157,7 +156,7 @@ export class SuitTypesComponent implements OnInit {
   showSuitTypeParameters(st?: SuitType) {
     
     const ref = this.dialogService.open(SuitTypeParametersComponent, {
-      header: 'Suit Type Parameters',
+      header: 'Suit Type Parameters : ' + (st?.name?.toUpperCase() || ''),
       width: '90%',
       height: '80%',
       styleClass: 'suit-type-dialog',
@@ -167,9 +166,9 @@ export class SuitTypesComponent implements OnInit {
       closable: true,
       closeOnEscape: false,
       data: {
-        user: this.userResponse, 
+        userId: this.userResponse?.id, 
         businessId: this.businessId,
-        suitType: st
+        suitTypeId: st?.id
       }
     });
     
@@ -183,22 +182,21 @@ export class SuitTypesComponent implements OnInit {
   
   loadSuitTypes(event?: TableLazyLoadEvent): void {
     
-    this.loadingService.show();
-    
     let payload = {
       businessId: this.businessId ?? 0,
       status: this.selectedStatus.id
     };
     
+    this.ls.show();
     this.sts.getSuitTypes<ApiResponse<SuitType[]>>(payload).subscribe({
       next: (data: any) => {
-        this.loadingService.hide();
+        this.ls.hide();
         let resp  = data as ApiResponse<SuitType[]>;
         this.suitTypes = resp.data;
         this.totalSuitTypes = this.suitTypes.length;
       },
       error: (error: any) => {
-        this.loadingService.hide();
+        this.ls.hide();
         this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load suit types.' });
       }
     });

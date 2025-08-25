@@ -109,6 +109,14 @@ export const ERoleToString = {
 } as const;
 
 
+export const EParameterTypeToString = {
+  [EParameterType.ALL]: 'ALL',
+  [EParameterType.INPUT_TEXT]: 'INPUT_TEXT',
+  [EParameterType.INPUT_NUMBER]: 'INPUT_NUMBER',
+  [EParameterType.MULTI_SELECT_OPTIONS]: 'TEXTAMULTI_SELECT_OPTIONSREA',
+  [EParameterType.SINGLE_SELECT_OPTION]: 'SINGLE_SELECT_OPTION',
+} as const;
+
 
 export interface NormalizedError {
   message: string;
