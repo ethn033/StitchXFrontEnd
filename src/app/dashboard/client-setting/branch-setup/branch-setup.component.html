@@ -1,0 +1,114 @@
+<div class="container-fluid p-0 min-vh-100 d-flex justify-content-center align-items-center bg-light">
+  <div class="col-12 col-md-8 col-lg-6 col-xl-5 p-2">
+    <p-card header="Create New Business" class="shadow">
+      <form [formGroup]="businessForm" (ngSubmit)="onSubmit()" class="p-fluid">
+        <!-- Business Name -->
+        <div class="mb-3">
+          <label for="name" class="form-label">Business Name*</label>
+          <input id="name" type="text" pInputText class="form-control" formControlName="name" placeholder="Enter business name" [ngClass]="{ 'is-invalid': businessForm.get('name')?.invalid && businessForm.get('name')?.touched }">
+          
+          <div class="invalid-feedback d-block">
+            @if (businessForm.get('name')?.hasError('required') && businessForm.get('name')?.touched) {
+              <div>Name is required.</div>
+            }
+            @if (businessForm.get('name')?.hasError('maxlength')) {
+              <div>Name cannot exceed 100 characters.</div>
+            }
+          </div>
+        </div>
+        
+        <!-- Address -->
+        <div class="mb-3">
+          <label for="address" class="form-label">Address*</label>
+          <textarea id="address" pInputTextarea class="form-control" formControlName="address" rows="3" placeholder="Enter business address" [ngClass]="{ 'is-invalid': businessForm.get('address')?.invalid && businessForm.get('address')?.touched }">
+        </textarea>
+        
+        <div class="invalid-feedback d-block">
+          @if (businessForm.get('address')?.hasError('required') && businessForm.get('address')?.touched) {
+            <div>Address is required.</div>
+          }
+          @if (businessForm.get('address')?.hasError('maxlength')) {
+            <div>Address cannot exceed 200 characters.</div>
+          }
+        </div>
+      </div>
+      
+      <!-- Phone -->
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number</label>
+        <input 
+        id="phone" 
+        type="tel" 
+        pInputText 
+        class="form-control"
+        formControlName="phone" 
+        placeholder="Enter phone number"
+        [ngClass]="{ 'is-invalid': businessForm.get('phone')?.invalid && businessForm.get('phone')?.touched }">
+        
+        <div class="invalid-feedback d-block">
+          @if (businessForm.get('phone')?.hasError('maxlength')) {
+            <div>Phone number cannot exceed 20 characters.</div>
+          }
+        </div>
+      </div>
+      
+      <!-- Location Coordinates Section -->
+      <!-- Location Coordinates Section -->
+      <div class="location-container mb-3 p-3 border rounded bg-light">
+        <h5 class="mb-3">Business Location</h5>
+        <p class="text-muted small mb-3">
+          <i class="pi pi-info-circle me-2"></i>
+          Please enter your business coordinates in decimal degrees format (e.g., 33.6844, 73.0479 for Islamabad).
+          You can find these by right-clicking on your location in Google Maps and selecting "What's here?" 
+          or by searching "Islamabad coordinates" in Google Maps.
+        </p>
+        
+        <div class="row g-2">
+          <div class="col-12 col-md-6">
+            <label for="latitude" class="form-label">Latitude*</label>
+            <p-inputNumber 
+            id="latitude" 
+            mode="decimal" 
+            class="w-100"
+            formControlName="latitude" 
+            [minFractionDigits]="4"
+            [maxFractionDigits]="6"
+            placeholder="e.g. 33.6844"
+            [ngClass]="{ 'is-invalid': businessForm.get('latitude')?.invalid && businessForm.get('latitude')?.touched }">
+          </p-inputNumber>
+          <div class="invalid-feedback d-block">
+            @if (businessForm.get('latitude')?.hasError('required') && businessForm.get('latitude')?.touched) {
+              <div>Latitude is required</div>
+            }
+            <div class="small text-muted mt-1">Islamabad range: ~33.60 to 33.80 (North)</div>
+          </div>
+        </div>
+        
+        <div class="col-12 col-md-6">
+          <label for="longitude" class="form-label">Longitude*</label>
+          <p-inputNumber  id="longitude" mode="decimal" class="w-100" formControlName="longitude" [minFractionDigits]="4" [maxFractionDigits]="6" placeholder="e.g. 73.0479" [ngClass]="{ 'is-invalid': businessForm.get('longitude')?.invalid && businessForm.get('longitude')?.touched }">
+        </p-inputNumber>
+        <div class="invalid-feedback d-block">
+          @if (businessForm.get('longitude')?.hasError('required') && businessForm.get('longitude')?.touched) {
+            <div>Longitude is required</div>
+          }
+          <div class="small text-muted mt-1">Islamabad range: ~72.90 to 73.20 (East)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Submit Button -->
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+    <p-button 
+    type="submit" 
+    label="Create Business" 
+    [disabled]="businessForm.invalid"
+    icon="pi pi-check"
+    styleClass="p-button-primary">
+  </p-button>
+</div>
+</form>
+</p-card>
+</div>
+</div>

@@ -1,122 +1,114 @@
-<div class="signup-container">
-    <div class="signup-card">
-        <div class="signup-header text-center mb-4">
-            <div class="logo mb-3">
-                <h1 class="m-0 text-primary fw-bold fs-3 font-serif">
-                    <span class="d-none d-sm-inline">Tailor</span><span class="text-dark">Bhai</span>
-                </h1>
-            </div>
-            <p class="text-muted mb-0">Create your account</p>
-        </div>
-
-        <form [formGroup]="signupForm" (ngSubmit)="onSignup()" novalidate class="w-100">
-            <!-- Name Field -->
-            <div class="form-group mb-3">
-                <label for="name" class="form-label">Full Name</label>
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-user"></i>
-                    </span>
-                    <input
-                        pInputText
-                        id="name"
-                        formControlName="name"
-                        placeholder="Enter your full name"
-                        class="w-100"
-                        [ngClass]="{ 'p-invalid': name?.touched && name?.invalid }"
-                    />
-                </div>
-                <small *ngIf="name?.touched && name?.invalid" class="p-error block mt-1">
-                    <span *ngIf="name?.errors?.['required']">Name is required</span>
-                </small>
-            </div>
-
-            <!-- Email Field -->
-            <div class="form-group mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-envelope"></i>
-                    </span>
-                    <input
-                        pInputText
-                        id="email"
-                        formControlName="email"
-                        placeholder="Enter your email"
-                        class="w-100"
-                        [ngClass]="{ 'p-invalid': email?.touched && email?.invalid }"
-                    />
-                </div>
-                <small *ngIf="email?.touched && email?.invalid" class="p-error block mt-1">
-                    <span *ngIf="email?.errors?.['required']">Email is required</span>
-                    <span *ngIf="email?.errors?.['email']">Please enter a valid email</span>
-                </small>
-            </div>
-
-            <!-- Password Field -->
-            <div class="form-group mb-3">
-                <label for="password" class="form-label">Password</label>
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-lock"></i>
-                    </span>
-                    <p-password
-                        id="password"
-                        formControlName="password"
-                        placeholder="Enter your password"
-                        [toggleMask]="true"
-                        [feedback]="false"
-                        [ngClass]="{ 'p-invalid': password?.touched && password?.invalid }"
-                        [inputStyleClass]="'w-100'"
-                    ></p-password>
-                </div>
-                <small *ngIf="password?.touched && password?.invalid" class="p-error block mt-1">
-                    <span *ngIf="password?.errors?.['required']">Password is required</span>
-                    <span *ngIf="password?.errors?.['minlength']">Password must be at least 6 characters</span>
-                </small>
-            </div>
-
-            <!-- Confirm Password Field -->
-            <div class="form-group mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-lock"></i>
-                    </span>
-                    <p-password
-                        id="confirmPassword"
-                        formControlName="confirmPassword"
-                        placeholder="Confirm your password"
-                        [toggleMask]="true"
-                        [feedback]="false"
-                        [ngClass]="{ 'p-invalid': confirmPassword?.touched && confirmPassword?.invalid }"
-                        [inputStyleClass]="'w-100'"
-                    ></p-password>
-                </div>
-                <small *ngIf="confirmPassword?.touched && confirmPassword?.invalid" class="p-error block mt-1">
-                    <span *ngIf="confirmPassword?.errors?.['required']">Confirm Password is required</span>
-                    <span *ngIf="confirmPassword?.errors?.['mustMatch']">Passwords must match</span>
-                </small>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="d-grid mb-3">
-                <p-button
-                    type="submit"
-                    label="Sign Up"
-                    [disabled]="signupForm.invalid || isLoading"
-                    [loading]="isLoading"
-                    styleClass="w-100 p-button-primary"
-                ></p-button>
-            </div>
-
-            <!-- Login Link -->
-            <div class="text-center mt-3">
-                <p class="text-muted mb-0">
-                    Already have an account?
-                    <a routerLink="/login" class="login-link text-decoration-none">Sign in</a>
-                </p>
-            </div>
-        </form>
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center p-3 bg-light">
+  <div class="login-card bg-white rounded-3 shadow-sm p-4 p-md-5 w-100" style="max-width: 480px">
+    <!-- Logo - Centered with responsive sizing -->
+    <div class="text-center mb-4">
+      <a routerLink="/admin/dashboard" class="text-decoration-none">
+        <h2 class="logo mb-2">
+          <span class="logo-text">Stitch</span>
+          <span class="logo-x">X</span>
+        </h2>
+      </a>
+      <p class="text-muted mb-0">Sign in to your account</p>
     </div>
+    
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate class="w-100">
+      <!-- Email Field -->
+      <div class="mb-3">
+        <label for="email" class="form-label small fw-semibold text-secondary">Email Address</label>
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0">
+            <i class="pi pi-envelope text-secondary"></i>
+          </span>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            pInputText 
+            placeholder="Enter your email" 
+            class="form-control border-start-0" 
+            [ngClass]="{ 'is-invalid': email?.touched && email?.invalid }"
+          >
+        </div>
+        @if (email?.touched && email?.invalid) {
+          <div class="invalid-feedback d-block">
+            @if (email?.errors?.['required']) {
+              Email is required
+            }
+            @if (email?.errors?.['email']) {
+              Please enter a valid email
+            }
+          </div>
+        }
+      </div>
+      
+      <!-- Password Field -->
+      <div class="mb-3">
+        <label for="password" class="form-label small fw-semibold text-secondary">Password</label>
+        <p-password 
+          id="password" 
+          formControlName="password" 
+          [inputStyle]="{'width': '100%'}" 
+          [style]="{'width': '100%'}"
+          placeholder="Enter your password" 
+          [toggleMask]="true" 
+          [feedback]="false"
+          [ngClass]="{ 'ng-invalid ng-dirty': password?.touched && password?.invalid }"
+        ></p-password>
+        @if (password?.touched && password?.invalid) {
+          <div class="invalid-feedback d-block">
+            @if (password?.errors?.['required']) {
+              Password is required
+            }
+            @if (password?.errors?.['minlength']) {
+              Password must be at least 6 characters
+            }
+          </div>
+        }
+      </div>
+      
+      <!-- Remember Me & Forgot Password -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="form-check">
+          <input 
+            type="checkbox" 
+            id="rememberMe" 
+            class="form-check-input" 
+            formControlName="rememberMe"
+          >
+          <label class="form-check-label small text-secondary" for="rememberMe">Remember me</label>
+        </div>
+        <a routerLink="/forgot-password" class="small text-decoration-none text-primary">
+          Forgot password?
+        </a>
+      </div>
+      
+      <!-- Submit Button -->
+      <div class="d-grid mb-3">
+        <button 
+          type="submit" 
+          class="btn btn-primary py-2"
+          [disabled]="signupForm.invalid || isLoading"
+        >
+          @if (isLoading) {
+            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          }
+          Sign In
+        </button>
+      </div>
+      
+      <!-- Divider -->
+      <div class="position-relative text-center my-4">
+        <hr class="border-secondary opacity-25">
+        <span class="position-absolute top-50 translate-middle-y bg-white px-3 small text-muted">OR</span>
+      </div>
+      
+      <!-- Register Link -->
+      <div class="text-center">
+        <p class="small text-muted mb-0">
+          Don't have an account? 
+          <a routerLink="/register" class="text-primary text-decoration-none fw-semibold">Sign up</a>
+        </p>
+      </div>
+    </form>
+  </div>
 </div>

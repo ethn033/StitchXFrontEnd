@@ -6,6 +6,6 @@
 /* Mobile devices (less than 768px) */
 @media (max-width: 767.98px) {
   .content-container {
-    margin-top: 135px;
+    margin-top: 100px;
   }
 }

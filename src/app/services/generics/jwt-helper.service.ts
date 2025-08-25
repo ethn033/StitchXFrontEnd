@@ -1,61 +1,134 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { TokenResponse } from '../../Dtos/requests/response-dto';
+import { AUTH_TOKEN } from '../../utils/global-contstants';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JwtHelperService {
+  private ls: LocalStorageService = inject(LocalStorageService);
+  constructor() {}
 
- decodeToken<T = any>(token: string): T | null {
-    if (!token) return null;
+
+   /**
+   * Get token from local storage
+   */
+  getToken(): string | null {
+    let token = this.ls.getItem(AUTH_TOKEN, true) as TokenResponse;
+    return token.accessToken;
+  }
+
+   /**
+   * Decode JWT token without verification
+   */
+  decodeToken(token: string): any {
     try {
-      const parts = token.split('.');
-      if (parts.length !== 3) {
-        throw new Error('Invalid JWT format');
-      }
-
-      const payload = parts[1];
-      const decoded = this.base64UrlDecode(payload);
-      return JSON.parse(decoded);
+      const payload = token.split('.')[1];
+      const decodedPayload = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decodedPayload);
     } catch (error) {
-      console.error('Error decoding JWT:', error);
+      console.error('Error decoding token:', error);
       return null;
     }
   }
 
-  private base64UrlDecode(base64Url: string): string {
-    // Convert Base64Url to Base64
-    let base64 = base64Url
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-
-    // Add padding if needed
-    const padLength = (4 - (base64.length % 4)) % 4;
-    base64 += '='.repeat(padLength);
-
-    // Modern alternative to deprecated escape/unescape
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
+ /**
+   * Check if token is expired
+   */
+  isTokenExpired(token?: string): boolean {
+    const authToken = token || this.getToken();
     
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+    if (!authToken) {
+      return true; // No token means expired
     }
 
-    return new TextDecoder().decode(bytes);
-  }
-
-  // Rest of your methods (getRoles, isTokenExpired, etc.) remain the same
-  getRoles(decodedToken: any): string[] {
-    if (!decodedToken) return [];
+    const decodedToken = this.decodeToken(authToken);
     
-    // Handle various role claim formats
-    return decodedToken.roles || 
-           decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || 
-           decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role'] || 
-           [];
+    if (!decodedToken?.exp) {
+      return true; // Token without expiration is considered expired
+    }
+
+    // Convert expiration time from seconds to milliseconds and compare
+    const expirationTime = decodedToken.exp * 1000;
+    const currentTime = Date.now();
+
+    return currentTime > expirationTime;
   }
 
-  isTokenExpired(decodedToken: any): boolean {
-    if (!decodedToken?.exp) return false;
-    return (Date.now() / 1000) > decodedToken.exp;
+  /**
+   * Get time remaining until token expires (in milliseconds)
+   */
+  getTimeUntilExpiration(token?: string): number | null {
+    const expirationDate = this.getTokenExpiration(token);
+    
+    if (!expirationDate) {
+      return null;
+    }
+
+    return expirationDate.getTime() - Date.now();
+  }
+
+  /**
+   * Check if token will expire within a certain time frame
+   */
+  willTokenExpireSoon(thresholdMinutes: number = 5, token?: string): boolean {
+    const timeUntilExpiration = this.getTimeUntilExpiration(token);
+    
+    if (timeUntilExpiration === null) {
+      return true;
+    }
+
+    const thresholdMs = thresholdMinutes * 60 * 1000;
+    return timeUntilExpiration <= thresholdMs;
+  }
+
+  /**
+   * Get token expiration time
+   */
+  getTokenExpiration(token?: string): Date | null {
+    const authToken = token || this.getToken();
+    
+    if (!authToken) {
+      return null;
+    }
+
+    const decodedToken = this.decodeToken(authToken);
+    
+    if (!decodedToken?.exp) {
+      return null;
+    }
+
+    return new Date(decodedToken.exp * 1000);
+  }
+
+  /**
+   * Get user information from token
+   */
+  getUserInfo(): any {
+    const token = this.getToken();
+    
+    if (!token) {
+      return null;
+    }
+
+    const decodedToken = this.decodeToken(token);
+    return decodedToken || null;
+  }
+
+  /**
+   * Get user ID from token
+   */
+  getUserId(): string | null {
+    const userInfo = this.getUserInfo();
+    return userInfo?.sub || userInfo?.userId || userInfo?.id || null;
+  }
+
+  /**
+   * Get user roles from token
+   */
+  getUserRoles(): string[] {
+    const userInfo = this.getUserInfo();
+    return userInfo?.roles || userInfo?.role || [];
   }
 }

@@ -10,3 +10,5 @@
 
 export const AUTH_TOKEN = 'auth_token';
 export const APP_USER = 'app_user';
+export const APP_REMEMBER_ME = 'app_remember_me';
+export const APP_SELECTED_BRANCH = 'app_selected_branch';

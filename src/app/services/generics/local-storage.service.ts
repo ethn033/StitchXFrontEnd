@@ -14,7 +14,7 @@ export class LocalStorageService {
   * @param parseJson Whether to JSON.stringify the value (default: false)
   * @throws {Error} If key is invalid or stringification fails
   */
-  setItem(key: string, value: string | object, parseJson: boolean = false): void {
+  setItem(key: string, value: string | object | boolean, parseJson: boolean = false): void {
     // Validate key
     if (!key?.trim()) {
       throw new Error('LocalStorage key must be a non-empty string');

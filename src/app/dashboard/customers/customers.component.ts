@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
-import { CustomerCreateComponent } from './dialogs/customer-create/customer-create.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
@@ -9,18 +8,19 @@ import { TagModule } from 'primeng/tag';
 import { TruncatePipe } from '../../pipe/truncate.pipe';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 // import { CustomerService } from '../../services/customers/customer.service';
-import { ViewCustomerComponent } from './dialogs/view-customer/view-customer.component';
+import { ViewCustomerComponent } from '../users/view-user/view-user.component';
 import { LoadingService } from '../../services/generics/loading.service';
 import { TooltipModule } from 'primeng/tooltip';
 // import { Customer } from '../../models/customers/customer-model';
 import { SelectModule } from 'primeng/select';
 import { DropDownItem } from '../../contracts/dropdown-item';
 import moment from 'moment';
-import { customerStatusValues, dateFilterValues } from '../../utils/utils';
+import { dateFilterValues, userStatusesFilterValues } from '../../utils/utils';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { LoginResponse } from '../../Dtos/responses/loginResponseDto';
+import { UserCreateComponent } from '../users/create-user/user-create.component';
 @Component({
   selector: 'app-customers',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule,  TableModule, TooltipModule],
@@ -32,7 +32,7 @@ export class CustomersComponent {
   
   // customers: Customer[] = [];
   
-  customerStatuses: DropDownItem[] = customerStatusValues();
+  customerStatuses: DropDownItem[] = userStatusesFilterValues();
   
   selectedCustomerStatus: DropDownItem = this.customerStatuses[0]; // Default to 'All Statuses'
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().toDate()]; // Default to last week
@@ -136,7 +136,7 @@ export class CustomersComponent {
   
   
   editCustomer(customer: LoginResponse): void {
-    const ref = this.dialogService.open(CustomerCreateComponent, {
+    const ref = this.dialogService.open(UserCreateComponent, {
       header: `Edit Customer - ${customer.user.firstName} ${customer.user.lastName}`,
       width: '90%',
       styleClass: 'customer-dialog',
@@ -156,7 +156,7 @@ export class CustomersComponent {
   }
   
   showNewCustomerDialog(): void {
-    const ref = this.dialogService.open(CustomerCreateComponent, {
+    const ref = this.dialogService.open(UserCreateComponent, {
       header: 'Add New Customer',
       width: '90%',
       styleClass: 'customer-dialog',
@@ -199,3 +199,4 @@ export class CustomersComponent {
   }
   
 }
+

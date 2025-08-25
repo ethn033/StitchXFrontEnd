@@ -1,0 +1,33 @@
+/* :host ::ng-deep {
+    .options-container .p-inputtext {
+        min-width: 200px;
+    }
+    
+    @media (max-width: 640px) {
+        .options-container .flex {
+            flex-direction: column;
+            align-items: stretch !important;
+        }
+        
+        .options-container .flex .field {
+            margin-right: 0 !important;
+            margin-bottom: 0.5rem;
+        }
+        
+        .options-container .flex button {
+            align-self: flex-end;
+        }
+    }
+}
+
+.border-round-md {
+    border-radius: 8px;
+}
+
+.surface-50 {
+    background-color: var(--surface-50);
+}
+
+.surface-border {
+    border-color: var(--surface-border);
+} */

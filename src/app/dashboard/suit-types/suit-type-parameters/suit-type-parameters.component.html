@@ -1,0 +1,151 @@
+<p-panel styleClass="mb-5" header="Add New Parameter" (onBeforeToggle)="toggleAddForm()" [toggleable]="true" [collapsed]="isCollapsed">
+    <form [formGroup]="parameterForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+            <!-- Name Field -->
+            <div class="col-md-6">
+                <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+                <input pInputText class="form-control" size="small" id="name" formControlName="name"
+                [class.is-invalid]="parameterForm.get('name')?.invalid && parameterForm.get('name')?.touched"
+                placeholder="Enter parameter name">
+                <div *ngIf="parameterForm.get('name')?.invalid && parameterForm.get('name')?.touched" class="invalid-feedback">
+                    Name is required
+                </div>
+            </div>
+            
+            <!-- Parameter Type Field -->
+            <div class="col-md-6">
+                <label for="parameterType" class="form-label">Parameter Type <span class="text-danger">*</span></label>
+                <p-select [size]="'small'" (onChange)="paramTypeChanged($event)" id="parameterType" [options]="parameterTypes" formControlName="parameterType" optionLabel="value" placeholder="Select Type" [style]="{'width': '100%'}"></p-select>
+            </div>
+            
+            <!-- Placeholder Field -->
+            <div class="col-md-6">
+                <label for="placeHolder" class="form-label">Placeholder</label>
+                <input pInputText size="small" id="placeHolder" type="text" formControlName="placeHolder" class="form-control" placeholder="Please enter placeholder text">
+            </div>
+            
+            <!-- Required Checkbox -->
+            <div class="col-md-6">
+                <div class="    mt-md-4 pt-md-3">
+                    <p-checkBox size="small" inputId="ir" styleClass="me-2" [value]="true" id="isRequired" formControlName="isRequired" />
+                    <label for="ir"> Is required?</label>
+                </div>
+            </div>
+            
+            <!-- Options for RADIO, CHECKBOX, and SELECT -->
+            <div class="col-12" *ngIf="[eParameterType.SINGLE_SELECT_OPTION, eParameterType.MULTI_SELECT_OPTIONS].includes(parameterForm.get('parameterType')?.value.id)">
+                <hr class="my-4">
+                <h6 class="mb-3">Options <span class="text-danger">*</span></h6>
+                
+                <div formArrayName="options">
+                    <div *ngFor="let option of options.controls; let i = index" class="row mb-2 align-items-center">
+                        <div class="col-md-10 col-9">
+                            <input type="text" [formControlName]="i" class="form-control" [class.is-invalid]="options.at(i).invalid && options.at(i).touched" placeholder="Option value">
+                            <div *ngIf="options.at(i).invalid && options.at(i).touched" class="invalid-feedback">
+                                Option value is required
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-3">
+                            <button type="button" class="btn btn-outline-danger w-100" (click)="removeOption(i)" *ngIf="options.length > 1" title="Remove option">
+                                <i class="pi pi-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-outline-primary mt-2" (click)="addOption()">
+                    <i class="pi pi-plus me-2"></i>Add Option
+                </button>
+            </div>
+            
+            <div class="col-12 mt-4 pt-3 border-top">
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" (click)="toggleAddForm()">Clear</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="pi pi-check me-2"></i>Save Parameter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</p-panel>
+
+<div class="d-flex justify-content-end align-items-center mb-2">
+    <span class=" me-3"><i class="pi pi-filter-slash text-4xl text-400 me-1"></i>Filters: </span> 
+    <div class="d-flex align-items-center gap-3">
+         <div class="flex flex-wrap gap-4" *ngFor="let item of filterStatusValues; let i = index" class="flex items-center">
+           <p-radiobutton styleClass="me-2" name="status" [value]="item" (ngModelChange)="onValueChange($event)" [(ngModel)]="selectedStatus" [inputId]="'ingredient' + i" ></p-radiobutton>
+            <label [for]="'ingredient' + i" class="ml-2">{{ item.value }}</label>
+        </div>
+    </div>
+</div>
+
+<app-loading></app-loading>
+<p-table styleClass="mt-3" [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="id" sortField="id" showGridlines="true">
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th>Name</th>
+            <th>Placeholder</th>
+            <th>Required</th>
+            <th>Type</th>
+            <td>Options</td>
+            <th>Status</th>
+            <th style="width: 120px">Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-st>
+        <tr>
+            <td>{{st.id}}</td>
+            <td>{{ st.name }}</td>
+            <td [pTooltip]="st.placeHolder">{{ st.placeHolder | truncate: 25 }}</td>
+            <td>
+                <p-toggleSwitch [readonly]="true" [(ngModel)]="st.isRequired" [pTooltip]="st.isRequired ? 'Required' : 'Optional'" (onChange)="null" />
+            </td>
+            <td>{{getParameterTypeString(st.parameterType) | removeUnderscores}}</td>
+            <td>{{st.parameterOptions}}</td>
+            <td>
+                <p-tag [severity]="st.isActive ? 'success' : 'danger'" [value]="st.isActive ? 'ACTIVE' : 'INACTIVE'"></p-tag>
+            </td>
+            
+            <td>
+                <div class="flex flex-wrap gap-1">
+                    <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
+                    tooltipPosition="top" (click)="null"></button>
+                    <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        @if(suitTypeParameters.length == 0 && !ls.getLoading()) {
+            <tr>
+                @if(selectedStatus.id == 2 || selectedStatus.id == 0) {
+                    <td colspan="8" class="text-center py-5">
+                        <div class="flex flex-column align-items-center">
+                            <i class="pi pi-filter-slash text-4xl text-400 mb-3"></i>
+                            <h4 class="mb-1">No parameters match the selected filter.</h4>
+                            <p class="text-600">Try adjusting your filter criteria.</p>
+                        </div>
+                    </td>   
+                }
+                @else {
+                    <td colspan="8" class="text-center py-5">
+                        <div class="flex flex-column align-items-center">
+                            <i class="fas fa-shirt text-4xl text-400 mb-3"></i>
+                            <h4 class="mb-1">No suit type parameters found.</h4>
+                            <p class="text-600">Add your first parameter to get started.</p>
+                            <button pButton label="Add New Parameter" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="toggleAddForm()"></button>
+                        </div>
+                    </td>
+                }
+                
+            </tr>
+        }
+    </ng-template>
+</p-table>
+<p-confirmDialog/>
+
+
+

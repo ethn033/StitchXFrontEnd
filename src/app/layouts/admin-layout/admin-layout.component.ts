@@ -5,6 +5,10 @@ import { Component, inject } from '@angular/core';
 import { TopbarComponent } from '../../dashboard/shared-admin/topbar/topbar.component';
 import { SidebarComponent } from '../../dashboard/shared-admin/sidebar/sidebar.component';
 import { LoadingComponent } from '../../components/shared/loading/loading.component';
+import { APP_USER } from '../../utils/global-contstants';
+import { LocalStorageService } from '../../services/generics/local-storage.service';
+import { ShareDataService } from '../../services/shared/share-data.service';
+import { UserResponse } from '../../Dtos/requests/response-dto';
 
 @Component({
   selector: 'app-admin-layout',
@@ -19,8 +23,11 @@ import { LoadingComponent } from '../../components/shared/loading/loading.compon
   styleUrl: './admin-layout.component.css'
 })
 export class AdminLayoutComponent  {
-
+  userResponse? : UserResponse;
+  private ls = inject(LocalStorageService);
+  private sds = inject(ShareDataService);
   loadingService: LoadingService = inject(LoadingService);
+
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -29,5 +36,14 @@ export class AdminLayoutComponent  {
         this.loadingService.hide();
       }
     });
+    
+    
+    this.userResponse = this.ls.getItem(APP_USER, true) as UserResponse;
+    if(!this.userResponse) {
+      this.router.navigate(['auth'], { replaceUrl: true });
+      return;
+    }
+    
+    this.sds.setUserResponse(this.userResponse);
   } 
 }

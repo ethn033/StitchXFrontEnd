@@ -15,6 +15,5 @@ export class AppComponent {
     
   }
   ngOnInit(): void {
-   this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: 'Failed to load customers.' });
   }
 }

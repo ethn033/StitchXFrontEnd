@@ -1,0 +1,33 @@
+@if(isValidId) {
+  <div class="error-container p-d-flex p-jc-center p-ai-center p-p-4">
+    <div class="p-d-flex p-flex-column p-ai-center p-text-center">
+      
+      <i 
+      icon="pi pi-exclamation-triangle" 
+      styleClass="p-text-warning" 
+      size="3x">
+    </i>
+    
+    <h3 class="p-mt-3 p-mb-2">Invalid data provided.</h3>
+    
+    <p class="p-mb-4 p-text-secondary">
+      Please provide a valid customer/business/branch ID to continue.
+    </p>
+  </div>
+</div>
+<div class="col-12">
+  <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()" [disabled]="loading">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span> Save
+        </button>
+  </div>
+</div>
+}
+@else {
+  <div>show form</div>
+}
+
+
+
+

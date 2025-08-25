@@ -13,7 +13,9 @@ export class LoadingService {
   show() {
     this.activeRequests++;
     if (!this.loading$.value) {
-      this.loading$.next(true);
+      setTimeout(() => {
+        this.loading$.next(true);
+      });
     }
   }
 
@@ -21,12 +23,16 @@ export class LoadingService {
     this.activeRequests--;
     if (this.activeRequests <= 0) {
       this.activeRequests = 0;
-      this.loading$.next(false);
+      setTimeout(() => {
+        this.loading$.next(false);
+      });
     }
   }
 
   setLoading(state: boolean): void {
-    this.loading$.next(state);
+    setTimeout(() => {
+      this.loading$.next(state);
+    });
   }
 
   getLoading(): boolean {

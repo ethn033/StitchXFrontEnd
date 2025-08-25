@@ -1,0 +1,24 @@
+.error-container {
+  min-height: 300px;
+  background-color: var(--surface-ground);
+}
+
+::ng-deep .error-container .p-icon {
+  color: var(--yellow-500) !important;
+}
+
+/* Optional: Add some animations */
+.error-container {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

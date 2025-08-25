@@ -1,132 +1,98 @@
 <p-dialog  header="Custom Date Range Filter" [modal]="true" [(visible)]="showCustomDateRangeDialog" [style]="{ width: '35rem' }">
-  <div class="w-full px-3">
-    <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" showButtonBar="true" inline="true" selectionMode="range" [style]="{ width: '100%' }" [readonlyInput]="true">
-    </p-datepicker>
-  </div>
-  
-  <div class="flex justify-end gap-2 mt-3 p-3 text-end">
-    <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
-    <p-button label="Save" (click)="showCustomDateRangeDialog = false; refresh()" />  <!-- Recommend separate handler -->
-  </div>
-  
+    <div class="w-full px-3">
+        <p-datepicker [(ngModel)]="dateRange" dateFormat="dd-mm-yy" inline="true" selectionMode="range"  [style]="{ width: '100%' }" [readonlyInput]="true">
+        </p-datepicker>
+    </div>
+    
+    <!-- Buttons - Right Aligned -->
+    <div class="flex justify-end gap-2 mt-3 p-3">
+        <p-button label="Cancel" severity="secondary" (click)="showCustomDateRangeDialog = false" />
+        <p-button label="Save" (click)="showCustomDateRangeDialog = false; loadOrders();" />  <!-- Recommend separate handler -->
+    </div>
 </p-dialog>
 
-
 <div class="d-flex justify-content-between align-items-center mb-5">
-  <h5 class="fw-bold m-0">
-    <p-button rounded="true" size="large" pTooltip="Refresh Orders" (onClick)="refresh()" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button>
-    Orders
-  </h5>
-  
-  
-  
-  <!-- Right: Dropdown + New Order button -->
-  <div class="d-flex align-items-center gap-3">
-    <!-- <p-select pTooltip="Filter Orders by Status" tooltipPosition="top" size="small" [options]="orderStatuses" [(ngModel)]="selectedOrderStatus" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
-     -->
-    <p-select pTooltip="Filter Orders by Date" tooltipPosition="top" size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
-    
-    <button pTooltip="Add new Order" tooltipPosition="left" pButton size="small" label="Order" (click)="showNewCustomerDialog()" icon="pi pi-plus" class="p-button-primary"></button>
-  </div>
+    <!-- Left: Title with refresh button -->
+    <h5 class="fw-bold m-0">
+        <p-button rounded="true" size="large" pTooltip="Refresh Users" (onClick)="loadOrders();" icon="pi pi-refresh" styleClass="clr-dark-grey fw-bold" [link]="true"></p-button> Orders
+    </h5>
+    <!-- Right: Dropdown + New Order button -->
+    <div class="d-flex align-items-center gap-3">
+        <p-select (onChange)="loadOrders();" size="small" [options]="orderStatuses" [(ngModel)]="selectedCustomerStatus" optionLabel="value" placeholder="Filter by Status" class="min-w-[200px]"></p-select>
+        <!-- <p-select (onChange)="loadOrders();" size="small" [options]="orderStatuses" [(ngModel)]="selectedRole" optionLabel="value" placeholder="FIlter by Role" class="min-w-[200px]"></p-select> -->
+        <p-select size="small" [options]="dateRanges" [(ngModel)]="selectedDateFilter" (onChange)="onDateFilterChanged($event)" optionLabel="value" placeholder="Select a Status" class="min-w-[200px]"></p-select>
+        <button pButton size="small" label="Order" (click)="addUpdateOrderDialog()" icon="pi pi-plus" class="p-button-primary"></button>
+    </div>
 </div>
 
-<!-- <p-table [value]="orders" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10,25,50]" stripedRows size="small" [lazy]="false" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" [columnResizeMode]="'fit'" scrollDirection="both" [showGridlines]="true">
-  
-  <ng-template pTemplate="body" let-order>
-    <p-card *ngFor="let order of orders" class="order-card" [style]="{'margin': '10px'}">
-      <div class="card-content">
-        <p-stepper [value]="order.status" class="basis-[50rem]">
-          <p-step-list>
-            <p-step *ngFor="let status of orderStatuses | excludeFirstItem" [value]="status.id-1"> {{ status.value }}</p-step> 
-          </p-step-list>
-        </p-stepper>
-        <div class="row">
-          <div class="col-10 p-0">
-            <div class="row">
-              <div class="col-6">
-                <strong>Order ID:</strong> {{ order.orderId }}
-              </div>
-              <div class="col-6 text-right">
-                <strong>Order Date:</strong> {{ order.orderDate | date:'short' }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <strong>Delivery Date:</strong> {{ order.deliveryDate | date:'short' }}
-              </div>
-              <div class="col-6 text-right">
-                <strong>Fabric:</strong> {{ order.fabricDetails }} ({{ order.fabricColor }})
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <strong>Fit:</strong> {{ order.stichingFit }}
-              </div>
-              <div class="col-6 text-right">
-                <strong>Quantity:</strong> {{ order.quantity }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6">
-                <strong>Amount Paid:</strong> {{ order.amountPaid | currency:'INR' }}
-              </div>
-              <div class="col-6 text-right">
-                <strong>Payment Status:</strong> <p-tag size="small" [severity]="order.paymentStatus === 'Paid' ? 'success' : 'warn'" [value]="order.paymentStatus"></p-tag>
-              </div>
-            </div>
-          </div>
-          <div class="col-2">
-            <div class="card-actions h-full flex align-items-center justify-content-center">
-              <div class="flex flex-col gap-2"> 
-                <button pButton icon="pi pi-eye" 
-                class="p-button-sm p-button-rounded p-button-text" 
-                pTooltip="View" 
-                tooltipPosition="top" 
-                (click)="viewCustomer(order)"></button>
-                <button pButton icon="pi pi-pencil" 
-                class="p-button-sm p-button-rounded p-button-text" 
-                pTooltip="Edit" 
-                tooltipPosition="top" 
-                (click)="editCustomer(order)"></button>
-                <button pButton icon="pi pi-trash" 
-                class="p-button-sm p-button-rounded p-button-text p-button-danger" 
-                pTooltip="Delete" 
-                tooltipPosition="top" 
-                (click)="confirmDelete(order)"></button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </p-card>
-    
-    <p-card *ngIf="orders.length === 0" class="text-center">
-      <div class="flex flex-column align-items-center">
-        <i class="pi pi-box text-4xl text-400 mb-3"></i>
-        <h4 class="text-900 mb-1">No Orders Found</h4>
-        <p class="text-600">Add orders to get started</p>
-        <button pButton label="Add Order" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="showNewCustomerDialog()"></button>
-      </div>
-    </p-card>
-  </ng-template>
-  
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <td colspan="13" class="text-center py-5">
-        <div class="flex flex-column align-items-center">
-          <i class="pi pi-box text-4xl text-400 mb-3"></i>
-          <h4 class="mb-1">No Orders Found</h4>
-          <p class="">Add Orders to get started</p>
-          <button pButton size="small" label="Add Order" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="showNewCustomerDialog()"></button>
-        </div>
-      </td>
-    </tr>
-  </ng-template>
-</p-table> -->
+<p-table size="small" #dt [value]="orders" [first]="first" [paginator]="true" [rows]="rows" [rowsPerPageOptions]="[10,20,50]" stripedRows size="small" [lazy]="true" (onLazyLoad)="loadOrders($event)" [totalRecords]="totalOrdersCount" [showCurrentPageReport]="true" dataKey="userId" sortField="userId" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [resizableColumns]="true" showGridlines="true">
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="orderOId">ID <p-sortIcon field="orderOId"></p-sortIcon></th>
+            <th>Items</th>
+            <th>Date</th>
+            <th>Delivery Date</th>
+            <th>Total Amount</th>
+            <th>Paid</th>
+            <th>Discount</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th style="width: 120px">Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-order>
+        <tr>
+            <td>{{order.orderOId}}</td>
+            <td>{{ order.totalItems }}</td>
+            <td>
+                {{order.orderDate}}
+            </td>
+            <td>
+                {{order.deliveryDate}}
+            </td>
+            <td>
+                {{order.totalAmount | currency: 'PKR'}}
+            </td>
+            <td>
+                {{order.paidAmount | currency: 'PKR'}}
+            </td>
+            <td>
+                {{order.discountAmount}}
+            </td>
+            <td>
+                <p-tag [severity]="order.status == oStatuses.RECEIVED ? 'secondary' : order.status == oStatuses.IN_PROGRESS ? 'info' : order.status == oStatuses.COMPLETED ? 'success' : 'warn' " [value]="order.status"></p-tag>
+            </td>
+            <td>
+                <p-tag [severity]="order.paymentStatus == paymentStatuses.PARTIALLY_PAID ? 'warn' : order.paymentStatus == paymentStatuses.PENDING ? 'info' : order.paymentStatus == paymentStatuses.PAID ? 'success' : 'danger' " [value]="order.status"></p-tag>
+            </td>
+            <td>
+                <div class="flex flex-wrap gap-1">
+                    <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View"  tooltipPosition="top" (click)="viewOrder(order)"></button>
+                    <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
+                    tooltipPosition="top" (click)="addUpdateOrderDialog(order)"></button>
+                    <button pButton icon="pi pi-shopping-cart" class="p-button-sm p-button-rounded p-button-text" pTooltip="Take Order" tooltipPosition="top" (click)="takeOrder(order)"></button>
+                    <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Delete" [disabled]="order.isDeleted" tooltipPosition="top" (click)="confirmDelete(order)"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+        @if(!loadingService.getLoading) {
+            <tr>
+                <td colspan="8" class="text-center py-5">
+                    <div class="flex flex-column align-items-center">
+                        <i class="pi pi-users text-4xl text-400 mb-3"></i>
+                        <h4 class="mb-1">No users found</h4>
+                        <p class="text-600">Add your first user to get started</p>
+                        <button pButton label="Add User" icon="pi pi-plus" class="p-button-outlined mt-3" (click)="addUpdateOrderDialog()"></button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </ng-template>
+</p-table>
+<p-confirmDialog/>
 
-<p-confirmDialog 
-[style]="{width: '450px'}" 
-header="Confirm Deletion" 
-icon="pi pi-exclamation-triangle"
-on
-></p-confirmDialog>
+
+
