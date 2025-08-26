@@ -89,7 +89,6 @@ export function validateCurrentRole(roles?: string[]): ERole {
 }
 
 export function valdiateRoles(userRolesItems: DropDownItem[], currentRole: ERole): DropDownItem[] {
-  debugger
     userRolesItems = userRolesItems.filter(item => item.id !== currentRole);
     const index = userRolesItems.findIndex(item => item.id === ERole.SOFT_OWNER);
     if (index !== -1) {

@@ -18,6 +18,13 @@ export interface UsersResponse {
     totalPages: number;
 }
 
+export interface CustomerResponse {
+    customers: User[];
+    totalCount: number;
+    pageSize: number;
+    page: number;
+    totalPages: number;
+}
 
 export interface OrdersResponse {
     users: Order[];

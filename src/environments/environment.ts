@@ -20,9 +20,9 @@ export const environment = {
             }
         },
         customer: {
-            controller: 'Customer/',
+            controller: 'Customers/',
             enpoints: {
-                GetAllCustomers: 'GetAllCustomers',
+                GetCustomers: 'GetCustomers',
                 GetCustomerById: 'GetCustomerById'
             }
         },
@@ -60,6 +60,16 @@ export const environment = {
             controller: 'Branch/',
             enpoints: {
                 CreateBranch: 'CreateBranch'
+            },
+        },
+        measurement: {
+            controller: 'Measurements/',
+            enpoints: {
+                GetAllMeasurements: 'GetAllMeasurements',
+                GetMeasurementById: 'GetMeasurementById',
+                CreateMeasurement: 'CreateMeasurement',
+                UpdateMeasurement: 'UpdateMeasurement',
+                DeleteMeasurement: 'DeleteMeasurement',
             },
         }
     }

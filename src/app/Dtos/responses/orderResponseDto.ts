@@ -1,4 +1,5 @@
 import { EOrderStatus, EPaymentStatus } from "../../enums/enums";
+import { Measurement } from "../requests/request-dto";
 
 export interface OrderItemDto {
   price: number;
@@ -27,6 +28,14 @@ export interface OrderHistoryItemResponseDto {
 
 export interface OrderHistoryResponseDto {
   orders?: OrderHistoryItemResponseDto[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface MeasurementResponse {
+  measurements?: Measurement[];
   page: number;
   pageSize: number;
   totalCount: number;

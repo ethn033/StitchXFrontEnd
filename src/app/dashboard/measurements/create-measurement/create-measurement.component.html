@@ -1,0 +1,37 @@
+
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <div class="form-group">
+        <label for="user" class="form-label d-block mb-1">Select User <span class="text-danger">*</span></label>
+        <p-autoComplete styleClass="w-100" id="user" size="small" inputId="userInput" formControlName="applicationUserId" [suggestions]="filteredUsers" (completeMethod)="filterUsers($event)" [minLength]="1" optionLabel="firstName+ lastName" (onSelect)="onUserSelect($event)" placeholder="Search for user..." [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid': measurementForm.get('applicationUserId')?.invalid && measurementForm.get('applicationUserId')?.touched}">
+        </p-autoComplete>
+        <div *ngIf="measurementForm.get('applicationUserId')?.touched && measurementForm.get('applicationUserId')?.invalid" class="invalid-feedback d-block">
+          Please select a user.
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-group">
+        <label for="suitType" class="form-label d-block mb-1">Select Suit Type <span class="text-danger">*</span></label>
+        <p-autoComplete  styleClass="w-100" size="small" id="suitType" inputId="suitTypeInput" formControlName="suitTypeId" [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" [minLength]="1" (onSelect)="onSuitTypeSelect($event)" placeholder="Search for suit type..." [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid': measurementForm.get('suitTypeId')?.invalid && measurementForm.get('suitTypeId')?.touched}">
+      </p-autoComplete>
+      <div *ngIf="measurementForm.get('suitTypeId')?.touched && measurementForm.get('suitTypeId')?.invalid" class="invalid-feedback d-block">
+        Please select a suit type.
+      </div>
+    </div>
+  </div>
+</div>
+<form [formGroup]="measurementForm" (ngSubmit)="onSubmit()">
+
+
+<div class="d-flex justify-content-end gap-2 mt-4">
+  <button type="button" pButton pRipple icon="pi pi-times" class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading">
+    Cancel
+  </button>
+  <button type="submit" pButton pRipple icon="pi pi-check" class="p-button-primary" [disabled]="loading">
+    <span *ngIf="loading" class="p-button-icon p-button-loading-icon pi pi-spinner pi-spin"></span>
+    <span class="ml-2">Save Measurement</span>
+  </button>
+</div>
+</form>

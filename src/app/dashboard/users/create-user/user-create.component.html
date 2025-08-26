@@ -94,11 +94,10 @@
   
 
 @if(currentRole == roles.SHOP_OWNER) {
-  <div class="measurement-section mb-4">
+  <!-- <div class="measurement-section mb-4">
     <p-fieldset legend="Customer Measurements" [toggleable]="true" [collapsed]="!measurementFormExpanded">
       <form [formGroup]="measurementForm" class="container-fluid p-0">
         <div class="row g-3">
-          <!-- Suit Type Selection -->
           <div class="col-md-6">
             <div class="form-group">
               <label for="suitType" class="form-label">Suit Type*</label>
@@ -113,7 +112,6 @@
             </div>
           </div>
 
-          <!-- Measurement Parameters Section -->
           <div class="col-12">
             <div class="card">
               <div class="card-header bg-light">
@@ -121,7 +119,6 @@
               </div>
               <div class="card-body">
                 <div class="row g-3">
-                  <!-- Chest -->
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="chest" class="form-label">Chest (inches)*</label>
@@ -136,7 +133,6 @@
                     </div>
                   </div>
 
-                  <!-- Waist -->
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="waist" class="form-label">Waist (inches)*</label>
@@ -151,7 +147,6 @@
                     </div>
                   </div>
 
-                  <!-- Hip -->
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="hip" class="form-label">Hip (inches)</label>
@@ -166,7 +161,6 @@
                     </div>
                   </div>
 
-                  <!-- Sleeve Length -->
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="sleeveLength" class="form-label">Sleeve (inches)*</label>
@@ -181,7 +175,6 @@
                     </div>
                   </div>
 
-                  <!-- Additional Measurements -->
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="shoulderWidth" class="form-label">Shoulder (inches)</label>
@@ -242,7 +235,6 @@
             </div>
           </div>
 
-          <!-- Notes Section -->
           <div class="col-12">
             <div class="form-group">
               <label for="measurementNotes" class="form-label">Special Instructions</label>
@@ -252,7 +244,6 @@
             </div>
           </div>
 
-          <!-- Form Actions -->
           <div class="col-12">
             <div class="d-flex justify-content-end gap-2">
               <button pButton type="button" label="Clear" icon="pi pi-times" 
@@ -264,5 +255,5 @@
         </div>
       </form>
     </p-fieldset>
-  </div>
+  </div> -->
 }

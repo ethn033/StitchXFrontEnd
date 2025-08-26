@@ -12,7 +12,7 @@
         <div class="search-container">
             <div class="search-wrapper">
                 <i class="pi pi-search search-icon"></i>
-                <p-autoComplete [(ngModel)]="searchText" appendTo="body" [suggestions]="filteredItems" (completeMethod)="filterItems($event)" placeholder="Search..." [inputStyle]="{'padding-left': '2rem'}" styleClass="full-width-autocomplete">
+                <p-autoComplete [inputStyle]="{'width':'100%', 'padding-left': '2rem'}" styleClass="w-100" [(ngModel)]="searchText" appendTo="body" [suggestions]="filteredItems" (completeMethod)="filterItems($event)" placeholder="Search..." inputId="global-search" styleClass="full-width-autocomplete">
                 </p-autoComplete>
             </div>
         </div>

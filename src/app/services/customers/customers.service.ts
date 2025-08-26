@@ -28,8 +28,8 @@ export class CustomersService extends ApiService {
     return this.put(this.endpoint + environment.api.auth.enpoints.UpdateUser+'/'+ id, payload);
   }
   
-  getUsers<T>(payload: any): Observable<ApiResponse<T>> {
-    return this.get(this.endpoint + environment.api.auth.enpoints.GetAllUsers, payload);
+  getCustomers<T>(payload: any): Observable<ApiResponse<T>> {
+    return this.get(this.endpoint + environment.api.customer.enpoints.GetCustomers, payload);
   }
   
   deleteUser<T>(id: number) : Observable<ApiResponse<T>>{

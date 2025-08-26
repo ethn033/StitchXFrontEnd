@@ -69,7 +69,7 @@ export const routes: Routes = [
       },
       {
         path: 'measurements',
-         loadComponent: () => import('./dashboard/users/users/users.component').then(m => m.UsersComponent)
+         loadComponent: () => import('./dashboard/measurements/measurements/measurements.component').then(m => m.MeasurementsComponent)
       },
       
     ]

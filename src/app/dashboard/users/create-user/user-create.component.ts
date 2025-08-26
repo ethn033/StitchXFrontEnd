@@ -13,7 +13,7 @@ import { userRolesFilterValue, valdiateRoles, validateCurrentRole } from '../../
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
-import { HttpStatusCode } from '@angular/common/http';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { User } from '../../../Dtos/requests/request-dto';
 import { DatePickerModule } from 'primeng/datepicker';
 import moment from 'moment';
@@ -120,8 +120,16 @@ export class UserCreateComponent {
         this.loading = false;
       },
       error: (err: any) => {
-        this.ms.add({key: 'global-toast', severity: 'error', summary: 'Login Failed', detail: err.message});
         this.loading = false;
+        if(err instanceof HttpErrorResponse) {
+          let message = err.error.message;
+          if(err.error?.data) {
+            message += ' '+err.error?.data[0].description;
+          } 
+
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: message });
+          
+        }
       }
     });
   }
@@ -133,7 +141,7 @@ export class UserCreateComponent {
   
   measurementFormExpanded = false;
   measurementForm: FormGroup = this.fb.group({});
-
+  
   suitTypes: SuitType[] = [];
   
   onSuitTypeChange(event: any) {

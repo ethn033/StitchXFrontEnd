@@ -209,10 +209,12 @@ export class SuitTypeParametersComponent implements OnInit {
         this.suitTypeParameters = resp.data.suitTypeParameters as SuitTypeParameter[] || [];
         this.totalSuitTypeParameters = this.suitTypeParameters.length;
       },
-      error: (error: any) => {
+      error: (err: any) => {
         this.isLoading = false;
         this.ls.hide();
-        this.ms.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: error?.message || 'Failed to load suit type parameters.' });
+        if(err instanceof HttpErrorResponse) {
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+        }
       },
       complete: () => {
         this.ls.hide();
@@ -242,8 +244,9 @@ export class SuitTypeParametersComponent implements OnInit {
             }
           },
           error: (err: any) => {
-            let er = normalizeError(err);
-            this.ms.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
+            if(err instanceof HttpErrorResponse) {
+              this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+            }
           }
         });
       }
