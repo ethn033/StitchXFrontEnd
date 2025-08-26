@@ -16,7 +16,7 @@ export class MeasurementService extends ApiService {
   }
   
   createMeasurement<T>(payload: Measurement): Observable<ApiResponse<T>> {
-    return this.post(this.endpoint + environment.api.measurement.enpoints.GetAllMeasurements, payload);
+    return this.post(this.endpoint + environment.api.measurement.enpoints.CreateMeasurement, payload);
   }
   
   updateMeasurementStatus<T>(id: number, payload: Measurement): Observable<ApiResponse<T>> {

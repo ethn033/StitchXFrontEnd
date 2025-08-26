@@ -154,6 +154,7 @@ export class MeasurementsComponent implements OnInit {
     const ref = this.dialogService.open(CreateMeasurementComponent, {
       header: 'Add New Measurement',
       width: '70%',
+      height: '80%',
       styleClass: 'measurement-dialog',
       contentStyle: { 'max-height': '80vh', overflow: 'auto' },
       baseZIndex: 10000,
@@ -163,11 +164,9 @@ export class MeasurementsComponent implements OnInit {
       autoZIndex: true,
       closeOnEscape: false,
       data: { 
-        data: {
-          customerId: null, 
-          branchId: this.selectedBranch?.id, 
-          businessId: this.businessId } 
-        },
+        customerId: null, 
+        branchId: this.selectedBranch?.id, 
+        businessId: this.businessId } 
       });
       
       ref.onClose.subscribe((result) => {

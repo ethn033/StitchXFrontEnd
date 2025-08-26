@@ -24,44 +24,20 @@
   <ng-template pTemplate="header">
     <tr>
       <th>Customer Name</th>
+      <th>Phone</th>
       <th>Suit Type</th>
       <th>Created Date</th>
       <th>Updated Date</th>
-      <th>Total Amount</th>
-      <th>Paid</th>
-      <th>Discount</th>
-      <!-- <th>Status</th> -->
-      <!-- <th>Payment</th> -->
       <th style="width: 120px">Actions</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-measurement>
     <tr>
-      <td>{{measurement.applicationUser.firstName + '' + measurement.applicationUser.lastName}}</td>
+      <td>{{measurement.applicationUser.firstName + ' ' + measurement.applicationUser.lastName}}</td>
+      <td>{{measurement.applicationUser.phone}}</td>
       <td>{{measurement.suitType.name}}</td>
       <td>{{ measurement.createdAt | date : 'dd-mm-yyy' }}</td>
       <td>{{ measurement.updatedAt | date : 'dd-mm-yyy' }}</td>
-      <td>
-        {{measurement.orderDate}}
-      </td>
-      <td>
-        {{measurement.deliveryDate}}
-      </td>
-      <td>
-        {{measurement.totalAmount | currency: 'PKR'}}
-      </td>
-      <td>
-        {{measurement.paidAmount | currency: 'PKR'}}
-      </td>
-      <td>
-        {{measurement.discountAmount}}
-      </td>
-      <!-- <td>
-        <p-tag [severity]="order.status == oStatuses.RECEIVED ? 'secondary' : order.status == oStatuses.IN_PROGRESS ? 'info' : order.status == oStatuses.COMPLETED ? 'success' : 'warn' " [value]="order.status"></p-tag>
-      </td> -->
-      <!-- <td>
-        <p-tag [severity]="order.paymentStatus == paymentStatuses.PARTIALLY_PAID ? 'warn' : order.paymentStatus == paymentStatuses.PENDING ? 'info' : order.paymentStatus == paymentStatuses.PAID ? 'success' : 'danger' " [value]="order.status"></p-tag>
-      </td> -->
       <td>
         <div class="flex flex-wrap gap-1">
           <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View"  tooltipPosition="top" (click)="null"></button>
