@@ -177,9 +177,15 @@ export class CreateMeasurementComponent implements OnInit {
   
   filterSuitTypes(event: any): void {
     const query = event.query;
-    
+    this.measurementForm.patchValue({
+      applicationUserId: this.selectedUser?.id || null,
+    });
+
     this.selectedSuitType = null;
     this.suitTypeParameters = [];
+
+    
+   
     if(query.trim().length < 1) {
       this.filteredSuitTypes = [];
       return;

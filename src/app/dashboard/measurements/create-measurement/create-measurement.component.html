@@ -30,9 +30,11 @@
     </div>
   </div>
 </div>
+<div class="container mt-4">
 <form [formGroup]="measurementForm" (ngSubmit)="onSubmit()">
 
-  <div *ngFor="let param of suitTypeParameters" class="mb-4">
+  <!-- Generate form fields dynamically based on loaded suit type parameters -->
+    <div *ngFor="let param of suitTypeParameters" class="mb-4">
       <label class="form-label">{{ param.name }}</label>
       
       <ng-container [ngSwitch]="param.parameterType">
@@ -44,8 +46,8 @@
         <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText [formControlName]="param.name!" type="number" [placeholder]="param.placeHolder" class="form-control" />
 
         <!-- Single Select (Radio Buttons) -->
-        <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="d-flex flex-column">
-          <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check">
+        <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="d-flex flex-wrap">
+          <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check me-3">
             <p-radioButton 
               [inputId]="option.trim()" 
               [formControlName]="param.name!" 
@@ -88,3 +90,4 @@
     </button>
   </div>
 </form>
+</div>
