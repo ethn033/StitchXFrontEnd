@@ -30,7 +30,7 @@
             <td>{{ st.price | currency: 'PKR'}}</td>
             <td>{{ st.createdAt | date: 'dd-mm-yyyy'}}</td>
             <td>
-                <p-toggleSwitch [(ngModel)]="st.isActive" [disabled]="st.isDeleted" [pTooltip]="st.isActive ? 'Active' : 'Inactive'" (onChange)="toggleSuitTypeStatus(st)" />
+                <p-toggleSwitch [(ngModel)]="st.isActive" [disabled]="st.isDeleted" [pTooltip]="st.isActive ? 'Deactivate' : 'Activate'" (onChange)="toggleSuitTypeStatus(st)" />
             </td>
             <td>
                 <div class="flex flex-wrap gap-1">

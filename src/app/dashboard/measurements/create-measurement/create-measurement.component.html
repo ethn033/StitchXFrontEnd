@@ -4,7 +4,7 @@
     <div class="form-group">
       <label for="user" class="form-label d-block mb-1"><i class="pi pi-user me-1"></i>Select User <span class="text-danger">*</span></label>
       
-      <p-autoComplete #usr="ngModel" [(ngModel)]="usr" required="" styleClass="w-100" id="user" size="small" inputId="userInput" [suggestions]="filteredUsers" (completeMethod)="filterUsers($event)" [minLength]="2" optionLabel="name" (onSelect)="onUserSelect($event)" placeholder="Search user by ID, Name or Email" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid': !selectedUser || usr.invalid}">
+      <p-autoComplete #usr="ngModel" [forceSelection]="true" [(ngModel)]="usr" required="" styleClass="w-100" id="user" size="small" inputId="userInput" [suggestions]="filteredUsers" (completeMethod)="filterUsers($event)" [minLength]="2" optionLabel="name" (onSelect)="onUserSelect($event)" placeholder="Search user by ID, Name or Email" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid': !selectedUser || usr.invalid}">
         <ng-template let-item #item>
           <div class="flex items-center gap-2">
             <i class="pi pi-user me-1"></i>
@@ -22,7 +22,7 @@
   <div class="col-md-6 mb-3">
     <div class="form-group">
       <label for="suitType" class="form-label d-block mb-1"><i class="fas fa-shirt me-1"></i>Select Suit Type <span class="text-danger">*</span></label>
-      <p-autoComplete #st="ngModel" required="" styleClass="w-100" [(ngModel)]="st" size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" [minLength]="1" (onSelect)="onSuitTypeSelect($event)" placeholder="Search for suit type e.g (Shalwar Qamees)" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid' : !selectedSuitType || st.invalid }">
+      <p-autoComplete #st="ngModel" required="" [forceSelection]="true" styleClass="w-100" [(ngModel)]="st" size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" [minLength]="1" (onSelect)="onSuitTypeSelect($event)" placeholder="Search for suit type e.g (Shalwar Qamees)" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid' : !selectedSuitType || st.invalid }">
       </p-autoComplete>
       <div *ngIf="!selectedSuitType || st.invalid" class="invalid-feedback d-block">
         Please select a suit type.
@@ -40,41 +40,34 @@
       <ng-container [ngSwitch]="param.parameterType">
 
         <!-- Text Input -->
-        <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText [formControlName]="param.name!" [placeholder]="param.placeHolder" class="form-control" />
+        <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText [formControlName]="param.id!" [placeholder]="param.placeHolder" class="form-control" />
 
         <!-- Number Input -->
-        <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText [formControlName]="param.name!" type="number" [placeholder]="param.placeHolder" class="form-control" />
+        <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText [formControlName]="param.id!" type="number" [placeholder]="param.placeHolder" class="form-control" />
 
         <!-- Single Select (Radio Buttons) -->
         <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="d-flex flex-wrap">
           <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check me-3">
-            <p-radioButton 
-              [inputId]="option.trim()" 
-              [formControlName]="param.name!" 
-              [value]="option.trim()"
+            <p-radioButton [inputId]="option.trim()" [formControlName]="param.id!.toString()" [value]="option.trim()"
               (onChange)="measurementForm.get(param.name!)?.markAsTouched()">
             </p-radioButton>
-            <label [for]="option.trim()" class="form-check-label">{{ option.trim() }}</label>
+            <label [for]="option.trim()" class="form-check-label ms-2">{{ option.trim() }}</label>
           </div>
         </div>
 
         <!-- Multi-Select (Checkboxes) -->
         <div *ngSwitchCase="parameterTypes.MULTI_SELECT_OPTIONS" class="d-flex flex-wrap">
           <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check me-3">
-            <p-checkbox 
-              [inputId]="option.trim()" 
-              [formControlName]="param.name!" 
-              [value]="option.trim()" 
-              (onChange)="updateCheckboxValue(param.name!, $event)">
+            <p-checkbox [inputId]="option.trim()" [formControlName]="param.id!" [value]="option.trim()" >
             </p-checkbox>
-            <label [for]="option.trim()" class="form-check-label">{{ option.trim() }}</label>
+            <label [for]="option.trim()" class="form-check-label ms-2">{{ option.trim() }}</label>
           </div>
         </div>
 
       </ng-container>
 
       <!-- Validation Message -->
-      <div *ngIf="measurementForm.get(param.name!)?.invalid && measurementForm.get(param.name!)?.touched" class="text-danger">
+      <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && measurementForm.get(param.id!.toString())?.touched" class="text-danger">
         {{ param.isRequired ? 'This field is required.' : 'Invalid input.' }}
       </div>
     </div>

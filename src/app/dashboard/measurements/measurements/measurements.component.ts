@@ -28,14 +28,16 @@ import { ApiResponse } from '../../../models/base-response';
 import { MeasurementResponse } from '../../../Dtos/responses/orderResponseDto';
 import { CreateMeasurementComponent } from '../create-measurement/create-measurement.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 @Component({
   selector: 'app-measurements',
   templateUrl: './measurements.component.html',
   styleUrls: ['./measurements.component.css'],
-  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule],
+  imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TabsModule, RouterModule, ToggleSwitchModule],
   providers: [DialogService, ConfirmationService],
 })
 export class MeasurementsComponent implements OnInit {
+  
   private sds = inject(ShareDataService);
   private lss = inject(LocalStorageService);
   userResponse?: User | null;
@@ -72,6 +74,36 @@ export class MeasurementsComponent implements OnInit {
   ngOnInit() {
   }
   
+  onChangeActivateMeasurement(measurement: any) {
+    this.ls.show();
+    this.ms.updateMeasurementStatus<ApiResponse<any>>(measurement.id, measurement.isActive).subscribe({
+      next: (response: any) => {
+        this.ls.hide();
+        if(response.isSuccess && response.statusCode == 200) {
+          this.messService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: response.message });
+          let index = this.measurements.findIndex(m => m.id === measurement.id);
+          
+          if (index !== -1) {
+            this.measurements.splice(index, 1);
+            this.measurements = [...this.measurements];
+          }
+          return;
+        }
+        measurement.isActive = !measurement.isActive; // revert the change if failed
+        this.messService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: response.message });
+      },
+      error: (err: any) => {
+        measurement.isActive = !measurement.isActive; // revert the change if failed
+        this.ls.hide();
+        if(err instanceof HttpErrorResponse) {
+          this.messService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+        }
+      },
+      complete: () => {
+        this.ls.hide();
+      }
+    });
+  }
   
   searchStr: string = '';
   first: number= 0;
@@ -80,6 +112,9 @@ export class MeasurementsComponent implements OnInit {
   pageSize: number = 10;
   loadMeasurments(event?: TableLazyLoadEvent): void {
     
+    debugger
+    
+    this.selectedStatus
     this.ls.show();
     this.first = event?.first ?? this.first;
     this.rows = event?.rows ?? this.rows;
@@ -95,7 +130,8 @@ export class MeasurementsComponent implements OnInit {
       endDate: (this.dateRange.length > 0 && this.dateRange[1] != null) ? moment(this.dateRange[1]).toISOString() : '',
       customerId: 0,
       suitTypeId: 0,
-      businessId: this.businessId
+      businessId: this.businessId,
+      status: this.selectedStatus.id
     };
     
     this.ms.getMeasurements<ApiResponse<Measurement>>(payload).subscribe({
@@ -175,36 +211,36 @@ export class MeasurementsComponent implements OnInit {
         }
       });
     }
-
+    
     confirmDelete(measurement: Measurement): void {
-          this.cs.confirm({
-            message: `Are you sure you want to delete measurement?`,
-            header: 'Confirm Deletion',
-            icon: 'pi pi-exclamation-triangle',
-            closable: true,
-            closeOnEscape: true,
-            rejectButtonProps: {
-              label: 'Cancel',
-              severity: 'secondary',
-              outlined: true,
+      this.cs.confirm({
+        message: `Are you sure you want to delete measurement?`,
+        header: 'Confirm Deletion',
+        icon: 'pi pi-exclamation-triangle',
+        closable: true,
+        closeOnEscape: true,
+        rejectButtonProps: {
+          label: 'Cancel',
+          severity: 'secondary',
+          outlined: true,
+        },
+        accept: () => {
+          this.ms.deleteMeasurement<ApiResponse<any>>(measurement.id!).subscribe({
+            next: (response: any) => {
+              let resp = response as ApiResponse<any>;
+              if(resp.isSuccess && resp.statusCode == 200){
+                this.messService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+                this.loadMeasurments();
+              }
             },
-            accept: () => {
-              this.ms.deleteMeasurement<ApiResponse<any>>(measurement.id!).subscribe({
-                next: (response: any) => {
-                  let resp = response as ApiResponse<any>;
-                  if(resp.isSuccess && resp.statusCode == 200){
-                    this.messService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
-                    this.loadMeasurments();
-                  }
-                },
-                error: (err: any) => {
-                   if(err instanceof HttpErrorResponse) {
-                    this.messService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
-                  }
-                }
-              });
+            error: (err: any) => {
+              if(err instanceof HttpErrorResponse) {
+                this.messService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+              }
             }
           });
         }
+      });
+    }
   }
   

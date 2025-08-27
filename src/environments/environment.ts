@@ -70,6 +70,7 @@ export const environment = {
                 CreateMeasurement: 'CreateMeasurement',
                 UpdateMeasurement: 'UpdateMeasurement',
                 DeleteMeasurement: 'DeleteMeasurement',
+                UpdateMeasurementStatus: 'UpdateMeasurementStatus'
             },
         }
     }

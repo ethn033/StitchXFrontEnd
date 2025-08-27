@@ -18,10 +18,11 @@ export class MeasurementService extends ApiService {
   createMeasurement<T>(payload: Measurement): Observable<ApiResponse<T>> {
     return this.post(this.endpoint + environment.api.measurement.enpoints.CreateMeasurement, payload);
   }
-  
-  updateMeasurementStatus<T>(id: number, payload: Measurement): Observable<ApiResponse<T>> {
-    return this.put(this.endpoint + environment.api.auth.enpoints.UpdateUser+'/'+ id, payload);
+
+  updateMeasurementStatus<T>(id: number, status: boolean): Observable<ApiResponse<T>> {
+    return this.put(this.endpoint + environment.api.measurement.enpoints.UpdateMeasurementStatus+'/'+ id, status);
   }
+
   
   getMeasurements<T>(payload: any): Observable<ApiResponse<T>> {
     return this.get(this.endpoint + environment.api.measurement.enpoints.GetAllMeasurements, payload);

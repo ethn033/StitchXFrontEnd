@@ -7,7 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { MeasurementService } from '../../../services/measurements/measurement.service';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
-import { SuitType, SuitTypeParameter, User } from '../../../Dtos/requests/request-dto';
+import { Measurement, SuitType, SuitTypeParameter, User } from '../../../Dtos/requests/request-dto';
 import { UsersService } from '../../../services/client/users.service';
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { ApiResponse } from '../../../models/base-response';
@@ -154,19 +154,19 @@ export class CreateMeasurementComponent implements OnInit {
         validators.push(Validators.required);
       }
       if (typeof param.name === 'string') {
-        this.measurementForm.addControl(param.name, this.fb.control(null, validators));
+        // this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
         switch (param.parameterType) {
           case EParameterType.INPUT_TEXT:
-            this.measurementForm.addControl(param.name, this.fb.control(null, validators));
+            this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
             break;
           case EParameterType.INPUT_NUMBER:
-            this.measurementForm.addControl(param.name, this.fb.control(null, validators));
+            this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
             break;
           case EParameterType.SINGLE_SELECT_OPTION:
-            this.measurementForm.addControl(param.name, this.fb.control(null, validators));
+            this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
             break;
           case EParameterType.MULTI_SELECT_OPTIONS:
-            this.measurementForm.addControl(param.name, this.fb.control([], validators)); // For multi-select
+            this.measurementForm.addControl(''+param.id, this.fb.control([], validators));
             break;
           default:
             break;
@@ -224,12 +224,34 @@ export class CreateMeasurementComponent implements OnInit {
       return;
     }
     
+    let payload = this.measurementForm.value;
+
+    const measurement: Measurement = {
+        applicationUserId: this.selectedUser?.id || 0,
+        businessId: this.businessId,
+        suitTypeId: this.selectedSuitType?.id || 0
+    };
+
+    measurement.measurementDetails = [];
+    for (const key in payload) {
+        if (payload.hasOwnProperty(key) && !['applicationUserId', 'suitTypeId'].includes(key)) {
+            measurement.measurementDetails?.push({
+                suitTypeParameterId: Number(key),
+                value: Array.isArray(payload[key]) ? payload[key].join(', ') : String(payload[key])
+            });
+        }
+    }
     this.loading = true;
     
-    this.mss.createMeasurement<any>(this.measurementForm.value).subscribe({
+    this.mss.createMeasurement<any>(measurement).subscribe({
       next: (res) => {
         this.loading = false;
-        
+        if(res && res.statusCode == HttpStatusCode.Created) {
+          this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: res.message});
+          this.ref.close(true);
+          return;
+        }
+        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: res.message || 'An error occurred while creating the measurement.' });
       },
       error: (err) => {
         this.loading = false;
@@ -239,24 +261,4 @@ export class CreateMeasurementComponent implements OnInit {
       }
     });
   }
-  
-
-  updateCheckboxValue(controlName: string, event: any) {
-  const control = this.measurementForm.get(controlName);
-  const currentValues = control?.value || [];
-
-  if (event.checked) {
-    currentValues.push(event.value);
-  } else {
-    const index = currentValues.indexOf(event.value);
-    if (index >= 0) {
-      currentValues.splice(index, 1);
-    }
-  }
-  
-  // Update the form control value
-  control?.setValue(currentValues);
-}
-  
-  
 }

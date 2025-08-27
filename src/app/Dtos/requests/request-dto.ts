@@ -152,8 +152,19 @@ export interface Measurement {
     applicationUser?: User | null;
     suitType?: SuitType | null;
     business?: Business | null;
-    measurementDetails?: Measurement[] | null;
+    measurementDetails?: MeasurementDetails[] | null;
     orderItems?: OrderItem[] | null;
+}
+
+export class MeasurementDetails {
+    id?: number | null;
+    measurementId?: number | null;
+    suitTypeParameterId?: number | null;
+    value?: string | null;
+    createdAt?: Date | string | null;
+    updatedAt?: Date | string | null;
+    measurement?: Measurement | null;
+    suitTypeParameter?: SuitTypeParameter | null;
 }
 
 export interface Payment {

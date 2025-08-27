@@ -28,16 +28,20 @@
       <th>Suit Type</th>
       <th>Created Date</th>
       <th>Updated Date</th>
+      <td>Status</td>
       <th style="width: 120px">Actions</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-measurement>
     <tr>
       <td>{{measurement.applicationUser.firstName + ' ' + measurement.applicationUser.lastName}}</td>
-      <td>{{measurement.applicationUser.phone}}</td>
+      <td>{{measurement.applicationUser.phoneNumber}}</td>
       <td>{{measurement.suitType.name}}</td>
       <td>{{ measurement.createdAt | date : 'dd-mm-yyy' }}</td>
       <td>{{ measurement.updatedAt | date : 'dd-mm-yyy' }}</td>
+      <td>
+        <p-toggleSwitch (onChange)="onChangeActivateMeasurement(measurement)" [(ngModel)]="measurement.isActive" [pTooltip]="measurement.isActive ? 'Deactivate' : 'Activate'" (onChange)="null" />
+      </td>
       <td>
         <div class="flex flex-wrap gap-1">
           <button pButton icon="pi pi-eye" class="p-button-sm p-button-rounded p-button-text" pTooltip="View"  tooltipPosition="top" (click)="null"></button>
