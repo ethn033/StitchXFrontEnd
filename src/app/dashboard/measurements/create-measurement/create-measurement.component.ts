@@ -28,7 +28,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
   selector: 'app-create-measurement',
   templateUrl: './create-measurement.component.html',
   imports: [CommonModule, ReactiveFormsModule, CheckboxModule, FormsModule,RadioButtonModule,DropdownModule, InputTextModule, CheckboxModule,  SelectModule, ButtonModule, AutoCompleteModule],
-  providers: [MessageService],
+  // providers: [MessageService],
   styleUrls: ['./create-measurement.component.css']
 })
 export class CreateMeasurementComponent implements OnInit {

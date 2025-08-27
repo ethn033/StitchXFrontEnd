@@ -1,86 +1,243 @@
-
-<div class="row mb-4">
-  <div class="col-md-6 mb-3">
-    <div class="form-group">
-      <label for="user" class="form-label d-block mb-1"><i class="pi pi-user me-1"></i>Select User <span class="text-danger">*</span></label>
+<div class="container-fluid px-0">
+  <!-- User and Suit Type Selection -->
+  <div class="card shadow-sm mb-4 border-dashed">
+    <div class="card-header bg-light py-3">
+      <h6 class="card-title mb-0"><i class="pi pi-info-circle me-2"></i>Basic Information</h6>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- User Selection -->
+        <div class="col-md-6">
+          <label for="user" class="form-label fw-semibold">
+            <i class="pi pi-user me-1"></i>Select User <span class="text-danger">*</span>
+          </label>
+          
+          <p-autoComplete #usr="ngModel" [forceSelection]="true" [(ngModel)]="usr" required styleClass="w-100" 
+          id="user" size="small" inputId="userInput" [suggestions]="filteredUsers" 
+          (completeMethod)="filterUsers($event)" [minLength]="2" optionLabel="name" 
+          (onSelect)="onUserSelect($event)" placeholder="Search user by ID, Name or Email" 
+          [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid': (!selectedUser || usr.invalid) && usr.touched}">
+          <ng-template let-item pTemplate="item">
+            <div class="d-flex align-items-center">
+              <i class="pi pi-user me-2 text-muted"></i>
+              <div>
+                <div class="fw-medium">{{ item.name }}</div>
+                <small class="text-muted">{{ item.email }}</small>
+              </div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        
+        <div *ngIf="(!selectedUser || usr.invalid) && usr.touched" class="invalid-feedback d-block mt-1">
+          <i class="pi pi-exclamation-triangle me-1"></i>Please select a user.
+        </div>
+      </div>
       
-      <p-autoComplete #usr="ngModel" [forceSelection]="true" [(ngModel)]="usr" required="" styleClass="w-100" id="user" size="small" inputId="userInput" [suggestions]="filteredUsers" (completeMethod)="filterUsers($event)" [minLength]="2" optionLabel="name" (onSelect)="onUserSelect($event)" placeholder="Search user by ID, Name or Email" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid': !selectedUser || usr.invalid}">
-        <ng-template let-item #item>
-          <div class="flex items-center gap-2">
-            <i class="pi pi-user me-1"></i>
-            {{ item.name }}
+      <!-- Suit Type Selection -->
+      <div class="col-md-6">
+        <label for="suitType" class="form-label fw-semibold">
+          <i class="fas fa-shirt me-1"></i>Select Suit Type <span class="text-danger">*</span>
+        </label>
+        
+        <p-autoComplete #st="ngModel" required [forceSelection]="true" styleClass="w-100" [(ngModel)]="st" 
+        size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" 
+        [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" 
+        [minLength]="1" (onSelect)="onSuitTypeSelect($event)" 
+        placeholder="Search for suit type e.g (Shalwar Qamees)" 
+        [inputStyle]="{'width':'100%'}" 
+        [ngClass]="{'is-invalid' : (!selectedSuitType || st.invalid) && st.touched }">
+        <ng-template let-item pTemplate="item">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-shirt me-2 text-muted"></i>
+            <div class="fw-medium">{{ item.name }}</div>
           </div>
         </ng-template>
       </p-autoComplete>
       
-      <div *ngIf="!selectedUser || usr.invalid" class="invalid-feedback d-block">
-        Please select a user.
-      </div>
-    </div>
-  </div>
-  
-  <div class="col-md-6 mb-3">
-    <div class="form-group">
-      <label for="suitType" class="form-label d-block mb-1"><i class="fas fa-shirt me-1"></i>Select Suit Type <span class="text-danger">*</span></label>
-      <p-autoComplete #st="ngModel" required="" [forceSelection]="true" styleClass="w-100" [(ngModel)]="st" size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" [minLength]="1" (onSelect)="onSuitTypeSelect($event)" placeholder="Search for suit type e.g (Shalwar Qamees)" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid' : !selectedSuitType || st.invalid }">
-      </p-autoComplete>
-      <div *ngIf="!selectedSuitType || st.invalid" class="invalid-feedback d-block">
-        Please select a suit type.
+      <div *ngIf="(!selectedSuitType || st.invalid) && st.touched" class="invalid-feedback d-block mt-1">
+        <i class="pi pi-exclamation-triangle me-1"></i>Please select a suit type.
       </div>
     </div>
   </div>
 </div>
-<div class="container mt-4">
-<form [formGroup]="measurementForm" (ngSubmit)="onSubmit()">
+</div>
 
-  <!-- Generate form fields dynamically based on loaded suit type parameters -->
-    <div *ngFor="let param of suitTypeParameters" class="mb-4">
-      <label class="form-label">{{ param.name }}</label>
-      
-      <ng-container [ngSwitch]="param.parameterType">
-
-        <!-- Text Input -->
-        <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText [formControlName]="param.id!" [placeholder]="param.placeHolder" class="form-control" />
-
-        <!-- Number Input -->
-        <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText [formControlName]="param.id!" type="number" [placeholder]="param.placeHolder" class="form-control" />
-
-        <!-- Single Select (Radio Buttons) -->
-        <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="d-flex flex-wrap">
-          <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check me-3">
-            <p-radioButton [inputId]="option.trim()" [formControlName]="param.id!.toString()" [value]="option.trim()"
-              (onChange)="measurementForm.get(param.name!)?.markAsTouched()">
-            </p-radioButton>
-            <label [for]="option.trim()" class="form-check-label ms-2">{{ option.trim() }}</label>
+<!-- Measurements Form -->
+<div class="card shadow-sm border-dashed" *ngIf="suitTypeParameters.length > 0;  else placeholderTemplate">
+  <div class="card-header bg-light py-3">
+    <h6 class="card-title mb-0"><i class="pi pi-ruler me-2"></i>Measurements</h6>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="measurementForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <!-- Generate form fields dynamically based on loaded suit type parameters -->
+        <div *ngFor="let param of suitTypeParameters; let i = index" 
+        class="col-12 col-md-6 col-lg-4 mb-3">
+        <div class="measurement-field p-3 border-dashed rounded h-100">
+          <label class="form-label  text-muted fw-bold mb-2">
+              <b>{{ param.name }}</b>
+            <span *ngIf="param.isRequired" class="text-danger">*</span>
+          </label>
+          
+          <ng-container [ngSwitch]="param.parameterType">
+            <!-- Text Input -->
+            <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText 
+            [formControlName]="param.id!" [placeholder]="param.placeHolder || 'Enter ' + param.name" 
+            class="form-control" [attr.aria-label]="param.name" />
+            
+            <!-- Number Input -->
+            <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText 
+            [formControlName]="param.id!" type="number" 
+            [placeholder]="param.placeHolder || 'Enter ' + param.name" 
+            class="form-control" [attr.aria-label]="param.name" />
+            
+            <!-- Radio Buttons (Single Select) -->
+            <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="options-container">
+              <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check">
+                <p-radioButton [inputId]="param.id + '_' + option.trim()" 
+                [formControlName]="param.id!.toString()" [value]="option.trim()"
+                (onChange)="measurementForm.get(param.id!.toString())?.markAsTouched()"
+                class="me-2">
+              </p-radioButton>
+              <label [for]="param.id + '_' + option.trim()" class="form-check-label cursor-pointer">
+                {{ option.trim() }}
+              </label>
+            </div>
           </div>
-        </div>
-
-        <!-- Multi-Select (Checkboxes) -->
-        <div *ngSwitchCase="parameterTypes.MULTI_SELECT_OPTIONS" class="d-flex flex-wrap">
-          <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check me-3">
-            <p-checkbox [inputId]="option.trim()" [formControlName]="param.id!" [value]="option.trim()" >
+          
+          <!-- Checkboxes (Multi Select) -->
+          <div *ngSwitchCase="parameterTypes.MULTI_SELECT_OPTIONS" class="options-container">
+            <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check">
+              <p-checkbox [inputId]="param.id + '_' + option.trim()" 
+              [formControlName]="param.id!" [value]="option.trim()"
+              class="me-2">
             </p-checkbox>
-            <label [for]="option.trim()" class="form-check-label ms-2">{{ option.trim() }}</label>
+            <label [for]="param.id + '_' + option.trim()" class="form-check-label cursor-pointer">
+              {{ option.trim() }}
+            </label>
           </div>
         </div>
-
       </ng-container>
+      
+      <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && 
+      measurementForm.get(param.id!.toString())?.touched" 
+      class="text-danger small mt-1">
+      <i class="pi pi-exclamation-circle me-1"></i>
+      {{ param.isRequired ? 'This field is required.' : 'Invalid input.' }}
+    </div>
+  </div>
+</div>
+</div>
 
-      <!-- Validation Message -->
-      <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && measurementForm.get(param.id!.toString())?.touched" class="text-danger">
-        {{ param.isRequired ? 'This field is required.' : 'Invalid input.' }}
+<!-- Form Actions -->
+<div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+  <button type="button" pButton pRipple icon="pi pi-times" 
+  class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading">
+  Cancel
+</button>
+<button type="submit" pButton pRipple icon="pi pi-check" 
+class="p-button-primary" [disabled]="loading || measurementForm.invalid">
+<i *ngIf="loading" class="pi pi-spinner pi-spin me-2"></i>
+{{ loading ? 'Saving...' : 'Save Measurement' }}
+</button>
+</div>
+</form>
+</div>
+</div>
+
+
+
+<ng-template #placeholderTemplate>
+  <div class="card shadow-sm border-dashed">
+    <div class="card-body text-center py-5">
+      
+      <div class="placeholder-graphic mb-4">
+  <div class="d-flex align-items-center justify-content-center">
+    <!-- User Icon -->
+    <div class="position-relative">
+      <i class="pi pi-user text-primary display-4 opacity-50"></i>
+    </div>
+    
+    <!-- Plus Icon -->
+    <div class="px-3">
+      <i class="pi pi-plus text-muted"></i>
+    </div>
+    
+    <!-- Shirt Icon -->
+    <div class="position-relative">
+        <i class="fas fa-shirt text-secondary"></i>
+    </div>
+    
+    <!-- Arrow Icon -->
+    <div class="px-3">
+      <i class="pi pi-arrow-right text-muted"></i>
+    </div>
+    
+    <!-- Ruler Icon -->
+    <div class="position-relative">
+      <i class="pi pi-ruler text-success display-4 opacity-50"></i>
+    </div>
+  </div>
+</div>
+      
+      <h4 class="text-dark mb-3">Ready to Take Measurements</h4>
+      
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+          <p class="text-muted">
+            To get started with measurements, please first select a customer and suit type. 
+            This will load the appropriate measurement form tailored to your selection.
+          </p>
+        </div>
+      </div>
+      
+      <div class="requirement-cards row justify-content-center mb-4">
+        <div class="col-md-5 mb-3">
+          <div class="card requirement-card" [class.requirement-met]="selectedUser" [class.requirement-pending]="!selectedUser">
+            <div class="card-body text-center">
+              <div class="requirement-icon mb-3">
+                <i class="pi" [class.pi-check-circle]="selectedUser" [class.pi-user]="!selectedUser" 
+                   [class.text-success]="selectedUser" [class.text-secondary]="!selectedUser" style="font-size: 2rem;"></i>
+              </div>
+              <h5 class="card-title">{{ selectedUser ? 'Customer Selected' : 'Select Customer' }}</h5>
+              <p class="card-text small text-muted">
+                {{ selectedUser ? 'Great! You\'ve selected ' + selectedUser.firstName + ' ' + selectedUser.lastName : 'Choose a customer to begin the measurement process' }}
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-5 mb-3">
+  <div class="card requirement-card" [class.requirement-met]="selectedSuitType" [class.requirement-pending]="!selectedSuitType">
+    <div class="card-body text-center">
+      <div class="requirement-icon mb-3">
+        <ng-container *ngIf="selectedSuitType; else suitTypePending">
+          <i class="pi pi-check-circle text-success" style="font-size: 2rem;"></i>
+        </ng-container>
+        <ng-template #suitTypePending>
+          <i class="fas fa-shirt text-secondary" style="font-size: 2rem;"></i>
+        </ng-template>
+      </div>
+      <h5 class="card-title">{{ selectedSuitType ? 'Suit Type Selected' : 'Select Suit Type' }}</h5>
+      <p class="card-text small text-muted">
+        {{ selectedSuitType ? 'Perfect! You\'ve selected ' + selectedSuitType.name : 'Choose a suit type to load measurements' }}
+      </p>
+    </div>
+  </div>
+</div>
+      </div>
+      
+      <div class="action-hint mt-4" *ngIf="!selectedUser || !selectedSuitType">
+        <p class="text-muted mb-3">
+          <i class="pi pi-info-circle me-2"></i>
+          Use the selection fields above to choose a customer and suit type
+        </p>
+        <div class="animated-arrow mb-3">
+          <i class="pi pi-arrow-up text-primary" style="font-size: 1.5rem;"></i>
+        </div>
       </div>
     </div>
-
-<!-- end dynamic form -->
-  <div class="d-flex justify-content-end gap-2 mt-4">
-    <button type="button" pButton pRipple icon="pi pi-times" class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading">
-      Cancel
-    </button>
-    <button type="submit" pButton pRipple icon="pi pi-check" class="p-button-primary" [disabled]="loading">
-      <span *ngIf="loading" class="p-button-icon p-button-loading-icon pi pi-spinner pi-spin"></span>
-      <span class="ml-2">Save Measurement</span>
-    </button>
   </div>
-</form>
+</ng-template>
+
 </div>
