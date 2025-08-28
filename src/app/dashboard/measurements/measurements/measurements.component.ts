@@ -44,7 +44,7 @@ export class MeasurementsComponent implements OnInit {
   roles = ERole;
   currentRole?: ERole | null;
   measurements: Measurement[] = [];
-  dateRange: Date[] = [moment().subtract(1, 'month').toDate(), moment().toDate()]; // Default to last week
+  dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().add(1, 'day').toDate()]; // Default to last week
   dateRanges = dateFilterValues();
   selectedDateFilter: DropDownItem = this.dateRanges[1]; // Default to 'This Week'
   dialogService: DialogService = inject(DialogService);
@@ -53,7 +53,6 @@ export class MeasurementsComponent implements OnInit {
   messService: MessageService = inject(MessageService);
   totalOrdersCount: number = 0;
   ls: LoadingService = inject(LoadingService);
-  
   statuses = entityStatuses();
   selectedStatus: DropDownItem = this.statuses[0];
   
@@ -67,6 +66,7 @@ export class MeasurementsComponent implements OnInit {
         this.currentRole = validateCurrentRole(this.userResponse.roles!);
       if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
         this.businessId = getBusinessId(this.userResponse);
+        this.selectedBranch = this.lss.getItem(APP_SELECTED_BRANCH, true) as Branch || null;
       }
     });
   }
@@ -111,17 +111,13 @@ export class MeasurementsComponent implements OnInit {
   pageNumber: number = 0;
   pageSize: number = 10;
   loadMeasurments(event?: TableLazyLoadEvent): void {
-    
-    debugger
-    
-    this.selectedStatus
     this.ls.show();
     this.first = event?.first ?? this.first;
     this.rows = event?.rows ?? this.rows;
     
     this.pageNumber = Math.floor(this.first / this.rows);
     this.pageSize = this.rows;
-    
+  
     let payload = {
       page: this.pageNumber,
       pageSize: this.pageSize,
@@ -186,9 +182,9 @@ export class MeasurementsComponent implements OnInit {
     this.loadMeasurments();
   }
   
-  addUpdateMeasurementDialog(user?: Measurement): void {
+  addUpdateMeasurementDialog(measurement?: Measurement): void {
     const ref = this.dialogService.open(CreateMeasurementComponent, {
-      header: 'Add New Measurement',
+      header: measurement ? 'Add New Measurement' : 'Add New Measurement',
       width: '70%',
       height: '80%',
       styleClass: 'measurement-dialog',
@@ -199,48 +195,47 @@ export class MeasurementsComponent implements OnInit {
       closable: true,
       autoZIndex: true,
       closeOnEscape: false,
-      data: { 
-        customerId: null, 
-        branchId: this.selectedBranch?.id, 
-        businessId: this.businessId } 
-      });
-      
-      ref.onClose.subscribe((result) => {
-        if (result) {
-          this.loadMeasurments();
-        }
-      });
-    }
+      data: {
+        measurement: measurement || null,
+        businessId: this.businessId || 0
+      } 
+    });
     
-    confirmDelete(measurement: Measurement): void {
-      this.cs.confirm({
-        message: `Are you sure you want to delete measurement?`,
-        header: 'Confirm Deletion',
-        icon: 'pi pi-exclamation-triangle',
-        closable: true,
-        closeOnEscape: true,
-        rejectButtonProps: {
-          label: 'Cancel',
-          severity: 'secondary',
-          outlined: true,
-        },
-        accept: () => {
-          this.ms.deleteMeasurement<ApiResponse<any>>(measurement.id!).subscribe({
-            next: (response: any) => {
-              let resp = response as ApiResponse<any>;
-              if(resp.isSuccess && resp.statusCode == 200){
-                this.messService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
-                this.loadMeasurments();
-              }
-            },
-            error: (err: any) => {
-              if(err instanceof HttpErrorResponse) {
-                this.messService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
-              }
-            }
-          });
-        }
-      });
-    }
+    ref.onClose.subscribe((result) => {
+      if (result) {
+        this.loadMeasurments();
+      }
+    });
   }
   
+  confirmDelete(measurement: Measurement): void {
+    this.cs.confirm({
+      message: `Are you sure you want to delete measurement?`,
+      header: 'Confirm Deletion',
+      icon: 'pi pi-exclamation-triangle',
+      closable: true,
+      closeOnEscape: true,
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
+      accept: () => {
+        this.ms.deleteMeasurement<ApiResponse<any>>(measurement.id!).subscribe({
+          next: (response: any) => {
+            let resp = response as ApiResponse<any>;
+            if(resp.isSuccess && resp.statusCode == 200){
+              this.messService.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+              this.loadMeasurments();
+            }
+          },
+          error: (err: any) => {
+            if(err instanceof HttpErrorResponse) {
+              this.messService.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+            }
+          }
+        });
+      }
+    });
+  }
+}

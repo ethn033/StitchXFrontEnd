@@ -1,27 +1,32 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from '../generics/api.service';
 import { environment } from '../../../environments/environment';
-import { Measurement } from '../../Dtos/requests/request-dto';
-import { ApiResponse } from '../../models/base-response';
+import { ApiService } from '../generics/api.service';
+import { Measurement, MeasurementDetails } from '../../Dtos/requests/request-dto';
 import { Observable } from 'rxjs';
+import { ApiResponse } from '../../models/base-response';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MeasurementService extends ApiService {
-  private endpoint = environment.api.measurement.controller;
+export class MeasurementDetailsService extends ApiService {
+  private endpoint = environment.api.measurementdetails.controller;
   
   constructor() {
     super();
   }
   
-  createMeasurement<T>(payload: Measurement): Observable<ApiResponse<T>> {
-    return this.post(this.endpoint + environment.api.measurement.enpoints.CreateMeasurement, payload);
+  getMeasurementDetails<T>(payload: any): Observable<ApiResponse<T>> {
+    return this.get(this.endpoint + environment.api.measurementdetails.enpoints.GetMeasurementDetails, payload);
   }
-
+  
   updateMeasurementStatus<T>(id: number, status: boolean): Observable<ApiResponse<T>> {
     return this.put(this.endpoint + environment.api.measurement.enpoints.UpdateMeasurementStatus+'/'+ id, status);
   }
+  
+  updateMeasurementDetails<T>(id: number, payload: Measurement): Observable<ApiResponse<T>> {
+    return this.put(this.endpoint + environment.api.measurementdetails.enpoints.UpdateMeasurementDetails+'/'+ id, payload);
+  }
+  
   getMeasurements<T>(payload: any): Observable<ApiResponse<T>> {
     return this.get(this.endpoint + environment.api.measurement.enpoints.GetAllMeasurements, payload);
   }

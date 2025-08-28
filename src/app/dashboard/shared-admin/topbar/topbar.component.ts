@@ -42,18 +42,24 @@ export class TopbarComponent {
   constructor() {
     this.sds.userData.subscribe(userData => {
       this.userResponse = userData as User;
-      
+      if(!this.userResponse) {
+        alert('user not found.');
+        return;
+      }
+
       if(this.userResponse.roles)
         this.currentRole = validateCurrentRole(this.userResponse.roles!);
-
+      
       if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
         this.branches = this.userResponse.business.branches;
         // get selected branch if any 
         let selected = this.ls.getItem(APP_SELECTED_BRANCH, true) as Branch;
         if(selected)
           this.selectedBranch = selected;
-        else
+        else {
           this.selectedBranch = this.branches[0];
+          this.ls.setItem(APP_SELECTED_BRANCH, this.selectedBranch, true);
+        }
       }
     });
   }
@@ -95,7 +101,6 @@ export class TopbarComponent {
   onBranchChange(event: SelectChangeEvent) {
     let selected = event.value as Branch;
     if(selected)
-      this.ls.removeItem(APP_SELECTED_BRANCH);
-    this.ls.setItem(APP_SELECTED_BRANCH, selected, true);
+      this.ls.setItem(APP_SELECTED_BRANCH, selected, true);
   }
 }

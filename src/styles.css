@@ -1,15 +1,18 @@
 @import 'css_variables.css';
 @import 'primeicons/primeicons.css';
 
-body {
-  background-color: #f8f9fa;
-}
-
-
-html, body { 
-  height: 100%;
+html {
   margin: 0;
   padding: 0;
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-size: 1rem; /* Scaled base font */
 }
 
 .row {
@@ -18,20 +21,13 @@ html, body {
 }
 
 .clr-dark-grey {
-  color: var(--gray-dark) !important;
+  color: #495057 !important;
 }
 
 .fw-bold {
-  font-weight: var(--font-weight-bold) !important;
+  font-weight: 700 !important;
 }
 
 .fw-extra-bold {
-  font-weight: var(--font-weight-extra-bold) !important;
+  font-weight: 900 !important;
 }
-
-
-
-
-
-
-

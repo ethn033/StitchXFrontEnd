@@ -12,7 +12,7 @@
             <i class="pi pi-user me-1"></i>Select User <span class="text-danger">*</span>
           </label>
           
-          <p-autoComplete #usr="ngModel" [forceSelection]="true" [(ngModel)]="usr" required styleClass="w-100" 
+          <p-autoComplete [readonly]="isUpdateScreen" [disabled]="isUpdateScreen" #usr="ngModel" [forceSelection]="true" [(ngModel)]="selectedUser" required styleClass="w-100" 
           id="user" size="small" inputId="userInput" [suggestions]="filteredUsers" 
           (completeMethod)="filterUsers($event)" [minLength]="2" optionLabel="name" 
           (onSelect)="onUserSelect($event)" placeholder="Search user by ID, Name or Email" 
@@ -39,7 +39,7 @@
           <i class="fas fa-shirt me-1"></i>Select Suit Type <span class="text-danger">*</span>
         </label>
         
-        <p-autoComplete #st="ngModel" required [forceSelection]="true" styleClass="w-100" [(ngModel)]="st" 
+        <p-autoComplete [readonly]="isUpdateScreen" [disabled]="isUpdateScreen" #st="ngModel" required [forceSelection]="true" styleClass="w-100" [(ngModel)]="selectedSuitType" 
         size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" 
         [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" 
         [minLength]="1" (onSelect)="onSuitTypeSelect($event)" 
@@ -75,7 +75,7 @@
         class="col-12 col-md-6 col-lg-4 mb-3">
         <div class="measurement-field p-3 border-dashed rounded h-100">
           <label class="form-label  text-muted fw-bold mb-2">
-              <b>{{ param.name }}</b>
+            <b>{{ param.name }}</b>
             <span *ngIf="param.isRequired" class="text-danger">*</span>
           </label>
           
@@ -119,8 +119,7 @@
         </div>
       </ng-container>
       
-      <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && 
-      measurementForm.get(param.id!.toString())?.touched" 
+      <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && measurementForm.get(param.id!.toString())?.touched" 
       class="text-danger small mt-1">
       <i class="pi pi-exclamation-circle me-1"></i>
       {{ param.isRequired ? 'This field is required.' : 'Invalid input.' }}
@@ -129,56 +128,49 @@
 </div>
 </div>
 
-<!-- Form Actions -->
 <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-  <button type="button" pButton pRipple icon="pi pi-times" 
-  class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading">
-  Cancel
-</button>
-<button type="submit" pButton pRipple icon="pi pi-check" 
-class="p-button-primary" [disabled]="loading || measurementForm.invalid">
-<i *ngIf="loading" class="pi pi-spinner pi-spin me-2"></i>
-{{ loading ? 'Saving...' : 'Save Measurement' }}
-</button>
+  <button type="button" pButton pRipple icon="pi pi-times" class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading"> Cancel</button>
+  <button type="submit" pButton pRipple icon="pi pi-check" class="p-button-primary" [disabled]="loading">
+    <i *ngIf="loading" class="pi pi-spinner pi-spin me-2"></i>
+    {{ loading ? 'Saving...' : isUpdateScreen ? 'Update Measurement' : 'Save Measurement' }}
+  </button>
 </div>
 </form>
 </div>
 </div>
-
-
 
 <ng-template #placeholderTemplate>
   <div class="card shadow-sm border-dashed">
     <div class="card-body text-center py-5">
       
       <div class="placeholder-graphic mb-4">
-  <div class="d-flex align-items-center justify-content-center">
-    <!-- User Icon -->
-    <div class="position-relative">
-      <i class="pi pi-user text-primary display-4 opacity-50"></i>
-    </div>
-    
-    <!-- Plus Icon -->
-    <div class="px-3">
-      <i class="pi pi-plus text-muted"></i>
-    </div>
-    
-    <!-- Shirt Icon -->
-    <div class="position-relative">
-        <i class="fas fa-shirt text-secondary"></i>
-    </div>
-    
-    <!-- Arrow Icon -->
-    <div class="px-3">
-      <i class="pi pi-arrow-right text-muted"></i>
-    </div>
-    
-    <!-- Ruler Icon -->
-    <div class="position-relative">
-      <i class="pi pi-ruler text-success display-4 opacity-50"></i>
-    </div>
-  </div>
-</div>
+        <div class="d-flex align-items-center justify-content-center">
+          <!-- User Icon -->
+          <div class="position-relative">
+            <i class="pi pi-user text-primary display-4 opacity-50"></i>
+          </div>
+          
+          <!-- Plus Icon -->
+          <div class="px-3">
+            <i class="pi pi-plus text-muted"></i>
+          </div>
+          
+          <!-- Shirt Icon -->
+          <div class="position-relative">
+            <i class="fas fa-shirt text-secondary"></i>
+          </div>
+          
+          <!-- Arrow Icon -->
+          <div class="px-3">
+            <i class="pi pi-arrow-right text-muted"></i>
+          </div>
+          
+          <!-- Ruler Icon -->
+          <div class="position-relative">
+            <i class="pi pi-ruler text-success display-4 opacity-50"></i>
+          </div>
+        </div>
+      </div>
       
       <h4 class="text-dark mb-3">Ready to Take Measurements</h4>
       
@@ -197,7 +189,7 @@ class="p-button-primary" [disabled]="loading || measurementForm.invalid">
             <div class="card-body text-center">
               <div class="requirement-icon mb-3">
                 <i class="pi" [class.pi-check-circle]="selectedUser" [class.pi-user]="!selectedUser" 
-                   [class.text-success]="selectedUser" [class.text-secondary]="!selectedUser" style="font-size: 2rem;"></i>
+                [class.text-success]="selectedUser" [class.text-secondary]="!selectedUser" style="font-size: 2rem;"></i>
               </div>
               <h5 class="card-title">{{ selectedUser ? 'Customer Selected' : 'Select Customer' }}</h5>
               <p class="card-text small text-muted">
@@ -208,23 +200,23 @@ class="p-button-primary" [disabled]="loading || measurementForm.invalid">
         </div>
         
         <div class="col-md-5 mb-3">
-  <div class="card requirement-card" [class.requirement-met]="selectedSuitType" [class.requirement-pending]="!selectedSuitType">
-    <div class="card-body text-center">
-      <div class="requirement-icon mb-3">
-        <ng-container *ngIf="selectedSuitType; else suitTypePending">
-          <i class="pi pi-check-circle text-success" style="font-size: 2rem;"></i>
-        </ng-container>
-        <ng-template #suitTypePending>
-          <i class="fas fa-shirt text-secondary" style="font-size: 2rem;"></i>
-        </ng-template>
-      </div>
-      <h5 class="card-title">{{ selectedSuitType ? 'Suit Type Selected' : 'Select Suit Type' }}</h5>
-      <p class="card-text small text-muted">
-        {{ selectedSuitType ? 'Perfect! You\'ve selected ' + selectedSuitType.name : 'Choose a suit type to load measurements' }}
-      </p>
-    </div>
-  </div>
-</div>
+          <div class="card requirement-card" [class.requirement-met]="selectedSuitType" [class.requirement-pending]="!selectedSuitType">
+            <div class="card-body text-center">
+              <div class="requirement-icon mb-3">
+                <ng-container *ngIf="selectedSuitType; else suitTypePending">
+                  <i class="pi pi-check-circle text-success" style="font-size: 2rem;"></i>
+                </ng-container>
+                <ng-template #suitTypePending>
+                  <i class="fas fa-shirt text-secondary" style="font-size: 2rem;"></i>
+                </ng-template>
+              </div>
+              <h5 class="card-title">{{ selectedSuitType ? 'Suit Type Selected' : 'Select Suit Type' }}</h5>
+              <p class="card-text small text-muted">
+                {{ selectedSuitType ? 'Perfect! You\'ve selected ' + selectedSuitType.name : 'Choose a suit type to load measurements' }}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div class="action-hint mt-4" *ngIf="!selectedUser || !selectedSuitType">

@@ -7,8 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { MeasurementService } from '../../../services/measurements/measurement.service';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
-import { Measurement, SuitType, SuitTypeParameter, User } from '../../../Dtos/requests/request-dto';
-import { UsersService } from '../../../services/client/users.service';
+import { Measurement, MeasurementDetails, SuitType, SuitTypeParameter, User } from '../../../Dtos/requests/request-dto';
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { ApiResponse } from '../../../models/base-response';
 import { CustomerResponse, UsersResponse } from '../../../Dtos/requests/response-dto';
@@ -23,16 +22,18 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { MeasurementDetailsService } from '../../../services/measurement-details/measurement-details.service';
 
 @Component({
   selector: 'app-create-measurement',
   templateUrl: './create-measurement.component.html',
   imports: [CommonModule, ReactiveFormsModule, CheckboxModule, FormsModule,RadioButtonModule,DropdownModule, InputTextModule, CheckboxModule,  SelectModule, ButtonModule, AutoCompleteModule],
-  // providers: [MessageService],
   styleUrls: ['./create-measurement.component.css']
 })
 export class CreateMeasurementComponent implements OnInit {
-  @Input() bidInput?: number;
+  
+  @Input() mObjInput?: Measurement;
+  @Input() bIdInput?: number;
   config = inject(DynamicDialogConfig);
   mss = inject(MeasurementService);
   ref = inject(DynamicDialogRef); 
@@ -42,7 +43,12 @@ export class CreateMeasurementComponent implements OnInit {
   ls = inject(LoadingService);
   stps = inject(SuitTypeParameterService);
   fb = inject(FormBuilder);
-  businessId: number = this.config?.data?.businessId as number || this.bidInput || 0;
+  mds = inject(MeasurementDetailsService);
+  
+  measurement: Measurement = this.config?.data?.measurement as Measurement || this.mObjInput || null;
+  businessId: number = this.config.data?.businessId as number || this.bIdInput || 0;
+  
+  isUpdateScreen: boolean = !!this.measurement;
   
   measurementForm: FormGroup;
   loading = false;
@@ -57,17 +63,16 @@ export class CreateMeasurementComponent implements OnInit {
     });
   }
   
-  ngOnInit() {
+  ngOnInit() { 
     this.getSuitTypes();
+    if(this.isUpdateScreen)
+      this.filterUsers({ query: this.measurement.applicationUserId || 0});
   }
   
   filterUsers(event: any): void {
     const query = event.query;
-    
     const isInteger = /^\d+$/.test(query);
-    const isUsrId = /^USR-\d+$/.test(query);
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(query);
-    
+    const isUsrId = /^USR-\d+$/.test(query);    
     this.selectedUser = null;
     if (!isInteger && !isUsrId && query.trim().length < 2) {
       this.filteredUsers = [];
@@ -79,8 +84,12 @@ export class CreateMeasurementComponent implements OnInit {
         if(response && response.statusCode == HttpStatusCode.Ok) {
           let res = response as ApiResponse<CustomerResponse>;
           this.filteredUsers = res.data.customers as User[] || [];
-          
           this.filteredUsers = this.filteredUsers.map(u => ({ ...u, name: u.firstName + ' ' + u.lastName }) );
+          
+          if(this.isUpdateScreen) {
+            this.selectedUser = this.filteredUsers[0];
+            this.measurementForm.get("applicationUserId")?.setValue(this.selectedUser.id);
+          }
         }
       },
       error: (err) => {
@@ -94,14 +103,26 @@ export class CreateMeasurementComponent implements OnInit {
   selectedSuitType: SuitType | null = null;
   suitTypes: SuitType[] = [];
   getSuitTypes(): void {
-    this.sts.getSuitTypes<ApiResponse<SuitType>>({ businessId: this.businessId }).subscribe({
+    let payload = {
+      businessId: this.businessId,
+      suitTypeId: this.measurement ? this.measurement.suitTypeId || 0 : 0
+    };
+    
+    this.sts.getSuitTypes<ApiResponse<SuitType>>(payload).subscribe({
       next: (response: any) => {
         if(response && response.statusCode == HttpStatusCode.Ok) {
-          let res = response as ApiResponse<SuitType> || [];
-          this.suitTypes = res.data as SuitType[] || [];
+          this.suitTypes = [];
+          if(response.data)
+            this.suitTypes = response.data as SuitType[] || [];
+          if(this.isUpdateScreen)
+            this.selectedSuitType = this.suitTypes[0] || null;
+          if(this.selectedSuitType) {
+            this.measurementForm.get("suitTypeId")?.setValue(this.selectedSuitType.id);
+            this.loadSuitTypeParameters();
+          }
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         if(err instanceof HttpErrorResponse) {
           this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
         }
@@ -115,7 +136,6 @@ export class CreateMeasurementComponent implements OnInit {
   loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
     let payload = {
       suitTypeId: this.selectedSuitType?.id ?? 0,
-      status: 1
     };
     
     this.ls.show();
@@ -125,9 +145,11 @@ export class CreateMeasurementComponent implements OnInit {
         let resp  = data as ApiResponse<any>;
         this.suitTypeParameters = resp.data.suitTypeParameters as SuitTypeParameter[] || [];
         this.totalSuitTypeParameters = this.suitTypeParameters.length;
-
+        
         if(this.totalSuitTypeParameters > 0) {
           this.createFormControls();
+          if(this.isUpdateScreen)
+            this.loadMeasurementDetails(this.measurement?.id);
         } else {
           this.ms.add({ key: 'global-toast', severity: 'info', summary: 'Info', detail: 'No parameters found for the selected suit type.' });
         }
@@ -146,6 +168,59 @@ export class CreateMeasurementComponent implements OnInit {
     });
   }
   
+  measurementDetails: MeasurementDetails[]  = [];
+  loadMeasurementDetails(mId: number | null = 0) {
+    if(!mId) return;
+    let payload = {
+      measurementId : mId
+    };
+    this.ls.show();
+    this.mds.getMeasurementDetails(payload).subscribe({
+      next: (res) => {
+        this.ls.hide();
+        if(res && res.statusCode == HttpStatusCode.Ok) {
+          let mds = res.data as MeasurementDetails[] || [];
+          if(mds.length > 0) {
+            this.measurementDetails = mds;
+            this.populateMds();
+            return;
+          }
+        }
+        
+        this.ms.add({ key: 'global-toast', severity: 'info', summary: 'Info', detail: 'No parameters found for the selected suit type.' });
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        if(err instanceof HttpErrorResponse) {
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+        }
+      }
+    });
+  }
+  
+  populateMds() {
+    this.measurementDetails.forEach((md: MeasurementDetails) => {
+      const paramId = md.suitTypeParameterId!.toString();
+      let control = this.measurementForm.get(paramId);
+
+      if(control) {
+         if (this.isCheckboxParameter(md.suitTypeParameterId!)) {
+            const resultArray: string[] = md.value?.split(',') || [];
+            control.setValue(resultArray);
+        }
+      else {
+        control.setValue(md.value);
+      }
+      }
+    });
+  }
+  
+  isCheckboxParameter(paramId: number): boolean {
+  const param = this.suitTypeParameters.find(p => p.id === paramId);
+  return param?.parameterType === this.parameterTypes.MULTI_SELECT_OPTIONS;
+}
+
   parameterTypes = EParameterType;
   createFormControls() {
     this.suitTypeParameters.forEach(param => {
@@ -153,24 +228,25 @@ export class CreateMeasurementComponent implements OnInit {
       if (param.isRequired) {
         validators.push(Validators.required);
       }
-      if (typeof param.name === 'string') {
+      
+      const controlId = param.id?.toString() || 'undefined-id';
         // this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
-        switch (param.parameterType) {
-          case EParameterType.INPUT_TEXT:
-            this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
-            break;
-          case EParameterType.INPUT_NUMBER:
-            this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
-            break;
-          case EParameterType.SINGLE_SELECT_OPTION:
-            this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
-            break;
-          case EParameterType.MULTI_SELECT_OPTIONS:
-            this.measurementForm.addControl(''+param.id, this.fb.control([], validators));
-            break;
-          default:
-            break;
-        }
+      switch (param.parameterType) {
+        case EParameterType.INPUT_TEXT:
+        this.measurementForm.addControl(controlId, this.fb.control('', validators));
+        break;
+        case EParameterType.INPUT_NUMBER:
+        this.measurementForm.addControl(controlId, this.fb.control(null, validators));
+        break;
+        case EParameterType.SINGLE_SELECT_OPTION:
+        this.measurementForm.addControl(controlId, this.fb.control(null, validators));
+        break;
+        case EParameterType.MULTI_SELECT_OPTIONS:
+        this.measurementForm.addControl(controlId, this.fb.control([], validators));
+        break;
+        default:
+          this.measurementForm.addControl(controlId, this.fb.control('', validators));
+        break;
       }
     });
   }
@@ -180,12 +256,12 @@ export class CreateMeasurementComponent implements OnInit {
     this.measurementForm.patchValue({
       applicationUserId: this.selectedUser?.id || null,
     });
-
+    
     this.selectedSuitType = null;
     this.suitTypeParameters = [];
-
     
-   
+    
+    
     if(query.trim().length < 1) {
       this.filteredSuitTypes = [];
       return;
@@ -218,35 +294,36 @@ export class CreateMeasurementComponent implements OnInit {
   }
   
   onSubmit(): void {
-
     this.measurementForm.markAllAsTouched();
     if (!this.measurementForm.valid) {
       return;
     }
     
     let payload = this.measurementForm.value;
-
+    
     const measurement: Measurement = {
-        applicationUserId: this.selectedUser?.id || 0,
-        businessId: this.businessId,
-        suitTypeId: this.selectedSuitType?.id || 0
+      id: this.measurement.id || 0,
+      applicationUserId: this.selectedUser?.id || 0,
+      businessId: this.businessId,
+      suitTypeId: this.selectedSuitType?.id || 0
     };
-
+    
     measurement.measurementDetails = [];
     for (const key in payload) {
-        if (payload.hasOwnProperty(key) && !['applicationUserId', 'suitTypeId'].includes(key)) {
-            measurement.measurementDetails?.push({
-                suitTypeParameterId: Number(key),
-                value: Array.isArray(payload[key]) ? payload[key].join(', ') : String(payload[key])
-            });
-        }
+      if (!['applicationUserId', 'suitTypeId'].includes(key)) {
+        measurement.measurementDetails?.push({
+          suitTypeParameterId: Number(key),
+          value: Array.isArray(payload[key]) ? payload[key].join(',') : payload[key]
+        });
+      }
     }
+
     this.loading = true;
-    
-    this.mss.createMeasurement<any>(measurement).subscribe({
+    const call = this.isUpdateScreen ? this.mds.updateMeasurementDetails<any>(this.measurement.id!, measurement) : this.mss.createMeasurement<any>(measurement);
+    call.subscribe({
       next: (res) => {
         this.loading = false;
-        if(res && res.statusCode == HttpStatusCode.Created) {
+        if(res && res.statusCode == HttpStatusCode.Created || res.statusCode == HttpStatusCode.Ok) {
           this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: res.message});
           this.ref.close(true);
           return;

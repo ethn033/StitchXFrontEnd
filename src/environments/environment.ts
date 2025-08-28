@@ -72,6 +72,13 @@ export const environment = {
                 DeleteMeasurement: 'DeleteMeasurement',
                 UpdateMeasurementStatus: 'UpdateMeasurementStatus'
             },
+        },
+        measurementdetails: {
+            controller: 'MeasurementDetails/',
+            enpoints: {
+                GetMeasurementDetails: 'GetMeasurementDetails',
+                UpdateMeasurementDetails: 'UpdateMeasurementDetails'
+            }
         }
     }
   };
