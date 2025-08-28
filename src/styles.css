@@ -1,25 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
-/* Import Bootstrap */
-/* @import 'bootstrap/dist/css/bootstrap.min.css'; */
 @import 'css_variables.css';
-
-/* Import PrimeNG theme */
 @import 'primeicons/primeicons.css';
 
-/* Custom styles */
 body {
-  font-family: 'Inter', sans-serif;
   background-color: #f8f9fa;
 }
 
-/* styles.css */
+
 html, body { 
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-/* Fix for Bootstrap rows */
 .row {
   margin-right: 0;
   margin-left: 0;
@@ -38,48 +30,8 @@ html, body {
 }
 
 
-/* Better spacing for error messages */
-.p-error {
-  margin-top: 0.25rem;
-}
 
 
-/* 
-  Minimal Select Style (opt-in with class="minimal-select")
-  - Add to p-select for borderless + green hover effect
-  - Regular p-select components remain unaffected
-*/
-.p-select.minimal-select {
-  border: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
 
-.p-select.minimal-select .p-select-label {
-  color: #4a4a4a !important;
-  font-weight: 500 !important;
-  padding: 0.5rem 0 !important;
-  transition: color 0.2s !important;
-}
 
-.p-select.minimal-select .p-select-trigger-icon {
-  color: #4a4a4a !important;
-  transition: color 0.2s !important;
-}
 
-/* Hover states */
-.p-select.minimal-select:not(.p-disabled):hover {
-  background: transparent !important;
-}
-.p-select.minimal-select:not(.p-disabled):hover .p-select-label,
-.p-select.minimal-select:not(.p-disabled):hover .p-select-trigger-icon {
-  color: #22C55E !important;
-}
-
-/* Focus state */
-.p-select.minimal-select.p-focus {
-  box-shadow: none !important;
-}
-.p-select.minimal-select.p-focus .p-select-label {
-  color: #22C55E !important;
-}

@@ -15,15 +15,13 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([apiInterceptorInterceptor])),
     providePrimeNG({
       ripple: true,
-        theme: {
-            preset: Aura,
-            options: {
-              // darkModeSelector: false || 'none'
-              prefix: 'p',
-                    darkModeSelector: false,
-                    cssLayer: false
-            }
+      theme: {
+        preset: Aura,
+        options: {
+          darkModeSelector: false,
+          cssLayer: false
         }
+      }
     }),
     provideZoneChangeDetection({ 
       eventCoalescing: true,
@@ -35,6 +33,5 @@ export const appConfig: ApplicationConfig = {
       registrationStrategy: 'registerWhenStable:30000'
     }),
     MessageService
-    // Add any other global providers here
   ],
 };
