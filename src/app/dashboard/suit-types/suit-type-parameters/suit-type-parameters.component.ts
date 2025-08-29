@@ -65,13 +65,14 @@ export class SuitTypeParametersComponent implements OnInit {
   constructor() {
     // Initialize the form
     this.parameterForm = this.fb.group({
+      id: 0,
       name: ['', Validators.required],
-      placeHolder: [''],
-      parameterType: [this.parameterTypes[1], Validators.required],
-      parameterOptions: [''],
-      isRequired: [false],
-      suitTypeId: [this.suitTypeId, Validators.required],
-      options: this.fb.array([]) // For option values when type is RADIO, CHECKBOX, or SELECT
+      placeHolder: '',
+      parameterType: (this.parameterTypes[1], Validators.required),
+      parameterOptions: '',
+      isRequired: false,
+      suitTypeId: (this.suitTypeId, Validators.required),
+      options: this.fb.array([]) // For option values when type is CHECKBOX, SELECT
     });
   }
   
@@ -85,18 +86,42 @@ export class SuitTypeParametersComponent implements OnInit {
     });
   }
   
+  paramTypeChanged(event: any): void {
+    const paramType = event.value;
+    this.handleParameterTypeChange(paramType.id);
+  }
+  
+  handleParameterTypeChange(paramType: EParameterType): void {
+
+    debugger
+    const optionsControl = this.parameterForm.get('parameterOptions');
+    const optionsArray = this.parameterForm.get('options') as FormArray;
+    
+    while (optionsArray.length !== 0) {
+      optionsArray.removeAt(0);
+    }
+    
+    if (paramType === EParameterType.SINGLE_SELECT_OPTION || paramType === EParameterType.MULTI_SELECT_OPTIONS) {
+      this.addOption();
+      optionsControl?.setValidators([Validators.required]);
+    } 
+    else 
+      {
+      optionsControl?.clearValidators();
+    }
+    
+    optionsControl?.updateValueAndValidity();
+  }
+  
+  addOption(val? : any): void {
+    this.options.push(this.fb.control(val || '', Validators.required));
+  }
+  
   get options(): FormArray {
     return this.parameterForm.get('options') as FormArray;
   }
   
-  
-  paramTypeChanged(event: any): void {
-    this.handleParameterTypeChange(event.value);
-  }
-  
-  
   onChangeActivateStatus(stp: any, removeitem? : boolean) {
-    
     this.confService.confirm({
       message: `Are you sure you want to activate this parameter?`,
       header: 'Confirm Restore',
@@ -155,35 +180,18 @@ export class SuitTypeParametersComponent implements OnInit {
     });
   }
   
-  handleParameterTypeChange(type: any): void {
-    const optionsControl = this.parameterForm.get('parameterOptions');
-    const optionsArray = this.parameterForm.get('options') as FormArray;
-    
-    while (optionsArray.length !== 0) {
-      optionsArray.removeAt(0);
-    }
-    
-    if (type.id === EParameterType.SINGLE_SELECT_OPTION || type.id === EParameterType.MULTI_SELECT_OPTIONS) {
-      this.addOption();
-      optionsControl?.setValidators([Validators.required]);
-    } else {
-      optionsControl?.clearValidators();
-    }
-    
-    optionsControl?.updateValueAndValidity();
-  }
-  
-  addOption(val? : any): void {
-    this.options.push(this.fb.control(val || '', Validators.required));
-  }
-  
   removeOption(index: number): void {
     this.options.removeAt(index);
   }
   
   toggleAddForm(): void {
-    this.isCollapsed = !this.isCollapsed;
+
+    if(this.isUpdateScreenParam)
+      this.isUpdateScreenParam = false;
+
+    
     this.parameterForm.reset({
+      id: 0,
       parameterType: this.parameterTypes[1],
       isRequired: false,
       suitTypeId: this.suitTypeId
@@ -192,72 +200,72 @@ export class SuitTypeParametersComponent implements OnInit {
     while (this.options.length !== 0) {
       this.options.removeAt(0);
     }
+
+    this.isCollapsed = !this.isCollapsed;
   }
   
+  isUpdateScreenParam = false;
   editParam(param: SuitTypeParameter) {
-
+    this.toggleAddForm();
+    this.isUpdateScreenParam = true;
     this.isCollapsed = false;
-    
-    // Reset form with the parameter values
-    this.parameterForm.reset({
+    this.parameterForm.patchValue({
+      id: param.id,
       name: param.name,
       placeHolder: param.placeHolder || '',
       parameterType: this.parameterTypes.find(pt => pt.id === param.parameterType) || this.parameterTypes[1],
       parameterOptions: param.parameterOptions || '',
-      isRequired: param.isRequired || false,
+      isRequired: param.isRequired,
       suitTypeId: param.suitTypeId || this.suitTypeId
     });
     
-    // Clear existing options
-    while (this.options.length !== 0) {
-      this.options.removeAt(0);
+    if (param.parameterType === EParameterType.MULTI_SELECT_OPTIONS || param.parameterType === EParameterType.SINGLE_SELECT_OPTION) {
+      const optionsArray = param.parameterOptions?.split(',') || [];
+      optionsArray.forEach(option => {
+        this.addOption(option.trim());
+      });
     }
-    
-    if (param.parameterType === EParameterType.MULTI_SELECT_OPTIONS) {
-        const optionsArray = param.parameterOptions?.split(',') || [];
-        optionsArray.forEach(option => {
-          if (option.trim()) {
-            this.addOption(option.trim());
-          }
-        });
-      }
-    }
-    
-    // Submit the form
-    onSubmit(): void {
-      this.parameterForm.markAllAsTouched();
-      let formValue = { ...this.parameterForm.value };
-      // For RADIO, CHECKBOX, and SELECT, convert options array to comma-separated string
-      if (formValue.parameterType.id === EParameterType.SINGLE_SELECT_OPTION || formValue.parameterType.id === EParameterType.MULTI_SELECT_OPTIONS) {
+  }
+  
+  // Submit the form
+  onSubmit(): void {
+    this.parameterForm.markAllAsTouched();
+
+    let formValue = { ...this.parameterForm.value };
+    if (formValue.parameterType.id === EParameterType.SINGLE_SELECT_OPTION 
+      || formValue.parameterType.id === EParameterType.MULTI_SELECT_OPTIONS) {
+        
         formValue.parameterOptions = formValue.options.join(',');
         this.parameterForm.get('parameterOptions')?.setValue(formValue.options.join(','));
-        
-        if(!formValue.placeHoler) 
-          formValue.placeHolder = 'Please select options';
+        if(!formValue.placeHolder) 
+          formValue.placeHolder = 'Please choose options';
       }
-      
-      if(!formValue.placeHoler) 
+    
+    if(!this.parameterForm.valid){
+      this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Please correct the errors in the form before submitting.' });
+      return;
+    }
+    
+      this.parameterForm.get('parameterOptions')?.clearValidators();
+      if(!formValue.placeHolder) 
         formValue.placeHolder = 'Please enter ' + formValue.name + ' here';
       
-      if(!this.parameterForm.valid){
-        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Please correct the errors in the form before submitting.' });
-        return;
-      }
-      // Remove the options array from the final payload
       delete formValue.options;
       
       formValue = {
         ...formValue,
-        parameterType: formValue.parameterType.id,
-        isRequired: formValue.isRequired ? formValue.isRequired[0] : false,
-      }
-      this.sts.createSuitTypeParameter<ApiResponse<any>>(formValue).subscribe({
+        parameterType: formValue.parameterType.id
+      };
+
+      const call = this.isUpdateScreenParam ? this.sts.updateSuitTypeParameter<ApiResponse<any>>(formValue.id, formValue) : this.sts.createSuitTypeParameter<ApiResponse<any>>(formValue);
+      
+      call.subscribe({
         next: (response: any) => {
           this.isCollapsed = !this.isCollapsed;
           if(response.statusCode == HttpStatusCode.Created || response.statusCode == HttpStatusCode.Ok && response.isSuccess) {
             this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: response.message });
-            this.toggleAddForm();
             this.loadSuitTypeParameters();
+            this.toggleAddForm();
             return;
           }        
           this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });

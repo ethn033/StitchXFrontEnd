@@ -208,8 +208,7 @@ export class CreateMeasurementComponent implements OnInit {
         validators.push(Validators.required);
       }
       
-      const controlId = param.id?.toString() || 'undefined-id';
-      // this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
+      const controlId = param.id?.toString() || '';
       switch (param.parameterType) {
         case EParameterType.INPUT_TEXT:
         this.measurementForm.addControl(controlId, this.fb.control('', validators));
@@ -218,7 +217,7 @@ export class CreateMeasurementComponent implements OnInit {
         this.measurementForm.addControl(controlId, this.fb.control(null, validators));
         break;
         case EParameterType.SINGLE_SELECT_OPTION:
-        this.measurementForm.addControl(controlId, this.fb.control(null, validators));
+        this.measurementForm.addControl(controlId, this.fb.control([], validators));
         break;
         case EParameterType.MULTI_SELECT_OPTIONS:
         this.measurementForm.addControl(controlId, this.fb.control([], validators));
@@ -232,34 +231,24 @@ export class CreateMeasurementComponent implements OnInit {
   
   populateMds() {
     this.measurementDetails.forEach((md: MeasurementDetails) => {
-      const paramId = md.suitTypeParameterId!.toString();
-      let control = this.measurementForm.get(paramId) || null;
-      
+      const stParamId = md.suitTypeParameterId!.toString();
+      let control = this.measurementForm.get(stParamId) || null;
       if(control) {
-        if (this.isCheckboxParameter(Number(paramId))) {
-
-          debugger
+        if (this.isMultiOptions(md.id!)) {
           const paramValues1 = splitStrBySep((md.value || ''), ',');
-          control.patchValue([]);
-          control.updateValueAndValidity();
           control.patchValue(paramValues1);
-          control.updateValueAndValidity();
         }
         else {
           control.setValue(md.value);
-          control.markAsTouched();
-          control.updateValueAndValidity();
         }
       }
     });
   }
   
-  isCheckboxParameter(paramId: number): boolean {
+  isMultiOptions(paramId: number): boolean {
     const param = this.suitTypeParameters.find(p => p.id === paramId);
-    return param?.parameterType === this.parameterTypes.MULTI_SELECT_OPTIONS;
+    return (param?.parameterType === EParameterType.MULTI_SELECT_OPTIONS || param?.parameterType === EParameterType.SINGLE_SELECT_OPTION);
   }
-  
-  
   
   filterSuitTypes(event: any): void {
     const query = event.query;
@@ -312,7 +301,7 @@ export class CreateMeasurementComponent implements OnInit {
     let payload = this.measurementForm.value;
     
     const measurement: Measurement = {
-      id: this.measurement.id || 0,
+      id: this.measurement ? this.measurement.id || 0 : 0,
       applicationUserId: this.selectedUser?.id || 0,
       businessId: this.businessId,
       suitTypeId: this.selectedSuitType?.id || 0

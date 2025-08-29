@@ -26,8 +26,8 @@
             
             <!-- Required Checkbox -->
             <div class="col-md-6">
-                <div class="    mt-md-4 pt-md-3">
-                    <p-checkBox size="small" inputId="ir" styleClass="me-2" [value]="true" id="isRequired" formControlName="isRequired" />
+                <div class="mt-md-4 pt-md-3">
+                    <p-checkBox size="small" inputId="ir" styleClass="me-2" [binary]="true" id="isRequired" formControlName="isRequired" />
                     <label for="ir"> Is required?</label>
                 </div>
             </div>
@@ -60,9 +60,9 @@
             
             <div class="col-12 mt-4 pt-3 border-top">
                 <div class="d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-secondary" (click)="toggleAddForm()">Clear</button>
+                    <button type="button" class="btn btn-secondary" (click)="toggleAddForm()">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="pi pi-check me-2"></i>Save Parameter
+                        <i class="pi pi-check me-2"></i> {{isUpdateScreenParam ? 'Update Parameter' : 'Add Parameter'}} 
                     </button>
                 </div>
             </div>
