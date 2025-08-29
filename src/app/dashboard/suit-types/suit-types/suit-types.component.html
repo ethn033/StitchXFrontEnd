@@ -36,7 +36,7 @@
                 <div class="flex flex-wrap gap-1">
                     <button [disabled]="st.isDeleted || !st.isActive" pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" tooltipPosition="top" (click)="addUpdateSuitTypeDialog(st)"></button>
                     <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger" pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
-                    <button pButton icon="pi pi-ellipsis-v" (click)="abc();stRestoreId = st.id; suitType = st; selectedStatus.id == 2 ? menuDelete.toggle($event) : selectedStatus.id == 1 ? menu.toggle($event): null" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button>
+                    <button pButton icon="pi pi-ellipsis-v" (click)="stRestoreId = st.id; suitType = st; selectedStatus.id == 2 ? menuDelete.toggle($event) : selectedStatus.id == 1 ? menu.toggle($event): null" class="p-button-sm p-button-rounded p-button-text" pTooltip="Suit Type Parameters" tooltipPosition="top"></button>
                 </div>
                 <p-menu #menu appendTo="body" [model]="items" [popup]="true" />
                 <p-menu #menuDelete appendTo="body" [popup]="true" [model]="itemsDelete" />

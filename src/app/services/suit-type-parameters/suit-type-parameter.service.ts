@@ -19,31 +19,31 @@ export class SuitTypeParameterService extends ApiService {
   
   
   createSuitTypeParameter<T>(payload: SuitTypeParameter): Observable<ApiResponse<T>> {
-    return this.post(this.controller + environment.api.suitypeparameter.enpoints.createSuitTypeParameter, payload);
+    return this.post(this.controller + environment.api.suitypeparameter.enpoints.CreateSuitTypeParameter, payload);
   }
 
   getSuitTypeParameterById<T>(id: number): Observable<ApiResponse<T>> {
-    return this.get(this.controller + environment.api.suitypeparameter.enpoints.getSuitTypeParameterById+'/'+id);
+    return this.get(this.controller + environment.api.suitypeparameter.enpoints.GetSuitTypeParameterById+'/'+id);
   }
   
   updateSuitTypeParameter<T>(id: number, payload: SuitTypeParameter): Observable<ApiResponse<T>> {
-    return this.put(this.controller + environment.api.suitypeparameter.enpoints.updateSuitTypeParameter+'/'+ id, payload);
+    return this.put(this.controller + environment.api.suitypeparameter.enpoints.UpdateSuitTypeParameter+'/'+ id, payload);
   }
   
   getSuitTypeParameters<T>(payload: any): Observable<ApiResponse<T>> {
-    return this.get(this.controller + environment.api.suitypeparameter.enpoints.getSuitTypeParameters, payload);
+    return this.get(this.controller + environment.api.suitypeparameter.enpoints.GetSuitTypeParameters, payload);
   }
   
   deleteSuitTypeParameter<T>(id: number) : Observable<ApiResponse<T>>{
-    return this.delete(this.controller + environment.api.suitypeparameter.enpoints.deleteSuitTypeParameter+'/'+id);
+    return this.delete(this.controller + environment.api.suitypeparameter.enpoints.DeleteSuitTypeParameter+'/'+id);
   }
 
-  updateSuitTypeParameterStatus<T>(id: number, status: boolean): Observable<ApiResponse<T>> {
-    return this.put(this.controller + environment.api.suitypeparameter.enpoints.updateSuitTypeParameter+'/'+ id, status);
+  updateSuitTypeParameterStatus<T>(id: number, payload: SuitTypeParameter): Observable<ApiResponse<T>> {
+    return this.put(this.controller + environment.api.suitypeparameter.enpoints.UpdateSuitTypeParameterStatus+'/'+ id, payload);
   }
   
   restoreDeletedSuitTypeParameter<T>(id: number): Observable<ApiResponse<T>> {
-    return this.put(this.controller + environment.api.suitypeparameter.enpoints.restoreDeletedSuitTypeParameter+'/'+ id);
+    return this.put(this.controller + environment.api.suitypeparameter.enpoints.RestoreDeletedSuitTypeParameter+'/'+ id);
   }
   
 }

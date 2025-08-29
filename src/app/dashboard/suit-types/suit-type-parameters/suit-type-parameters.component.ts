@@ -19,7 +19,6 @@ import { entityStatuses, EParameterTypeToString, getBusinessId, normalizeError, 
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ApiResponse } from '../../../models/base-response';
 import { ShareDataService } from '../../../services/shared/share-data.service';
-import { SuitType, User } from '../../../Dtos/requests/request-dto';
 import { TabsModule } from "primeng/tabs";
 import { RouterModule } from '@angular/router';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
@@ -39,7 +38,6 @@ import { LoadingComponent } from "../../../components/shared/loading/loading.com
   styleUrls: ['./suit-type-parameters.component.css']
 })
 export class SuitTypeParametersComponent implements OnInit {
-  
   isCollapsed = true;
   @Input() uIdInput?: number;
   @Input() stIdInput?: number;
@@ -60,14 +58,11 @@ export class SuitTypeParametersComponent implements OnInit {
   filterStatusValues: DropDownItem[] = entityStatuses();
   selectedStatus: DropDownItem = this.filterStatusValues[0];
   
-  // Add these properties
-  showAddForm: boolean = false;
   parameterForm: FormGroup;
   parameterTypes = parameterTypeFilterValue();
   
   eParameterType = EParameterType; // Expose enum to template
   constructor() {
-    this.parameterTypes
     // Initialize the form
     this.parameterForm = this.fb.group({
       name: ['', Validators.required],
@@ -99,6 +94,67 @@ export class SuitTypeParametersComponent implements OnInit {
     this.handleParameterTypeChange(event.value);
   }
   
+  
+  onChangeActivateStatus(stp: any, removeitem? : boolean) {
+    
+    this.confService.confirm({
+      message: `Are you sure you want to activate this parameter?`,
+      header: 'Confirm Restore',
+      icon: 'pi pi-exclamation-triangle',
+      closable: true,
+      closeOnEscape: true,
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: stp.isActive ? 'Activate Parameter' : 'Deactivate Parameter',
+        severity: stp.isActive ? 'primary' : 'danger'
+      },
+      accept: () => {
+        this.proceedActivate(stp, removeitem);
+      },
+      reject: () => {
+        stp.isActive = !stp.isActive;
+        
+      }
+    });
+  } 
+  
+  proceedActivate(stp: any, removeitem? : boolean) {
+    this.ls.show();
+    this.sts.updateSuitTypeParameterStatus<ApiResponse<any>>(stp.id, stp).subscribe({
+      next: (response: any) => {
+        this.ls.hide();
+        if(response.isSuccess && response.statusCode == 200) {
+          this.ms.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: response.message });
+          
+          if(!removeitem) return;
+          
+          let index = this.suitTypeParameters.findIndex(s => s.id === stp.id);
+          if (index !== -1) {
+            this.suitTypeParameters.splice(index, 1);
+            this.suitTypeParameters = [...this.suitTypeParameters];
+          }
+          return;
+        }
+        stp.isActive = !stp.isActive;
+        this.ms.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: response.message });
+      },
+      error: (err: any) => {
+        stp.isActive = !stp.isActive;
+        this.ls.hide();
+        if(err instanceof HttpErrorResponse) {
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+        }
+      },
+      complete: () => {
+        this.ls.hide();
+      }
+    });
+  }
+  
   handleParameterTypeChange(type: any): void {
     const optionsControl = this.parameterForm.get('parameterOptions');
     const optionsArray = this.parameterForm.get('options') as FormArray;
@@ -117,8 +173,8 @@ export class SuitTypeParametersComponent implements OnInit {
     optionsControl?.updateValueAndValidity();
   }
   
-  addOption(): void {
-    this.options.push(this.fb.control('', Validators.required));
+  addOption(val? : any): void {
+    this.options.push(this.fb.control(val || '', Validators.required));
   }
   
   removeOption(index: number): void {
@@ -138,119 +194,224 @@ export class SuitTypeParametersComponent implements OnInit {
     }
   }
   
-  // Submit the form
-  onSubmit(): void {
-    this.parameterForm.markAllAsTouched();
-    let formValue = { ...this.parameterForm.value };
-    // For RADIO, CHECKBOX, and SELECT, convert options array to comma-separated string
-    if (formValue.parameterType.id === EParameterType.SINGLE_SELECT_OPTION || formValue.parameterType.id === EParameterType.MULTI_SELECT_OPTIONS) {
-      formValue.parameterOptions = formValue.options.join(',');
-      this.parameterForm.get('parameterOptions')?.setValue(formValue.options.join(','));
-      
-      if(!formValue.placeHoler) 
-        formValue.placeHolder = 'Please select options';
-    }
+  editParam(param: SuitTypeParameter) {
+
+    this.isCollapsed = false;
     
-    if(!formValue.placeHoler) 
-      formValue.placeHolder = 'Please enter ' + formValue.name + ' here';
-    
-    if(!this.parameterForm.valid){
-      this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Please correct the errors in the form before submitting.' });
-      return;
-    }
-    // Remove the options array from the final payload
-    delete formValue.options;
-    
-    formValue = {
-      ...formValue,
-      parameterType: formValue.parameterType.id,
-      isRequired: formValue.isRequired ? formValue.isRequired[0] : false,
-    }
-    this.sts.createSuitTypeParameter<ApiResponse<any>>(formValue).subscribe({
-      next: (response: any) => {
-        this.isCollapsed = !this.isCollapsed;
-        if(response.statusCode == HttpStatusCode.Created || response.statusCode == HttpStatusCode.Ok && response.isSuccess) {
-          this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: response.message });
-          this.toggleAddForm();
-          this.loadSuitTypeParameters();
-          return;
-        }        
-        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });
-      },
-      error: (err: any) => {
-        if(err instanceof HttpErrorResponse) {
-          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
-        }
-      }
+    // Reset form with the parameter values
+    this.parameterForm.reset({
+      name: param.name,
+      placeHolder: param.placeHolder || '',
+      parameterType: this.parameterTypes.find(pt => pt.id === param.parameterType) || this.parameterTypes[1],
+      parameterOptions: param.parameterOptions || '',
+      isRequired: param.isRequired || false,
+      suitTypeId: param.suitTypeId || this.suitTypeId
     });
     
-  }
-  
-  onValueChange(event: any) {
-    this.selectedStatus = event as DropDownItem; 
-    this.loadSuitTypeParameters();
-  }
-  
-  isLoading = false;
-  suitTypeParameters: SuitTypeParameter[] = [];
-  totalSuitTypeParameters: number = 0;
-  loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
-    let payload = {
-      businessId: this.businessId ?? 0,
-      suitTypeId: this.suitTypeId,
-      status: this.selectedStatus.id ?? 1
-    };
+    // Clear existing options
+    while (this.options.length !== 0) {
+      this.options.removeAt(0);
+    }
     
-    this.ls.show();
-    this.sts.getSuitTypeParameters<ApiResponse<any>>(payload).subscribe({
-      next: (data: any) => {
-        this.ls.hide();
-        let resp  = data as ApiResponse<any>;
-        this.suitTypeParameters = resp.data.suitTypeParameters as SuitTypeParameter[] || [];
-        this.totalSuitTypeParameters = this.suitTypeParameters.length;
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        this.ls.hide();
-        if(err instanceof HttpErrorResponse) {
-          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
-        }
-      },
-      complete: () => {
-        this.ls.hide();
-      }
-    });
-  }
-  
-  confirmDelete(stp: SuitTypeParameter): void {
-    this.confService.confirm({
-      message: `Are you sure you want to delete ${stp.name}?`,
-      header: 'Confirm Deletion',
-      icon: 'pi pi-exclamation-triangle',
-      closable: true,
-      closeOnEscape: true,
-      rejectButtonProps: {
-        label: 'Cancel',
-        severity: 'secondary',
-        outlined: true,
-      },
-      accept: () => {
-        this.sts.deleteSuitTypeParameter<ApiResponse<any>>(stp.id!).subscribe({
-          next: (response: any) => {
-            let resp = response as ApiResponse<SuitTypeParameter>;
-            if(resp.isSuccess && resp.statusCode == 200){
-              this.ms.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
-              this.loadSuitTypeParameters();
-            }
-          },
-          error: (err: any) => {
-            if(err instanceof HttpErrorResponse) {
-              this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
-            }
+    if (param.parameterType === EParameterType.MULTI_SELECT_OPTIONS) {
+        const optionsArray = param.parameterOptions?.split(',') || [];
+        optionsArray.forEach(option => {
+          if (option.trim()) {
+            this.addOption(option.trim());
           }
         });
       }
-    });
+    }
+    
+    // Submit the form
+    onSubmit(): void {
+      this.parameterForm.markAllAsTouched();
+      let formValue = { ...this.parameterForm.value };
+      // For RADIO, CHECKBOX, and SELECT, convert options array to comma-separated string
+      if (formValue.parameterType.id === EParameterType.SINGLE_SELECT_OPTION || formValue.parameterType.id === EParameterType.MULTI_SELECT_OPTIONS) {
+        formValue.parameterOptions = formValue.options.join(',');
+        this.parameterForm.get('parameterOptions')?.setValue(formValue.options.join(','));
+        
+        if(!formValue.placeHoler) 
+          formValue.placeHolder = 'Please select options';
+      }
+      
+      if(!formValue.placeHoler) 
+        formValue.placeHolder = 'Please enter ' + formValue.name + ' here';
+      
+      if(!this.parameterForm.valid){
+        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: 'Please correct the errors in the form before submitting.' });
+        return;
+      }
+      // Remove the options array from the final payload
+      delete formValue.options;
+      
+      formValue = {
+        ...formValue,
+        parameterType: formValue.parameterType.id,
+        isRequired: formValue.isRequired ? formValue.isRequired[0] : false,
+      }
+      this.sts.createSuitTypeParameter<ApiResponse<any>>(formValue).subscribe({
+        next: (response: any) => {
+          this.isCollapsed = !this.isCollapsed;
+          if(response.statusCode == HttpStatusCode.Created || response.statusCode == HttpStatusCode.Ok && response.isSuccess) {
+            this.ms.add({ key: 'global-toast', severity: 'success', summary: 'Success', detail: response.message });
+            this.toggleAddForm();
+            this.loadSuitTypeParameters();
+            return;
+          }        
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: response.message });
+        },
+        error: (err: any) => {
+          if(err instanceof HttpErrorResponse) {
+            this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+          }
+        }
+      });
+      
+    }
+    
+    onValueChange(event: any) {
+      this.selectedStatus = event as DropDownItem; 
+      this.loadSuitTypeParameters();
+    }
+    
+    isLoading = false;
+    suitTypeParameters: SuitTypeParameter[] = [];
+    totalSuitTypeParameters: number = 0;
+    loadSuitTypeParameters(event?: TableLazyLoadEvent): void {
+      let payload = {
+        businessId: this.businessId ?? 0,
+        suitTypeId: this.suitTypeId,
+        status: this.selectedStatus.id ?? 1
+      };
+      
+      this.ls.show();
+      this.sts.getSuitTypeParameters<ApiResponse<any>>(payload).subscribe({
+        next: (data: any) => {
+          this.ls.hide();
+          let resp  = data as ApiResponse<any>;
+          this.suitTypeParameters = resp.data.suitTypeParameters as SuitTypeParameter[] || [];
+          this.totalSuitTypeParameters = this.suitTypeParameters.length;
+        },
+        error: (err: any) => {
+          this.isLoading = false;
+          this.ls.hide();
+          if(err instanceof HttpErrorResponse) {
+            this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+          }
+        },
+        complete: () => {
+          this.ls.hide();
+        }
+      });
+    }
+    
+    
+    
+    
+    restoreParameter(param: SuitTypeParameter) {
+      this.confService.confirm({
+        message: `Are you sure you want to restore this parameter?`,
+        header: 'Confirm Restore',
+        icon: 'pi pi-exclamation-triangle',
+        closable: true,
+        closeOnEscape: true,
+        rejectButtonProps: {
+          label: 'Cancel',
+          severity: 'secondary',
+          outlined: true,
+        },
+        acceptButtonProps: {
+          label: 'Restore',
+          severity: 'danger'
+        },
+        accept: () => {
+          this.sts.restoreDeletedSuitTypeParameter<ApiResponse<any>>(param.id!).subscribe({
+            next: (response: any) => {
+              let resp = response as ApiResponse<SuitTypeParameter>;
+              if(resp.isSuccess && resp.statusCode == 200){
+                this.ms.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+                this.loadSuitTypeParameters();
+              }
+            },
+            error: (err: any) => {
+              if(err instanceof HttpErrorResponse) {
+                this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+              }
+            }
+          });
+        }
+      });
+    }
+    
+    
+    confirmDelete(stp: SuitTypeParameter): void {
+      this.confService.confirm({
+        message: `Are you sure you want to delete ${stp.name}?`,
+        header: 'Confirm Deletion',
+        icon: 'pi pi-exclamation-triangle',
+        closable: true,
+        closeOnEscape: true,
+        rejectButtonProps: {
+          label: 'Cancel',
+          severity: 'secondary',
+          outlined: true,
+        },
+        acceptButtonProps: {
+          label: 'Delete',
+          severity: 'danger'
+        },
+        accept: () => {
+          this.sts.deleteSuitTypeParameter<ApiResponse<any>>(stp.id!).subscribe({
+            next: (response: any) => {
+              let resp = response as ApiResponse<SuitTypeParameter>;
+              if(resp.isSuccess && resp.statusCode == 200){
+                this.ms.add({ key:'global-toast', severity: 'success', summary: 'Success', detail: resp.message });
+                this.loadSuitTypeParameters();
+              }
+            },
+            error: (err: any) => {
+              if(err instanceof HttpErrorResponse) {
+                this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+              }
+            }
+          });
+        }
+      });
+    }
+    
+    
+    
+    
+    
+    first = 0;
+    
+    rows = 10;
+    // paging 
+    next() {
+      this.first = this.first + this.rows;
+    }
+    
+    prev() {
+      this.first = this.first - this.rows;
+    }
+    
+    reset() {
+      this.first = 0;
+    }
+    
+    pageChange(event: any) {
+      this.first = event.first;
+      this.rows = event.rows;
+    }
+    
+    isLastPage(): boolean {
+      return this.suitTypeParameters ? this.first + this.rows >= this.suitTypeParameters.length : true;
+    }
+    
+    isFirstPage(): boolean {
+      return this.suitTypeParameters ? this.first === 0 : true;
+    }
   }
   
-}

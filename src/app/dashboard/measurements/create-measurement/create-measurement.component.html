@@ -80,18 +80,15 @@
           </label>
           
           <ng-container [ngSwitch]="param.parameterType">
-            <!-- Text Input -->
             <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText 
             [formControlName]="param.id!" [placeholder]="param.placeHolder || 'Enter ' + param.name" 
             class="form-control" [attr.aria-label]="param.name" />
             
-            <!-- Number Input -->
             <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText 
             [formControlName]="param.id!" type="number" 
             [placeholder]="param.placeHolder || 'Enter ' + param.name" 
             class="form-control" [attr.aria-label]="param.name" />
             
-            <!-- Radio Buttons (Single Select) -->
             <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="options-container">
               <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check">
                 <p-radioButton [inputId]="param.id + '_' + option.trim()" 
@@ -105,11 +102,9 @@
             </div>
           </div>
           
-          <!-- Checkboxes (Multi Select) -->
           <div *ngSwitchCase="parameterTypes.MULTI_SELECT_OPTIONS" class="options-container">
-            <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check">
-              <p-checkbox [inputId]="param.id + '_' + option.trim()" 
-              [formControlName]="param.id!" [value]="option.trim()"
+            <div *ngFor="let option of param.parameterOptions?.split(','); " class="form-check">
+              <p-checkbox [inputId]="param.id + '_' + option.trim()" [formControlName]="param.id!" [value]="option.trim()"
               class="me-2">
             </p-checkbox>
             <label [for]="param.id + '_' + option.trim()" class="form-check-label cursor-pointer">

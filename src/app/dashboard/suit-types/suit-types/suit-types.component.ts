@@ -27,7 +27,6 @@ import { Menu } from "primeng/menu";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { HttpStatusCode } from '@angular/common/http';
 import { SuitTypeParametersComponent } from '../suit-type-parameters/suit-type-parameters.component';
-import { ViewCustomerComponent } from '../../users/view-user/view-user.component';
 @Component({
   selector: 'app-suit-types',
   templateUrl: './suit-types.component.html',
@@ -36,17 +35,12 @@ import { ViewCustomerComponent } from '../../users/view-user/view-user.component
   styleUrls: ['./suit-types.component.css']
 })
 export class SuitTypesComponent implements OnInit {
-  abc() {
-    console.log(this.selectedStatus.id);
-  }
-  
   private sds = inject(ShareDataService);
   dialogService: DialogService = inject(DialogService);
   sts: SuitTypeService = inject(SuitTypeService);
   confirmationService: ConfirmationService = inject(ConfirmationService);
   messageService: MessageService = inject(MessageService);
   ls: LoadingService = inject(LoadingService);
-  
   
   suitType!: SuitType; // for paramters, will be passed to the component
   items: MenuItem[] = [
@@ -179,7 +173,6 @@ export class SuitTypesComponent implements OnInit {
     });
   }
   
-  
   loadSuitTypes(event?: TableLazyLoadEvent): void {
     
     let payload = {
@@ -201,7 +194,6 @@ export class SuitTypesComponent implements OnInit {
       }
     });
   }
-  
   
   addUpdateSuitTypeDialog(st?: SuitType): void {
     const ref = this.dialogService.open(CreateSuitTypeComponent, {
@@ -226,7 +218,6 @@ export class SuitTypesComponent implements OnInit {
       }
     });
   }
-  
   
   confirmDelete(st: SuitType): void {
     this.confirmationService.confirm({
@@ -259,5 +250,4 @@ export class SuitTypesComponent implements OnInit {
       }
     });
   }
-  
 }

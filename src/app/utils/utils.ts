@@ -66,6 +66,11 @@ export function getBusinessId(user: User) : number | null {
     return null;
 }
 
+
+export function splitStrBySep(strArray: string, sep: string): string[] {
+  return (!strArray || !sep) ? [] : strArray.split(sep).map(item => item.trim()) || [];
+}
+
 export function validateCurrentRole(roles?: string[]): ERole {
   let role: ERole = ERole.CUSTOMER;
   if(roles && roles.length > 0) {
@@ -89,12 +94,12 @@ export function validateCurrentRole(roles?: string[]): ERole {
 }
 
 export function valdiateRoles(userRolesItems: DropDownItem[], currentRole: ERole): DropDownItem[] {
-    userRolesItems = userRolesItems.filter(item => item.id !== currentRole);
-    const index = userRolesItems.findIndex(item => item.id === ERole.SOFT_OWNER);
-    if (index !== -1) {
-      userRolesItems.splice(index, 1);
-    }
-    return userRolesItems;
+  userRolesItems = userRolesItems.filter(item => item.id !== currentRole);
+  const index = userRolesItems.findIndex(item => item.id === ERole.SOFT_OWNER);
+  if (index !== -1) {
+    userRolesItems.splice(index, 1);
+  }
+  return userRolesItems;
 }
 
 export const ERoleToString = {
@@ -112,7 +117,7 @@ export const EParameterTypeToString = {
   [EParameterType.ALL]: 'ALL',
   [EParameterType.INPUT_TEXT]: 'INPUT_TEXT',
   [EParameterType.INPUT_NUMBER]: 'INPUT_NUMBER',
-  [EParameterType.MULTI_SELECT_OPTIONS]: 'TEXTAMULTI_SELECT_OPTIONSREA',
+  [EParameterType.MULTI_SELECT_OPTIONS]: 'MULTI_SELECT_OPTIONS',
   [EParameterType.SINGLE_SELECT_OPTION]: 'SINGLE_SELECT_OPTION',
 } as const;
 

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
 import { SelectModule } from 'primeng/select';
@@ -23,6 +23,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { MeasurementDetailsService } from '../../../services/measurement-details/measurement-details.service';
+import { splitStrBySep } from '../../../utils/utils';
 
 @Component({
   selector: 'app-create-measurement',
@@ -199,28 +200,6 @@ export class CreateMeasurementComponent implements OnInit {
     });
   }
   
-  populateMds() {
-    this.measurementDetails.forEach((md: MeasurementDetails) => {
-      const paramId = md.suitTypeParameterId!.toString();
-      let control = this.measurementForm.get(paramId);
-
-      if(control) {
-         if (this.isCheckboxParameter(md.suitTypeParameterId!)) {
-            const resultArray: string[] = md.value?.split(',') || [];
-            control.setValue(resultArray);
-        }
-      else {
-        control.setValue(md.value);
-      }
-      }
-    });
-  }
-  
-  isCheckboxParameter(paramId: number): boolean {
-  const param = this.suitTypeParameters.find(p => p.id === paramId);
-  return param?.parameterType === this.parameterTypes.MULTI_SELECT_OPTIONS;
-}
-
   parameterTypes = EParameterType;
   createFormControls() {
     this.suitTypeParameters.forEach(param => {
@@ -230,7 +209,7 @@ export class CreateMeasurementComponent implements OnInit {
       }
       
       const controlId = param.id?.toString() || 'undefined-id';
-        // this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
+      // this.measurementForm.addControl(''+param.id, this.fb.control(null, validators));
       switch (param.parameterType) {
         case EParameterType.INPUT_TEXT:
         this.measurementForm.addControl(controlId, this.fb.control('', validators));
@@ -245,11 +224,42 @@ export class CreateMeasurementComponent implements OnInit {
         this.measurementForm.addControl(controlId, this.fb.control([], validators));
         break;
         default:
-          this.measurementForm.addControl(controlId, this.fb.control('', validators));
+        this.measurementForm.addControl(controlId, this.fb.control('', validators));
         break;
       }
     });
   }
+  
+  populateMds() {
+    this.measurementDetails.forEach((md: MeasurementDetails) => {
+      const paramId = md.suitTypeParameterId!.toString();
+      let control = this.measurementForm.get(paramId) || null;
+      
+      if(control) {
+        if (this.isCheckboxParameter(Number(paramId))) {
+
+          debugger
+          const paramValues1 = splitStrBySep((md.value || ''), ',');
+          control.patchValue([]);
+          control.updateValueAndValidity();
+          control.patchValue(paramValues1);
+          control.updateValueAndValidity();
+        }
+        else {
+          control.setValue(md.value);
+          control.markAsTouched();
+          control.updateValueAndValidity();
+        }
+      }
+    });
+  }
+  
+  isCheckboxParameter(paramId: number): boolean {
+    const param = this.suitTypeParameters.find(p => p.id === paramId);
+    return param?.parameterType === this.parameterTypes.MULTI_SELECT_OPTIONS;
+  }
+  
+  
   
   filterSuitTypes(event: any): void {
     const query = event.query;
@@ -267,7 +277,7 @@ export class CreateMeasurementComponent implements OnInit {
       return;
     }
     
-    this.filteredSuitTypes = this.suitTypes.filter(suitType => suitType.name?.toLowerCase().includes(query.toLowerCase()));
+    this.filteredSuitTypes = this.suitTypes.filter(suitType => suitType.name?.toLowerCase().startsWith(query.toLowerCase()));
     
   }
   
@@ -317,7 +327,7 @@ export class CreateMeasurementComponent implements OnInit {
         });
       }
     }
-
+    
     this.loading = true;
     const call = this.isUpdateScreen ? this.mds.updateMeasurementDetails<any>(this.measurement.id!, measurement) : this.mss.createMeasurement<any>(measurement);
     call.subscribe({

@@ -81,7 +81,8 @@
 </div>
 
 <app-loading></app-loading>
-<p-table styleClass="mt-3" [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" dataKey="id" sortField="id" showGridlines="true">
+<p-table styleClass="mt-3" [value]="suitTypeParameters" size="small" #dt [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20,50]" stripedRows size="small" [totalRecords]="totalSuitTypeParameters" showCurrentPageReport="true"
+        [first]="first" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" dataKey="id" sortField="id" showGridlines="true">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
@@ -89,31 +90,37 @@
             <th>Placeholder</th>
             <th>Required</th>
             <th>Type</th>
-            <td>Options</td>
+            <td>parameter Options</td>
             <th>Status</th>
-            <th style="width: 120px">Actions</th>
+            <th style="width: 12%;">Actions</th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-st>
+    <ng-template pTemplate="body" let-stp>
         <tr>
-            <td>{{st.id}}</td>
-            <td>{{ st.name }}</td>
-            <td [pTooltip]="st.placeHolder">{{ st.placeHolder | truncate: 25 }}</td>
+            <td>{{stp.id}}</td>
+            <td>{{ stp.name }}</td>
+            <td [pTooltip]="stp.placeHolder" tooltipPosition="top">{{ stp.placeHolder | truncate:20:true }}</td>
             <td>
-                <p-toggleSwitch [readonly]="true" [(ngModel)]="st.isRequired" [pTooltip]="st.isRequired ? 'Required' : 'Optional'" (onChange)="null" />
+                <p-checkbox [readonly]="selectedStatus.id != 1" [disabled]="selectedStatus.id != 1" [binary]="true" [inputId]="stp.id" [(ngModel)]="stp.isRequired" [pTooltip]="stp.isRequired ? 'Required' : 'Optional'" (onChange)="onChangeActivateStatus(stp)" />
             </td>
-            <td>{{getParameterTypeString(st.parameterType) | removeUnderscores}}</td>
-            <td>{{st.parameterOptions}}</td>
+            <td>{{getParameterTypeString(stp.parameterType) | removeUnderscores}}</td>
+            <td [pTooltip]="stp.parameterOptions">{{stp.parameterOptions | removeUnderscores | truncate:30:true}}</td>
             <td>
-                <p-tag [severity]="st.isActive ? 'success' : 'danger'" [value]="st.isActive ? 'ACTIVE' : 'INACTIVE'"></p-tag>
+                <p-toggleSwitch [readonly]="stp.isDeleted" [disabled]="stp.isDeleted" [pTooltip]="stp.isActive ? 'Deactivate' : 'Activate'" [(ngModel)]="stp.isActive" (onChange)="onChangeActivateStatus(stp, true)" />
             </td>
             
-            <td>
+            <td style="width: 12%;">
                 <div class="flex flex-wrap gap-1">
-                    <button pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
-                    tooltipPosition="top" (click)="null"></button>
-                    <button pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
-                    pTooltip="Delete" [disabled]="st.isDeleted" tooltipPosition="top" (click)="confirmDelete(st)"></button>
+                    <button [disabled]="selectedStatus.id != 1" pButton icon="pi pi-pencil" class="p-button-sm p-button-rounded p-button-text" pTooltip="Edit" 
+                    tooltipPosition="top" (click)="editParam(stp)"></button>
+                    
+                    <button *ngIf="selectedStatus.id != 2" pButton icon="pi pi-trash" class="p-button-sm p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Delete" tooltipPosition="top" (click)="confirmDelete(stp)"></button>
+                   
+                    <button *ngIf="selectedStatus.id == 2" pButton icon="pi pi-undo" class="p-button-sm p-button-rounded p-button-text p-button-danger"
+                    pTooltip="Restore Parameter" tooltipPosition="top" (click)="restoreParameter(stp)"></button>
+                    
+
                 </div>
             </td>
         </tr>

@@ -41,13 +41,13 @@ export const environment = {
         suitypeparameter: {
             controller: 'SuitTypeParameters/',
             enpoints: {
-                createSuitTypeParameter: 'CreateSuitTypeParameter',
-                getSuitTypeParameterById: 'GetSuitTypeParameterById',
-                updateSuitTypeParameter: 'UpdateSuitTypeParameter',
-                getSuitTypeParameters: 'GetSuitTypeParameters',
-                deleteSuitTypeParameter: 'DeleteSuitTypeParameter',
-                updateSuitTypeParameterStatus: 'UpdateSuitTypeParameterStatus',
-                restoreDeletedSuitTypeParameter: 'RestoreDeletedSuitTypeParameter'
+                CreateSuitTypeParameter: 'CreateSuitTypeParameter',
+                GetSuitTypeParameterById: 'GetSuitTypeParameterById',
+                UpdateSuitTypeParameter: 'UpdateSuitTypeParameter',
+                GetSuitTypeParameters: 'GetSuitTypeParameters',
+                DeleteSuitTypeParameter: 'DeleteSuitTypeParameter',
+                UpdateSuitTypeParameterStatus: 'UpdateSuitTypeParameterStatus',
+                RestoreDeletedSuitTypeParameter: 'RestoreDeletedSuitTypeParameter'
             }
         },
         business: {
