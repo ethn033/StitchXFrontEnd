@@ -234,9 +234,9 @@ export class CreateMeasurementComponent implements OnInit {
       const stParamId = md.suitTypeParameterId!.toString();
       let control = this.measurementForm.get(stParamId) || null;
       if(control) {
-        if (this.isMultiOptions(md.id!)) {
-          const paramValues1 = splitStrBySep((md.value || ''), ',');
-          control.patchValue(paramValues1);
+        if (this.isMultiOptions(md.suitTypeParameterId!)) {
+          const values = splitStrBySep((md.value || ''), ',');
+          control.patchValue(values);
         }
         else {
           control.setValue(md.value);
@@ -258,8 +258,6 @@ export class CreateMeasurementComponent implements OnInit {
     
     this.selectedSuitType = null;
     this.suitTypeParameters = [];
-    
-    
     
     if(query.trim().length < 1) {
       this.filteredSuitTypes = [];
@@ -317,6 +315,13 @@ export class CreateMeasurementComponent implements OnInit {
       }
     }
     
+
+    Object.keys(this.measurementForm.controls).forEach(key => {
+      const control = this.measurementForm.get(key);
+      console.log(`Control: ${key}, Value:`, control?.value);
+    });
+
+  debugger
     this.loading = true;
     const call = this.isUpdateScreen ? this.mds.updateMeasurementDetails<any>(this.measurement.id!, measurement) : this.mss.createMeasurement<any>(measurement);
     call.subscribe({

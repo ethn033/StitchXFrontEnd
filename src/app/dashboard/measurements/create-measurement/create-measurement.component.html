@@ -39,27 +39,21 @@
           <i class="fas fa-shirt me-1"></i>Select Suit Type <span class="text-danger">*</span>
         </label>
         
-        <p-autoComplete [readonly]="isUpdateScreen" [disabled]="isUpdateScreen" #st="ngModel" required [forceSelection]="true" styleClass="w-100" [(ngModel)]="selectedSuitType" 
-        size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" 
-        [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" 
-        [minLength]="1" (onSelect)="onSuitTypeSelect($event)" 
-        placeholder="Search for suit type e.g (Shalwar Qamees)" 
-        [inputStyle]="{'width':'100%'}" 
-        [ngClass]="{'is-invalid' : (!selectedSuitType || st.invalid) && st.touched }">
-        <ng-template let-item pTemplate="item">
-          <div class="d-flex align-items-center">
-            <i class="fas fa-shirt me-2 text-muted"></i>
-            <div class="fw-medium">{{ item.name }}</div>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-      
-      <div *ngIf="(!selectedSuitType || st.invalid) && st.touched" class="invalid-feedback d-block mt-1">
-        <i class="pi pi-exclamation-triangle me-1"></i>Please select a suit type.
+        <p-autoComplete [readonly]="isUpdateScreen" [disabled]="isUpdateScreen" #st="ngModel" required [forceSelection]="true" styleClass="w-100" [(ngModel)]="selectedSuitType" size="small" optionLabel="name" id="suitType" inputId="suitTypeInput" [suggestions]="filteredSuitTypes" (completeMethod)="filterSuitTypes($event)" [minLength]="1" (onSelect)="onSuitTypeSelect($event)" placeholder="Search for suit type e.g (Shalwar Qamees)" [inputStyle]="{'width':'100%'}" [ngClass]="{'is-invalid' : (!selectedSuitType || st.invalid) && st.touched }">
+          <ng-template let-item pTemplate="item">
+            <div class="d-flex align-items-center">
+              <i class="fas fa-shirt me-2 text-muted"></i>
+              <div class="fw-medium">{{ item.name }}</div>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        
+        <div *ngIf="(!selectedSuitType || st.invalid) && st.touched" class="invalid-feedback d-block mt-1">
+          <i class="pi pi-exclamation-triangle me-1"></i>Please select a suit type.
+        </div>
       </div>
     </div>
   </div>
-</div>
 </div>
 
 <!-- Measurements Form -->
@@ -80,56 +74,48 @@
           </label>
           
           <ng-container [ngSwitch]="param.parameterType">
-            <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText 
-            [formControlName]="param.id!" [placeholder]="param.placeHolder || 'Enter ' + param.name" 
-            class="form-control" [attr.aria-label]="param.name" />
+            <input *ngSwitchCase="parameterTypes.INPUT_TEXT" pInputText [formControlName]="param.id!.toString()" [placeholder]="param.placeHolder || 'Enter ' + param.name" class="form-control" [attr.aria-label]="param.name" />
             
-            <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText 
-            [formControlName]="param.id!" type="number" 
-            [placeholder]="param.placeHolder || 'Enter ' + param.name" 
-            class="form-control" [attr.aria-label]="param.name" />
+            <input *ngSwitchCase="parameterTypes.INPUT_NUMBER" pInputText [formControlName]="param.id!.toString()" type="number" 
+            [placeholder]="param.placeHolder || 'Enter ' + param.name" class="form-control" [attr.aria-label]="param.name" />
             
             <div *ngSwitchCase="parameterTypes.SINGLE_SELECT_OPTION" class="options-container">
               <div *ngFor="let option of param.parameterOptions?.split(',')" class="form-check">
-                <p-radioButton [inputId]="param.id + '_' + option.trim()" 
-                [formControlName]="param.id!.toString()" [value]="option.trim()"
-                (onChange)="measurementForm.get(param.id!.toString())?.markAsTouched()"
-                class="me-2">
-              </p-radioButton>
-              <label [for]="param.id + '_' + option.trim()" class="form-check-label cursor-pointer">
-                {{ option.trim() }}
-              </label>
+                <p-radioButton [inputId]="param.id + '_' + option" [formControlName]="param.id!.toString()" [value]="option" (onChange)="measurementForm.get(param.id!.toString())?.markAsTouched()" class="me-2">
+                </p-radioButton>
+                <label [for]="param.id?.toString() + '_' + option" class="form-check-label cursor-pointer">
+                  {{ option }}
+                </label>
+              </div>
             </div>
-          </div>
+            
+            <div *ngSwitchCase="parameterTypes.MULTI_SELECT_OPTIONS" class="options-container">
+              <div *ngFor="let option of param.parameterOptions?.split(',');" class="form-check">
+                <p-checkbox [inputId]="param.id + '_' + option" [formControlName]="param.id!.toString()" [value]="option" class="me-2">
+                </p-checkbox>
+                <label [for]="param.id?.toString()" class="form-check-label cursor-pointer">
+                  {{ option }}
+                </label>
+              </div>
+            </div>
+          </ng-container>
           
-          <div *ngSwitchCase="parameterTypes.MULTI_SELECT_OPTIONS" class="options-container">
-            <div *ngFor="let option of param.parameterOptions?.split(','); " class="form-check">
-              <p-checkbox [inputId]="param.id + '_' + option.trim()" [formControlName]="param.id!" [value]="option.trim()"
-              class="me-2">
-            </p-checkbox>
-            <label [for]="param.id + '_' + option.trim()" class="form-check-label cursor-pointer">
-              {{ option.trim() }}
-            </label>
-          </div>
+          <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && measurementForm.get(param.id!.toString())?.touched" 
+          class="text-danger small mt-1">
+          <i class="pi pi-exclamation-circle me-1"></i>
+          {{ param.isRequired ? 'This field is required.' : 'Invalid input.' }}
         </div>
-      </ng-container>
-      
-      <div *ngIf="measurementForm.get(param.id!.toString())?.invalid && measurementForm.get(param.id!.toString())?.touched" 
-      class="text-danger small mt-1">
-      <i class="pi pi-exclamation-circle me-1"></i>
-      {{ param.isRequired ? 'This field is required.' : 'Invalid input.' }}
+      </div>
     </div>
   </div>
-</div>
-</div>
-
-<div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
-  <button type="button" pButton pRipple icon="pi pi-times" class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading"> Cancel</button>
-  <button type="submit" pButton pRipple icon="pi pi-check" class="p-button-primary" [disabled]="loading">
-    <i *ngIf="loading" class="pi pi-spinner pi-spin me-2"></i>
-    {{ loading ? 'Saving...' : isUpdateScreen ? 'Update Measurement' : 'Save Measurement' }}
-  </button>
-</div>
+  
+  <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+    <button type="button" pButton pRipple icon="pi pi-times" class="p-button-outlined p-button-secondary" (click)="onCancel()" [disabled]="loading"> Cancel</button>
+    <button type="submit" pButton pRipple icon="pi pi-check" class="p-button-primary" [disabled]="loading">
+      <i *ngIf="loading" class="pi pi-spinner pi-spin me-2"></i>
+      {{ loading ? 'Saving...' : isUpdateScreen ? 'Update Measurement' : 'Save Measurement' }}
+    </button>
+  </div>
 </form>
 </div>
 </div>
