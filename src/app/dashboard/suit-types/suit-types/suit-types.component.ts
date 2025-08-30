@@ -12,20 +12,20 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { entityStatuses, getBusinessId, normalizeError, validateCurrentRole } from '../../../utils/utils';
+import { entityStatuses, normalizeError } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ApiResponse } from '../../../models/base-response';
 import { ERole } from '../../../enums/enums';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { SuitType, User } from '../../../Dtos/requests/request-dto';
 import { TabsModule } from "primeng/tabs";
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CreateSuitTypeComponent } from '../create-suit-type/create-suit-type.component';
 import { SuitTypeService } from '../../../services/suit-type/suit-type.service';
 import { TruncatePipe } from "../../../pipe/truncate.pipe";
 import { Menu } from "primeng/menu";
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
-import { HttpStatusCode } from '@angular/common/http';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { SuitTypeParametersComponent } from '../suit-type-parameters/suit-type-parameters.component';
 @Component({
   selector: 'app-suit-types',
@@ -72,16 +72,17 @@ export class SuitTypesComponent implements OnInit {
   selectedStatus: DropDownItem = this.filterStatusValues[0];
   
   totalSuitTypes: number = 0;
-  
-  businessId?: number | null;
+    router = inject(Router);
+    
+  businessId?: number | null = null;
   constructor() {
-    this.sds.userData.subscribe(userData => {
-      this.userResponse = userData as User;
-      this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
-        this.businessId = getBusinessId(this.userResponse);
-      }
-    });
+    this.userResponse = this.sds.currentUser as User;
+    if(!this.userResponse) {
+      this.router.navigate(['/admin'], { replaceUrl: true});
+    }
+
+    if(this.sds.isBusinessExists())
+      this.businessId = this.sds.getCurrentUserBusinessId();
   }
   
   ngOnInit(): void {
@@ -243,8 +244,8 @@ export class SuitTypesComponent implements OnInit {
             this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: resp.message });
           },
           error: (err: any) => {
-            let er = normalizeError(err);
-            this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: er?.message});
+            if(err instanceof HttpErrorResponse)
+              this.messageService.add({ key:'global-toast', severity: 'error', summary: 'Error', detail: err.error?.message});
           }
         });
       }

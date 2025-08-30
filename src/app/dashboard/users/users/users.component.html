@@ -85,7 +85,7 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage">
-        @if(users.length == 0 && !loadingService.getLoading()) {
+        @if(users && users.length == 0 && !loadingService.getLoading()) {
             <tr>
                 @if(selectedCustomerStatus.id == 2 || selectedCustomerStatus.id == 0) {
                     <td colspan="8" class="text-center py-5">

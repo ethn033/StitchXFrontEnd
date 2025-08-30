@@ -1,3 +1,4 @@
+import { ShareDataService } from './../../../services/shared/share-data.service';
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
@@ -15,7 +16,7 @@ import { LocalStorageService } from '../../../services/generics/local-storage.se
 import { ERole } from '../../../enums/enums';
 import { APP_REMEMBER_ME, APP_USER, AUTH_TOKEN } from '../../../utils/global-contstants';
 import { LoadingService } from '../../../services/generics/loading.service';
-import { Login } from '../../../Dtos/requests/request-dto';
+import { Login, User } from '../../../Dtos/requests/request-dto';
 import { ERoleToString } from '../../../utils/utils';
 import { UserResponse } from '../../../Dtos/requests/response-dto';
 
@@ -37,10 +38,11 @@ import { UserResponse } from '../../../Dtos/requests/response-dto';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+  
   private fb = inject(FormBuilder);
-  private loading = inject(LoadingService);
   private ls = inject(LocalStorageService);
   private authService = inject(AuthService);
+  private sds = inject(ShareDataService);
   private router = inject(Router);
   
   isLoading = false;
@@ -52,11 +54,11 @@ export class LoginComponent {
     rememberMe: [false]
   });
   
-
+  
   constructor(private messageService: MessageService) {
-
+    
   }
-
+  
   rememberMe: boolean = false;
   onSubmit() {
     if (this.loginForm.invalid) {
@@ -72,28 +74,33 @@ export class LoginComponent {
         let response = data as ApiResponse<UserResponse> ;
         if(response.statusCode == 200 && data.isSuccess) {
           if(response.data && response.data.user && response.data.tokenResponse) {
-            if(response.data.user.roles && response.data.user.roles.includes(ERoleToString[ERole.SOFT_OWNER]) || response.data.user.roles?.includes(ERoleToString[ERole.SHOP_OWNER])) {
-              // if(response.data.user.roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-              //   if(response.data.user.business == null) {
-              //     this.router.navigate(['clint-setup/create-business'], { replaceUrl: true });
-              //     return
-              //   }
-              //   if(response.data.user.business.branches == null) {
-              //     this.router.navigate(['clint-setup/create-branch'], { replaceUrl: true });
-              //     return;
-              //   }
-              // }
-              this.router.navigate(['admin'], { replaceUrl: true  });
-            }
-            else if(response.data.user.roles?.includes(ERoleToString[ERole.TAILOR]) || response.data.user.roles?.includes(ERoleToString[ERole.CUTTER])) {
-              this.router.navigate(['tailor'], { replaceUrl: true });
-            }
-            else if(response.data.user.roles?.includes(ERoleToString[ERole.CUSTOMER])) {
-              this.router.navigate(['shop'], { replaceUrl: true });
-            }
             this.ls.setItem(APP_REMEMBER_ME, this.rememberMe, true);
             this.ls.setItem(APP_USER, response.data.user, true);
             this.ls.setItem(AUTH_TOKEN, response.data.tokenResponse, true);
+            
+            const user = this.ls.getItem(APP_USER, true) as User;         
+            this.sds.setUserResponse(user);
+            
+            if(this.sds.isSoftOwner()) {
+              this.router.navigate(['admin'], { replaceUrl: true  });
+            }
+            else if(this.sds.isShopOwner()) {
+              
+              if(!this.sds.isBusinessExists()) {
+                this.router.navigate(['clint-setup', 'create-business', this.sds.currentUserId()], { replaceUrl: true });
+              }
+              else if(!this.sds.isBranchExists()) {
+                this.router.navigate(['clint-setup/create-branch'], { replaceUrl: true });
+              }
+              else 
+                this.router.navigate(['admin'], { replaceUrl: true  });
+            }
+            else if(this.sds.isTailor() || this.sds.isCutter()) {
+              this.router.navigate(['tailor'], { replaceUrl: true });
+            }
+            else {
+              this.router.navigate(['shop'], { replaceUrl: true });
+            }
           }
           this.isLoading = false;
           this.loginForm.reset();

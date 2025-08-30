@@ -14,12 +14,12 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TabsModule } from "primeng/tabs";
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { Branch, User } from '../../../Dtos/requests/request-dto';
 import { ERole } from '../../../enums/enums';
-import { dateFilterValues, entityStatuses, getBusinessId, validateCurrentRole } from '../../../utils/utils';
+import { dateFilterValues, entityStatuses } from '../../../utils/utils';
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { MeasurementService } from '../../../services/measurements/measurement.service';
 import { LoadingService } from '../../../services/generics/loading.service';
@@ -41,8 +41,6 @@ export class MeasurementsComponent implements OnInit {
   private sds = inject(ShareDataService);
   private lss = inject(LocalStorageService);
   userResponse?: User | null;
-  roles = ERole;
-  currentRole?: ERole | null;
   measurements: Measurement[] = [];
   dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().add(1, 'day').toDate()]; // Default to last week
   dateRanges = dateFilterValues();
@@ -53,6 +51,7 @@ export class MeasurementsComponent implements OnInit {
   messService: MessageService = inject(MessageService);
   totalOrdersCount: number = 0;
   ls: LoadingService = inject(LoadingService);
+  router = inject(Router);
   statuses = entityStatuses();
   selectedStatus: DropDownItem = this.statuses[0];
   
@@ -60,15 +59,16 @@ export class MeasurementsComponent implements OnInit {
   selectedBranch?: Branch | null;
   businessId: number | null = 0;
   constructor() {
-    this.sds.userData.subscribe(userData => {
-      this.userResponse = userData as User;
-      if(this.userResponse.roles)
-        this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
-        this.businessId = getBusinessId(this.userResponse);
-        this.selectedBranch = this.lss.getItem(APP_SELECTED_BRANCH, true) as Branch || null;
-      }
-    });
+    this.userResponse = this.sds.currentUser as User;
+    this.branches = this.sds.getCurrentBranches() as Branch[];
+    this.businessId = this.sds.getCurrentUserBusinessId();
+    let selected = this.lss.getItem(APP_SELECTED_BRANCH, true) as Branch;
+    if(selected)
+      this.selectedBranch = selected;
+    else {
+      this.selectedBranch = this.branches[0];
+      this.lss.setItem(APP_SELECTED_BRANCH, this.selectedBranch, true);
+    }
   }
   
   ngOnInit() {

@@ -1,16 +1,18 @@
 <aside class="sidebar">
   <nav class="sidebar-nav">
-    @if(currentRole == roles.SOFT_OWNER) {
+    @if(sds.isSoftOwner()) {
       <a class="nav-item" pTooltip="Home" routerLink="/admin/dashboard" routerLinkActive="active">
         <i class="pi pi-home"></i>
       </a>
-      
+      <a class="nav-item" pTooltip="Businesses" routerLink="/admin/businesses" routerLinkActive="active">
+        <i class="pi pi-briefcase"></i>
+      </a>
       <a class="nav-item" pTooltip="Users" routerLink="/admin/users" routerLinkActive="active">
         <i class="pi pi-users"></i>
       </a>
     }
 
-    @if(currentRole == roles.SHOP_OWNER) {
+    @else if(sds.isShopOwner()) {
       <a class="nav-item" pTooltip="Home" routerLink="/admin/dashboard" routerLinkActive="active">
         <i class="pi pi-home"></i>
       </a>
@@ -27,6 +29,5 @@
        <i class="fa fa-shirt"></i>
       </a>
     }
-    
   </nav>
 </aside>

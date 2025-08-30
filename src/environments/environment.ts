@@ -22,7 +22,7 @@ export const environment = {
         customer: {
             controller: 'Customers/',
             enpoints: {
-                GetCustomers: 'GetCustomers',
+                GetAllCustomers: 'GetAllCustomers',
                 GetCustomerById: 'GetCustomerById'
             }
         },

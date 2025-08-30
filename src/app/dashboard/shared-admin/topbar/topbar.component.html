@@ -22,7 +22,7 @@
         <div class="actions-container">
             <p-button icon="pi pi-bell" [rounded]="true" text="true" severity="contrast" styleClass="action-btn"/>
             
-            @if(currentRole == roles.SHOP_OWNER) {
+            @if(sds.isShopOwner()) {
                 <p-select size="small" [options]="branches" [(ngModel)]="selectedBranch" optionLabel="name" placeholder="Select Branch" (onChange)="onBranchChange($event)" styleClass="branch-dropdown" appendTo="body"></p-select>
             }
             

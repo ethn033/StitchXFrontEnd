@@ -29,7 +29,7 @@ export class CustomersService extends ApiService {
   }
   
   getCustomers<T>(payload: any): Observable<ApiResponse<T>> {
-    return this.get(this.endpoint + environment.api.customer.enpoints.GetCustomers, payload);
+    return this.get(this.endpoint + environment.api.customer.enpoints.GetAllCustomers, payload);
   }
   
   deleteUser<T>(id: number) : Observable<ApiResponse<T>>{

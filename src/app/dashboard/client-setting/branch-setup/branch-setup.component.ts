@@ -1,5 +1,5 @@
-import { BranchCreateUpdateDto } from '../../../Dtos/requests/request-dto';
-import { Component, inject } from '@angular/core';
+import { Business } from './../../../Dtos/requests/request-dto';
+import { Component, inject, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Button } from "primeng/button";
@@ -7,10 +7,13 @@ import { Card } from "primeng/card";
 import { InputNumber } from 'primeng/inputnumber';
 import { BranchService } from '../../../services/branch/branch.service';
 import { ApiResponse } from '../../../models/base-response';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
 import { APP_USER } from '../../../utils/global-contstants';
-import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
+import { Branch, User } from '../../../Dtos/requests/request-dto';
+import { MessageService } from 'primeng/api';
+import { ShareDataService } from '../../../services/shared/share-data.service';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 
 @Component({
   selector: 'app-branch-setup',
@@ -19,55 +22,96 @@ import { UserResponse } from '../../../Dtos/responses/loginResponseDto';
   styleUrl: './branch-setup.component.css'
 })
 export class BranchSetupComponent {
-  private readonly as = inject(BranchService);
-  private router = inject(Router);
-  private ls = inject(LocalStorageService);
-  businessForm!: FormGroup;
-  userResponse? : UserResponse;
+  brs = inject(BranchService);
+  branchForm!: FormGroup;
+  userResponse? : User;
   
-  constructor(private fb: FormBuilder) {
-    this.initForm();
-    this.userResponse = this.ls.getItem(APP_USER, true) as UserResponse;
+  @Input() businessId: number | null = null;
+  
+  isLoading = false;
+  ms = inject(MessageService);
+  fb = inject(FormBuilder);
+  sds = inject(ShareDataService);
+  router = inject(Router);
+  ls = inject(LocalStorageService);
+  route = inject(ActivatedRoute);
+  
+  
+  constructor() {
+    this.userResponse = this.ls.getItem(APP_USER, true) as User;
     if(!this.userResponse) {
       this.router.navigate(['auth'], { replaceUrl: true });
       return;
     }
+    this.sds.setUserResponse(this.userResponse);
+    this.route.params.subscribe((params: any) => {
+      const bId = params?.['businessId?'] || null;
+      
+      if(!this.businessId && bId) {
+        this.businessId = Number(bId);
+      }
+      
+      if(!this.businessId || Number.isNaN(this.businessId) && this.sds.isBranchExists()) {
+        this.businessId = this.sds.getCurrentUserBusinessId();
+      }
+
+      this.initForm();      
+    });
     
   }
   
   
   initForm() {
-    this.businessForm = this.fb.group({
-      name: ['', [Validators.required, Validators.maxLength(100)]],
-      address: ['', [Validators.required, Validators.maxLength(200)]],
+    let req = Validators.required;
+    this.branchForm = this.fb.group({
+      name: ['', [req, Validators.maxLength(100)]],
+      address: ['', [req, Validators.maxLength(200)]],
       phone: ['', [Validators.maxLength(100)]],
+      businessId: [this.businessId, req],
       latitude:  [undefined],
       longitude: [undefined],
     });
   }
   
   onSubmit() {
-    this.businessForm?.markAllAsTouched();
-    if (!this.businessForm?.valid)
+    this.branchForm?.markAllAsTouched();
+    if (!this.branchForm?.valid)
       return;
     
-    let request: BranchCreateUpdateDto = new {
-      ...this.businessForm.value,
-      applicationUserId: this.userResponse?.id,
-      businessId: this.userResponse?.business.id,
-      isActive: true,
-      ownerId: this.userResponse?.id
-    };
-
-    this.as.createBranch(request).subscribe({
+    let request: Branch = this.branchForm.value;
+    
+    this.brs.createBranch(request).subscribe({
       next: (data: any) => {
         let resp = data as ApiResponse<any>;
-        if(resp.statusCode == 200 && resp.isSuccess) {
+        if(resp.statusCode == HttpStatusCode.Created && resp.isSuccess) {
+
+          let branch = resp.data as Branch;
+          let user = this.sds.currentUser;
+
+          if(user.business && branch) {
+            if(user.business.branches) 
+              user.business.branches.push(branch);
+            else {
+              user.business.branches = [];
+              user.business.branches.push(branch);
+            }
+          }
+          
+          this.ls.setItem(APP_USER, user, true);
+
           this.router.navigate(['admin'], { replaceUrl: true  });
+          this.ms.add({key: 'global-toast', severity: 'success', summary: 'Success', detail: resp.message});
+          return;
         }
+
+        this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: resp.message });
+        this.isLoading = false;
       },
       error: (err: any) => {
-        
+        this.isLoading = false;
+        if(err instanceof HttpErrorResponse) {
+          this.ms.add({ key: 'global-toast', severity: 'error', summary: 'Error', detail: err.error.message });
+        }
       }
     });
   }

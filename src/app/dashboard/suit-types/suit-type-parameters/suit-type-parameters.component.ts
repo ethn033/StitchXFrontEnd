@@ -15,7 +15,7 @@ import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Va
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { entityStatuses, EParameterTypeToString, getBusinessId, normalizeError, parameterTypeFilterValue} from '../../../utils/utils';
+import { entityStatuses, EParameterTypeToString, parameterTypeFilterValue} from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ApiResponse } from '../../../models/base-response';
 import { ShareDataService } from '../../../services/shared/share-data.service';

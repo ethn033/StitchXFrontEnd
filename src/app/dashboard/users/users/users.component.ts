@@ -3,7 +3,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogService } from 'primeng/dynamicdialog';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { CommonModule } from '@angular/common';
-import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DropDownItem } from '../../../contracts/dropdown-item';
-import { dateFilterValues, entityStatuses, normalizeError, userRolesFilterValue, valdiateRoles, validateCurrentRole } from '../../../utils/utils';
+import { dateFilterValues, entityStatuses, normalizeError, userRolesFilterValue } from '../../../utils/utils';
 import { LoadingService } from '../../../services/generics/loading.service';
 import { ViewCustomerComponent } from '../view-user/view-user.component';
 import { TruncatePipe } from '../../../pipe/truncate.pipe';
@@ -23,9 +23,10 @@ import { ERole } from '../../../enums/enums';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { UserCreateComponent } from '../create-user/user-create.component';
 import { User } from '../../../Dtos/requests/request-dto';
-import { UsersResponse } from '../../../Dtos/requests/response-dto';
+import { CustomerResponse } from '../../../Dtos/requests/response-dto';
 import { TabsModule } from "primeng/tabs";
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CustomersService } from '../../../services/customers/customers.service';
 @Component({
   selector: 'app-users',
   imports: [CommonModule, DialogModule, DatePickerModule, FormsModule, ButtonModule, SelectModule, ConfirmDialogModule, TagModule, TableModule, TooltipModule, TruncatePipe, TabsModule, RouterModule],
@@ -34,7 +35,16 @@ import { RouterModule } from '@angular/router';
   styleUrl: './users.component.css'
 })
 export class UsersComponent {
-  private sds = inject(ShareDataService);
+  sds = inject(ShareDataService);
+  loadingService: LoadingService = inject(LoadingService);
+  dialogService: DialogService = inject(DialogService);
+  us: UsersService = inject(UsersService);
+  cusService = inject(CustomersService);
+  confirmationService: ConfirmationService = inject(ConfirmationService);
+  messageService: MessageService = inject(MessageService);
+  router: Router = inject(Router);
+  
+  
   userResponse?: User | null;
   roles = ERole;
   currentRole?: ERole | null;
@@ -43,32 +53,15 @@ export class UsersComponent {
   selectedCustomerStatus: DropDownItem = this.userStatuses[0];
   userRolesItems: DropDownItem[] = userRolesFilterValue();
   selectedRole?: DropDownItem = this.userRolesItems[0];
-  dateRange: Date[] = [moment().subtract(1, 'month').toDate(), moment().toDate()]; // Default to last week
+  dateRange: Date[] = [moment().subtract(1, 'week').toDate(), moment().add(1, 'day').toDate()];
   dateRanges = dateFilterValues();
-  selectedDateFilter: DropDownItem = this.dateRanges[1]; // Default to 'This Week'
-  
-  // Removed invalid instantiation of Customer, as it is only a type
-  filterItems: MenuItem[] = [
-    { label: 'All Customers', icon: 'pi pi-users', command: () => this.filterCustomers('all') },
-    { label: 'With Orders', icon: 'pi pi-shopping-bag', command: () => this.filterCustomers('withOrders') },
-    { label: 'Pending Orders', icon: 'pi pi-clock', command: () => this.filterCustomers('pending') },
-    { label: 'With Balance', icon: 'pi pi-money-bill', command: () => this.filterCustomers('outstanding') }
-  ];
-  
-  dialogService: DialogService = inject(DialogService);
-  us: UsersService = inject(UsersService);
-  confirmationService: ConfirmationService = inject(ConfirmationService);
-  messageService: MessageService = inject(MessageService);
-  totalUsersCount: number = 0;
-  loadingService: LoadingService = inject(LoadingService);
-  
-  
+  selectedDateFilter: DropDownItem = this.dateRanges[1];
+
   constructor() {
-    this.sds.userData.subscribe(userData => {
-      this.userResponse = userData as User;
-      this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      this.userRolesItems = valdiateRoles(this.userRolesItems, this.currentRole);
-    });
+    this.userResponse = this.sds.currentUser as User || null;
+    if(!this.userResponse) {
+      this.router.navigate(['/admin'], { replaceUrl: true});
+    } 
   }
   
   ngOnInit(): void {
@@ -79,6 +72,7 @@ export class UsersComponent {
   rows: number= 10;
   pageNumber: number = 0;
   pageSize: number = 10;
+  totalUsersCount: number = 0;
   loadUsers(event?: TableLazyLoadEvent): void {
     
     this.loadingService.show();
@@ -93,17 +87,17 @@ export class UsersComponent {
       pageSize: this.pageSize,
       search: this.searchStr,
       status: this.selectedCustomerStatus.id,
-      role: this.selectedRole?.id ?? ERole.ALL,
+      role: this.selectedRole?.id == ERole.ALL ? ERole.CUSTOMER : this.selectedRole?.id ?? ERole.CUSTOMER,
       startDate: this.dateRange.length > 0 ? moment(this.dateRange[0]).toISOString() : '',
       endDate: (this.dateRange.length > 0 && this.dateRange[1] != null) ? moment(this.dateRange[1]).toISOString() : '',
     };
     
-    this.us.getUsers<ApiResponse<UsersResponse>>(payload).subscribe({
+    this.cusService.getCustomers<ApiResponse<CustomerResponse>>(payload).subscribe({
       next: (data: any) => {
         
         this.loadingService.hide();
-        let usersResp = data as ApiResponse<UsersResponse>;
-        this.users = usersResp.data.users;
+        let usersResp = data as ApiResponse<CustomerResponse>;
+        this.users = usersResp.data.customers;
         this.totalUsersCount = usersResp.data.totalCount;
       },
       error: (error: any) => {

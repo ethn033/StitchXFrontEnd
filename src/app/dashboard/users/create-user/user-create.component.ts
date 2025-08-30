@@ -9,7 +9,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { userRolesFilterValue, valdiateRoles, validateCurrentRole } from '../../../utils/utils';
+import { userRolesFilterValue } from '../../../utils/utils';
 import { DropDownItem } from '../../../contracts/dropdown-item';
 import { UsersService } from '../../../services/client/users.service';
 import { ApiResponse } from '../../../models/base-response';
@@ -20,6 +20,7 @@ import moment from 'moment';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { ERole } from '../../../enums/enums';
 import { FieldsetModule } from 'primeng/fieldset';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-create',
@@ -32,6 +33,7 @@ export class UserCreateComponent {
   customerForm: FormGroup;
   loading = false;
   us = inject(UsersService);
+  router = inject(Router);
   ms = inject(MessageService);
   config = inject(DynamicDialogConfig)
   ref = inject(DynamicDialogRef);
@@ -45,11 +47,10 @@ export class UserCreateComponent {
   roles = ERole;
   
   constructor() {
-    this.sds.userData.subscribe(userData => {
-      this.userResponse = userData as User;
-      this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      this.userRolesItems = valdiateRoles(this.userRolesItems, this.currentRole);
-    });
+    this.userResponse = this.sds.currentUser as User;
+    if(!this.userResponse) {
+      this.router.navigate(['/admin'], { replaceUrl: true});
+    } 
     
     this.isUpdateScreen = !!this.config.data?.user;
     
@@ -60,8 +61,8 @@ export class UserCreateComponent {
       phoneNumber: ['', [Validators.required]],
       address: [''],
       city: [''],
-      passwordHash: ['', !this.isUpdateScreen ? [Validators.required, Validators.minLength(8), Validators.maxLength(25)] : []],
-      role: [null, !this.isUpdateScreen ? Validators.required : []],
+      passwordHash: ['', !this.isUpdateScreen ? [Validators.required, Validators.minLength(8), Validators.maxLength(25)] : ''],
+      role: [null, !this.isUpdateScreen ? Validators.required : null],
       dateOfBirth: []
     });
     

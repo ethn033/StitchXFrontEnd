@@ -9,6 +9,7 @@ import { APP_USER } from '../../utils/global-contstants';
 import { LocalStorageService } from '../../services/generics/local-storage.service';
 import { ShareDataService } from '../../services/shared/share-data.service';
 import { UserResponse } from '../../Dtos/requests/response-dto';
+import { User } from '../../Dtos/requests/request-dto';
 
 @Component({
   selector: 'app-admin-layout',
@@ -23,7 +24,7 @@ import { UserResponse } from '../../Dtos/requests/response-dto';
   styleUrl: './admin-layout.component.css'
 })
 export class AdminLayoutComponent  {
-  userResponse? : UserResponse;
+  currentuser! : User;
   private ls = inject(LocalStorageService);
   private sds = inject(ShareDataService);
   loadingService: LoadingService = inject(LoadingService);
@@ -37,13 +38,12 @@ export class AdminLayoutComponent  {
       }
     });
     
-    
-    this.userResponse = this.ls.getItem(APP_USER, true) as UserResponse;
-    if(!this.userResponse) {
+    this.currentuser = this.ls.getItem(APP_USER, true) as User;
+    if(!this.currentuser) {
       this.router.navigate(['auth'], { replaceUrl: true });
       return;
     }
     
-    this.sds.setUserResponse(this.userResponse);
+    this.sds.setUserResponse(this.currentuser);
   } 
 }

@@ -13,14 +13,13 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { TabsModule } from "primeng/tabs";
-import { RouterModule } from '@angular/router';
-import { TruncatePipe } from '../../pipe/truncate.pipe';
+import { Router, RouterModule } from '@angular/router';
 import { DropDownItem } from '../../contracts/dropdown-item';
 import { Branch, Order, User } from '../../Dtos/requests/request-dto';
 import { EOrderStatus, EPaymentStatus, ERole } from '../../enums/enums';
 import { ApiResponse } from '../../models/base-response';
 import { ShareDataService } from '../../services/shared/share-data.service';
-import { validateCurrentRole, dateFilterValues, normalizeError, orderStatusFilterValue, getBusinessId } from '../../utils/utils';
+import { dateFilterValues, normalizeError, orderStatusFilterValue } from '../../utils/utils';
 import { LoadingService } from '../../services/generics/loading.service';
 import { OrdersResponse } from '../../Dtos/requests/response-dto';
 import { ViewCustomerComponent } from '../users/view-user/view-user.component';
@@ -41,7 +40,6 @@ export class OrderComponent implements OnInit {
   private ls = inject(LocalStorageService);
   userResponse?: User | null;
   roles = ERole;
-  currentRole?: ERole | null;
   orders: Order[] = [];
   orderStatuses: DropDownItem[] = orderStatusFilterValue();
   oStatuses = EOrderStatus;
@@ -57,28 +55,32 @@ export class OrderComponent implements OnInit {
   messageService: MessageService = inject(MessageService);
   totalOrdersCount: number = 0;
   loadingService: LoadingService = inject(LoadingService);
-  
+  router = inject(Router);
   
   branches: Branch[] = [];
   selectedBranch?: Branch | null;
   businessId?: number | null;
   constructor() {
+    this.userResponse = this.sds.currentUser as User;
+    if(!this.userResponse) {
+      this.router.navigate(['/admin'], { replaceUrl: true});
+    }
+
+    if(this.sds.isBusinessExists())
+      this.businessId = this.sds.getCurrentUserBusinessId();
+
+    if(this.sds.isBranchExists())
+      this.branches = this.sds.getCurrentBranches();
+
     this.sds.userData.subscribe(userData => {
       this.userResponse = userData as User;
       
-      if(this.userResponse.roles)
-        this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      
-      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
-        this.businessId = getBusinessId(this.userResponse);
-        this.branches = this.userResponse.business.branches;
-        // get selected branch if any 
-        let selected = this.ls.getItem(APP_SELECTED_BRANCH, true) as Branch;
+      let selected = this.ls.getItem(APP_SELECTED_BRANCH, true) as Branch;
         if(selected)
           this.selectedBranch = selected;
         else
           this.selectedBranch = this.branches[0];
-      }
+
     });
   }
   

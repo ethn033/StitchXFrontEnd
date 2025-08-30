@@ -7,7 +7,7 @@ import { RippleModule } from 'primeng/ripple';
 import { FormsModule } from '@angular/forms';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../../services/auth/auth.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { AvatarModule } from 'primeng/avatar';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -15,7 +15,6 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ShareDataService } from '../../../services/shared/share-data.service';
 import { ERole } from '../../../enums/enums';
 import { Badge } from "primeng/badge";
-import { validateCurrentRole } from '../../../utils/utils';
 import { Branch, User } from '../../../Dtos/requests/request-dto';
 import { SelectChangeEvent, SelectModule } from "primeng/select";
 import { LocalStorageService } from '../../../services/generics/local-storage.service';
@@ -28,40 +27,21 @@ import { APP_SELECTED_BRANCH } from '../../../utils/global-contstants';
   styleUrl: './topbar.component.css'
 })
 export class TopbarComponent {
-  private as = inject(AuthService);
-  private ls = inject(LocalStorageService);
-  private sds = inject(ShareDataService);
+  as = inject(AuthService);
+  ls = inject(LocalStorageService);
+  router = inject(Router);
+  sds = inject(ShareDataService);
   userResponse?: User | null;
   
   roles = ERole;
-  currentRole?: ERole | null;
   branches: Branch[] = [];
   
   selectedBranch?: Branch | null;
   
   constructor() {
-    this.sds.userData.subscribe(userData => {
-      this.userResponse = userData as User;
-      if(!this.userResponse) {
-        alert('user not found.');
-        return;
-      }
-
-      if(this.userResponse.roles)
-        this.currentRole = validateCurrentRole(this.userResponse.roles!);
-      
-      if(this.userResponse && this.userResponse.business && this.userResponse.business.branches) {
-        this.branches = this.userResponse.business.branches;
-        // get selected branch if any 
-        let selected = this.ls.getItem(APP_SELECTED_BRANCH, true) as Branch;
-        if(selected)
-          this.selectedBranch = selected;
-        else {
-          this.selectedBranch = this.branches[0];
-          this.ls.setItem(APP_SELECTED_BRANCH, this.selectedBranch, true);
-        }
-      }
-    });
+    this.userResponse = this.sds.currentUser as User;
+    this.branches = this.sds.getCurrentBranches() as Branch[];
+    this.selectedBranch = this.sds.getCurrentBranch();
   }
   
   userMenuItems: MenuItem[] = [

@@ -1,17 +1,17 @@
 <div class="container-fluid p-0 min-vh-100 d-flex justify-content-center align-items-center bg-light">
   <div class="col-12 col-md-8 col-lg-6 col-xl-5 p-2">
-    <p-card header="Create New Business" class="shadow">
-      <form [formGroup]="businessForm" (ngSubmit)="onSubmit()" class="p-fluid">
+    <p-card header="Create Branch" class="shadow">
+      <form [formGroup]="branchForm" (ngSubmit)="onSubmit()" class="p-fluid">
         <!-- Business Name -->
         <div class="mb-3">
           <label for="name" class="form-label">Business Name*</label>
-          <input id="name" type="text" pInputText class="form-control" formControlName="name" placeholder="Enter business name" [ngClass]="{ 'is-invalid': businessForm.get('name')?.invalid && businessForm.get('name')?.touched }">
+          <input id="name" type="text" pInputText class="form-control" formControlName="name" placeholder="Enter business name" [ngClass]="{ 'is-invalid': branchForm.get('name')?.invalid && branchForm.get('name')?.touched }">
           
           <div class="invalid-feedback d-block">
-            @if (businessForm.get('name')?.hasError('required') && businessForm.get('name')?.touched) {
+            @if (branchForm.get('name')?.hasError('required') && branchForm.get('name')?.touched) {
               <div>Name is required.</div>
             }
-            @if (businessForm.get('name')?.hasError('maxlength')) {
+            @if (branchForm.get('name')?.hasError('maxlength')) {
               <div>Name cannot exceed 100 characters.</div>
             }
           </div>
@@ -20,14 +20,14 @@
         <!-- Address -->
         <div class="mb-3">
           <label for="address" class="form-label">Address*</label>
-          <textarea id="address" pInputTextarea class="form-control" formControlName="address" rows="3" placeholder="Enter business address" [ngClass]="{ 'is-invalid': businessForm.get('address')?.invalid && businessForm.get('address')?.touched }">
+          <textarea id="address" pInputTextarea class="form-control" formControlName="address" rows="3" placeholder="Enter business address" [ngClass]="{ 'is-invalid': branchForm.get('address')?.invalid && branchForm.get('address')?.touched }">
         </textarea>
         
         <div class="invalid-feedback d-block">
-          @if (businessForm.get('address')?.hasError('required') && businessForm.get('address')?.touched) {
+          @if (branchForm.get('address')?.hasError('required') && branchForm.get('address')?.touched) {
             <div>Address is required.</div>
           }
-          @if (businessForm.get('address')?.hasError('maxlength')) {
+          @if (branchForm.get('address')?.hasError('maxlength')) {
             <div>Address cannot exceed 200 characters.</div>
           }
         </div>
@@ -43,10 +43,10 @@
         class="form-control"
         formControlName="phone" 
         placeholder="Enter phone number"
-        [ngClass]="{ 'is-invalid': businessForm.get('phone')?.invalid && businessForm.get('phone')?.touched }">
+        [ngClass]="{ 'is-invalid': branchForm.get('phone')?.invalid && branchForm.get('phone')?.touched }">
         
         <div class="invalid-feedback d-block">
-          @if (businessForm.get('phone')?.hasError('maxlength')) {
+          @if (branchForm.get('phone')?.hasError('maxlength')) {
             <div>Phone number cannot exceed 20 characters.</div>
           }
         </div>
@@ -74,10 +74,10 @@
             [minFractionDigits]="4"
             [maxFractionDigits]="6"
             placeholder="e.g. 33.6844"
-            [ngClass]="{ 'is-invalid': businessForm.get('latitude')?.invalid && businessForm.get('latitude')?.touched }">
+            [ngClass]="{ 'is-invalid': branchForm.get('latitude')?.invalid && branchForm.get('latitude')?.touched }">
           </p-inputNumber>
           <div class="invalid-feedback d-block">
-            @if (businessForm.get('latitude')?.hasError('required') && businessForm.get('latitude')?.touched) {
+            @if (branchForm.get('latitude')?.hasError('required') && branchForm.get('latitude')?.touched) {
               <div>Latitude is required</div>
             }
             <div class="small text-muted mt-1">Islamabad range: ~33.60 to 33.80 (North)</div>
@@ -86,10 +86,10 @@
         
         <div class="col-12 col-md-6">
           <label for="longitude" class="form-label">Longitude*</label>
-          <p-inputNumber  id="longitude" mode="decimal" class="w-100" formControlName="longitude" [minFractionDigits]="4" [maxFractionDigits]="6" placeholder="e.g. 73.0479" [ngClass]="{ 'is-invalid': businessForm.get('longitude')?.invalid && businessForm.get('longitude')?.touched }">
+          <p-inputNumber  id="longitude" mode="decimal" class="w-100" formControlName="longitude" [minFractionDigits]="4" [maxFractionDigits]="6" placeholder="e.g. 73.0479" [ngClass]="{ 'is-invalid': branchForm.get('longitude')?.invalid && branchForm.get('longitude')?.touched }">
         </p-inputNumber>
         <div class="invalid-feedback d-block">
-          @if (businessForm.get('longitude')?.hasError('required') && businessForm.get('longitude')?.touched) {
+          @if (branchForm.get('longitude')?.hasError('required') && branchForm.get('longitude')?.touched) {
             <div>Longitude is required</div>
           }
           <div class="small text-muted mt-1">Islamabad range: ~72.90 to 73.20 (East)</div>
@@ -103,7 +103,7 @@
     <p-button 
     type="submit" 
     label="Create Business" 
-    [disabled]="businessForm.invalid"
+    [disabled]="branchForm.invalid"
     icon="pi pi-check"
     styleClass="p-button-primary">
   </p-button>

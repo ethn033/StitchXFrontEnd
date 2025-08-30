@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { DropDownItem } from "../contracts/dropdown-item";
-import { OrderHistoryItemResponseDto } from "../Dtos/responses/orderResponseDto";
 import { EOrderStatus, EParameterType, ERole } from "../enums/enums";
 import { User } from "../Dtos/requests/request-dto";
 
@@ -59,39 +58,10 @@ export function orderStatusFilterValue(): DropDownItem[] {
   return statusList;
 }
 
-export function getBusinessId(user: User) : number | null {
-  if(user && user.business)
-    return user.business.id!;
-  else
-    return null;
-}
-
-
 export function splitStrBySep(strArray: string, sep: string): string[] {
   return (!strArray || !sep) ? [] : strArray.split(sep).map(item => item.trim()) || [];
 }
 
-export function validateCurrentRole(roles?: string[]): ERole {
-  let role: ERole = ERole.CUSTOMER;
-  if(roles && roles.length > 0) {
-    if(roles.includes(ERoleToString[ERole.CUSTOMER])) {
-      role = ERole.CUSTOMER;
-    }
-    if(roles.includes(ERoleToString[ERole.CUTTER])) {
-      role = ERole.CUTTER;
-    }
-    if(roles.includes(ERoleToString[ERole.TAILOR])) {
-      role = ERole.TAILOR;
-    }
-    if(roles.includes(ERoleToString[ERole.SHOP_OWNER])) {
-      role = ERole.SHOP_OWNER;
-    }
-    if(roles.includes(ERoleToString[ERole.SOFT_OWNER])) {
-      role = ERole.SOFT_OWNER;
-    }
-  }
-  return role;
-}
 
 export function valdiateRoles(userRolesItems: DropDownItem[], currentRole: ERole): DropDownItem[] {
   userRolesItems = userRolesItems.filter(item => item.id !== currentRole);
@@ -112,7 +82,6 @@ export const ERoleToString = {
   [ERole.DEMO_USER]: 'DEMO_USER'
 } as const;
 
-
 export const EParameterTypeToString = {
   [EParameterType.ALL]: 'ALL',
   [EParameterType.INPUT_TEXT]: 'INPUT_TEXT',
@@ -120,7 +89,6 @@ export const EParameterTypeToString = {
   [EParameterType.MULTI_SELECT_OPTIONS]: 'MULTI_SELECT_OPTIONS',
   [EParameterType.SINGLE_SELECT_OPTION]: 'SINGLE_SELECT_OPTION',
 } as const;
-
 
 export interface NormalizedError {
   message: string;
